@@ -9,7 +9,7 @@ let registryContract: any
 describe("Registry", () => {
   before(async() => {
     signers = await ethers.getSigners()
-    registryContract = await hre.ethers.deployContract("CopodRegistry")
+    registryContract = await hre.ethers.deployContract("Registry")
   })
 
   it("Register land", async () => {

@@ -3,16 +3,7 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-
-// Land parcel
-struct LandDetails {
-    string titleNo;
-    uint256 size;
-    string symbol;
-    address payable owner;
-    uint256 tokenId;
-}
+import "./Land.sol";
 
 // Land usage
 struct UsageRight {
@@ -23,22 +14,7 @@ struct UsageRight {
     string titleNo;
 }
 
-contract Land is ERC721, Ownable {
-    // Land titles to details- title no. are unique
-    LandDetails land;
-
-    constructor(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) ERC721(titleNo_, symbol_) Ownable(owner_) {
-        land = LandDetails(titleNo_, size_, symbol_, payable(owner_), tokenId_);
-        // Transfer titleNo_ to owner_
-        _safeMint(owner_, tokenId_);
-    }
-
-    function getLand() public view returns (string memory titleNo, string memory symbol, uint256 size) {
-        return (land.titleNo, land.symbol, land.size);
-    }
-}
-
-contract CopodRegistry {
+contract Registry {
     // Lands
     mapping(string => address) private lands;
     // Land title usage rights
@@ -56,7 +32,7 @@ contract CopodRegistry {
     
     // Register land
     function addLand(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) public returns (Land landAddress) {
-        // Don't mint same land again
+        // Don't mint same land
         require(lands[titleNo_] == address(0), LandAlreadyExists(titleNo_));
 
         Land land = new Land(titleNo_, symbol_, owner_, size_, tokenId_);
