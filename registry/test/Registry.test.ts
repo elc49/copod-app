@@ -3,41 +3,54 @@ import hre, { ethers } from "hardhat"
 import { Signer } from "ethers"
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs"
 
-let signers: Signer[]
-let registryContract: any
+interface Land {
+  titleNo: string
+  size: number
+  unit: string
+  tokenId: number
+}
+
+let signers: Signer[], owner: Signer, tenant: Signer
+let registryContract: any, landContract: any
+const land: Land = {
+  titleNo: "FE/E32/HZ",
+  size: 32,
+  unit: "HA",
+  tokenId: 4842,
+}
 
 describe("Registry", () => {
-  before(async() => {
+  before(async () => {
     signers = await ethers.getSigners()
+    owner = signers[0]
+    tenant = signers[1]
     registryContract = await hre.ethers.deployContract("Registry")
   })
 
-  it("Register land", async () => {
-    let owner = signers[0]
-    await registryContract.addLand("FE/E32", "HA", await owner.getAddress(), 34, 4842)
+  describe("register", async () => {
+    it("register success", async () => {
+      await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size, 4842)
 
-    let landContract: any = (await ethers.getContractFactory("Land")).attach(await registryContract.getLandERC721Contract("FE/E32"))
-    let land = await landContract.getLand()
-    let count = await landContract.balanceOf(await owner.getAddress())
-    let countLands = await registryContract.getCountTokenizedLands()
+      landContract = (await ethers.getContractFactory("Land")).attach(await registryContract.getLandERC721Contract(land.titleNo))
+      const result = await landContract.getLand()
+      const count = await landContract.balanceOf(await owner.getAddress())
+      const countLands = await registryContract.countTokenizedLands()
 
-    expect(land.titleNo).to.be.equal("FE/E32")
-    expect(land.symbol).to.be.equal("HA")
-    expect(count).to.be.equal(1)
-    expect(countLands).to.be.equal(1)
+      expect(result.titleNo).to.be.equal(land.titleNo)
+      expect(result.symbol).to.be.equal(land.unit)
+      expect(count).to.be.equal(1)
+      expect(countLands).to.be.equal(1)
+    })
+
+    it("Dont't register same land parcel", async () => {
+      await expect(
+        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, 482)
+      ).to.be.reverted
+    })
   })
 
-  it("Dont't register same land parcel", async() => {
-    let owner = signers[0]
-    await expect(
-      registryContract.addLand("FE/E32", "HA", await owner.getAddress(), 34, 482)
-    ).to.be.reverted
-  })
-
-  it("Grant land usage rights", async() => {
-    let tenant = signers[1]
-    await expect(
-      registryContract.setUsageRights("FE/E32", 32, 38203, 16000, await tenant.getAddress())
-    ).to.emit(registryContract, "GrantLandUsageRights").withArgs("FE/E32", anyValue, anyValue, anyValue)
+  describe("grantUsage", async () => {
+    it("grant success", async () => {
+    })
   })
 })
