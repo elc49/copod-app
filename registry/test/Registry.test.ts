@@ -50,7 +50,7 @@ describe("Registry", () => {
     })
   })
 
-  describe("grantUsage", async () => {
+  describe("grantLandUsageRights", async () => {
     it("not land owner grant usage", async () => {
       await expect(
         registryContract.grantLandUsageRights(land.titleNo, 21, timeInFuture, 25000, await owner.getAddress(), await tenant.getAddress())
