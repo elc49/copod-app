@@ -88,7 +88,7 @@ describe("Registry", () => {
     })
 
     it("return false", async () => {
-      const futureTime = Math.floor((Date.now() + (60*60*24))/1000)
+      const futureTime = Math.floor((Date.now() + (60*60*24*24))/1000)
       await time.increase(futureTime)
 
       expect(
