@@ -26,7 +26,7 @@ contract Land is ERC721, Ownable {
     event ReclaimSize(address owner, uint256 size);
 
     // Errors
-    error TrySubtracting(uint256 size);
+    error TrySubtract(uint256 size);
     error TryAdd(uint256 size);
 
     constructor(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) ERC721(titleNo_, symbol_) Ownable(owner_) {
@@ -44,7 +44,7 @@ contract Land is ERC721, Ownable {
     function grantSize(uint256 size_, address owner_) public returns (bool) {
         require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
         (bool success, uint256 result) =  land.size.trySub(size_);
-        require(success, TrySubtracting(size_));
+        require(success, TrySubtract(size_));
         // Update new land size
         land.size = result;
         emit GrantSize(owner_, size_);
@@ -55,6 +55,7 @@ contract Land is ERC721, Ownable {
     function reclaimSize(uint256 size_, address owner_) public returns (bool) {
         require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
         (bool success, uint256 result) = land.size.tryAdd(size_);
+        require(success, TryAdd(size_));
         // Update new land size
         land.size = result;
         emit ReclaimSize(owner_, size_);
