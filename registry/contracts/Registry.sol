@@ -30,8 +30,9 @@ contract Registry {
     // Error
     error LandAlreadyExists(string titleNo);
     error UnavailableLandSpace(string titleNo, uint256 size);
-    error AvailableToOnlyOwner(address caller);
+    error NotAuthorized(address caller);
     error GrantSize(uint256 size);
+    error NoTokenizedLand(string titleNo);
     
     // Register land
     function register(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) public returns (Land landAddress) {
@@ -56,14 +57,15 @@ contract Registry {
     }
 
     // Grant usage rights
-    // TODO: should be signed by owner and tenant
+    // TODO: should be authorized/authenticated by owner/tenant
     function grantLandUsageRights(string memory titleNo_, uint256 size_, uint256 duration_, uint256 cost_, address tenant_, address owner_) public {
         // Get land details
+        require(lands[titleNo_] != address(0), NoTokenizedLand(titleNo_));
         Land l = Land(lands[titleNo_]);
         LandDetails memory land = l.getLand();
 
         // Validate caller
-        require(owner_ == land.owner, AvailableToOnlyOwner(owner_));
+        require(owner_ == land.owner, NotAuthorized(owner_));
 
         // Validate land space
         require(size_ <= land.size, UnavailableLandSpace(titleNo_, size_));
@@ -73,7 +75,6 @@ contract Registry {
         require(success, GrantSize(size_));
 
         usage[tenant_][titleNo_] = UsageRight(size_, duration_, payable(tenant_), cost_, titleNo_);
-        // TODO: properly update land size
         emit GrantLandUsageRights(titleNo_, size_, duration_, tenant_);
     }
 

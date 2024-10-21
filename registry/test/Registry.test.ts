@@ -18,6 +18,7 @@ const land: Land = {
   unit: "HA",
   tokenId: 4842,
 }
+const timeInFuture = Date.parse("2025-01-01")
 
 describe("Registry", () => {
   before(async () => {
@@ -50,7 +51,31 @@ describe("Registry", () => {
   })
 
   describe("grantUsage", async () => {
-    it("grant success", async () => {
+    it("not land owner grant usage", async () => {
+      await expect(
+        registryContract.grantLandUsageRights(land.titleNo, 21, timeInFuture, 25000, await owner.getAddress(), await tenant.getAddress())
+      ).to.be.revertedWithCustomError(registryContract, "NotAuthorized")
+    })
+
+    it("land should cover requested usage size", async () => {
+      await expect(
+        registryContract.grantLandUsageRights(land.titleNo, 34, timeInFuture, 25000, await tenant.getAddress(), await owner.getAddress())
+      ).to.be.revertedWithCustomError(registryContract, "UnavailableLandSpace")
+    })
+
+    it("request usage to verified land", async () => {
+      await expect(
+        registryContract.grantLandUsageRights("ER/34", 21, timeInFuture, 25000, await tenant.getAddress(), await owner.getAddress())
+      ).to.be.revertedWithCustomError(registryContract, "NoTokenizedLand")
+    })
+
+    it("grant rights success", async () => {
+      await expect(
+        registryContract.grantLandUsageRights(land.titleNo, 21, timeInFuture, 25000, await tenant.getAddress(), await owner.getAddress())
+      ).to.emit(registryContract, "GrantLandUsageRights").withArgs(land.titleNo, anyValue, anyValue, anyValue)
+
+      const l = await landContract.getLand()
+      expect(l.size).to.be.equal(11)
     })
   })
 })
