@@ -78,6 +78,12 @@ contract Registry {
         emit GrantLandUsageRights(titleNo_, size_, duration_, tenant_);
     }
 
+    // Prove usage rights
+    function claimUsageRights(address tenant_, string memory titleNo_) public view returns (bool) {
+        UsageRight memory u = usage[tenant_][titleNo_];
+        return u.duration > block.timestamp;
+    }
+
     // Reclaim back rights - only callable by land owner
     // TODO: only callable past duration
     function reclaimUsageRights(address tenant_, string memory titleNo_) public {

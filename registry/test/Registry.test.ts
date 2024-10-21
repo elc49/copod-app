@@ -2,6 +2,7 @@ import { expect } from "chai"
 import hre, { ethers } from "hardhat"
 import { Signer } from "ethers"
 import { anyValue } from "@nomicfoundation/hardhat-chai-matchers/withArgs"
+import { time } from "@nomicfoundation/hardhat-network-helpers"
 
 interface Land {
   titleNo: string
@@ -18,7 +19,7 @@ const land: Land = {
   unit: "HA",
   tokenId: 4842,
 }
-const timeInFuture = Date.parse("2025-01-01")
+const timeInFuture = Math.floor((Date.now() + (60*60*24))/1000)
 
 describe("Registry", () => {
   before(async () => {
@@ -76,6 +77,23 @@ describe("Registry", () => {
 
       const l = await landContract.getLand()
       expect(l.size).to.be.equal(11)
+    })
+  })
+
+  describe("claimUsageRights", async () => {
+    it("return true", async () => {
+      expect(
+        await registryContract.claimUsageRights(await tenant.getAddress(), land.titleNo)
+      ).to.be.true
+    })
+
+    it("return false", async () => {
+      const futureTime = Math.floor((Date.now() + (60*60*24*24))/1000)
+      await time.increase(futureTime)
+
+      expect(
+        await registryContract.claimUsageRights(await tenant.getAddress(), land.titleNo)
+      ).to.be.false
     })
   })
 })
