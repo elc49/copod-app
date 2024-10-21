@@ -25,13 +25,17 @@ contract Registry {
     // Land events
     event LandCreated(string titleNo, uint size);
     event GrantLandUsageRights(string titleNo, uint256 size, uint256 duration, address tenant);
-    event ReclaimBackRights(uint256 size, address tenant, string titleNo);
+    event ReclaimUsageRights(uint256 size, address tenant, string titleNo);
 
     // Error
     error LandAlreadyExists(string titleNo);
+    error UnavailableLandSpace(string titleNo, uint256 size);
+    error NotAuthorized(address caller);
+    error GrantSize(uint256 size);
+    error NoTokenizedLand(string titleNo);
     
     // Register land
-    function addLand(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) public returns (Land landAddress) {
+    function register(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) public returns (Land landAddress) {
         // Don't mint same land
         require(lands[titleNo_] == address(0), LandAlreadyExists(titleNo_));
 
@@ -43,7 +47,7 @@ contract Registry {
     }
 
     // Total tokenized properties
-    function getCountTokenizedLands() public view returns (uint256) {
+    function countTokenizedLands() public view returns (uint256) {
         return tokenizedLands;
     }
 
@@ -53,15 +57,31 @@ contract Registry {
     }
 
     // Grant usage rights
-    function setUsageRights(string memory titleNo_, uint256 size_, uint256 duration_, uint256 cost_, address tenant_) public {
+    // TODO: should be authorized/authenticated by owner/tenant
+    function grantLandUsageRights(string memory titleNo_, uint256 size_, uint256 duration_, uint256 cost_, address tenant_, address owner_) public {
+        // Get land details
+        require(lands[titleNo_] != address(0), NoTokenizedLand(titleNo_));
+        Land l = Land(lands[titleNo_]);
+        LandDetails memory land = l.getLand();
+
+        // Validate caller
+        require(owner_ == land.owner, NotAuthorized(owner_));
+
+        // Validate land space
+        require(size_ <= land.size, UnavailableLandSpace(titleNo_, size_));
+
+        // Grant usage size
+        (bool success) = l.grantSize(size_, owner_);
+        require(success, GrantSize(size_));
+
         usage[tenant_][titleNo_] = UsageRight(size_, duration_, payable(tenant_), cost_, titleNo_);
-        // TODO: properly update land size
         emit GrantLandUsageRights(titleNo_, size_, duration_, tenant_);
     }
 
     // Reclaim back rights - only callable by land owner
-    function reclaimBackRights(address tenant_, string memory titleNo_) public {
+    // TODO: only callable past duration
+    function reclaimUsageRights(address tenant_, string memory titleNo_) public {
         // TODO: reclaim back rights- size
-        emit ReclaimBackRights(32, tenant_, titleNo_);
+        emit ReclaimUsageRights(32, tenant_, titleNo_);
     }
 }
