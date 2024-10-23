@@ -11,6 +11,6 @@ jobs:
       with:
         node-version: '20.x'
     - name: Install dependencies
-      run: cd registry && npm ci
+      run: cd SmartContract && npm ci
     - name: Test smart contracts
       run: make tests
