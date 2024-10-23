@@ -80,10 +80,10 @@ describe("Registry", () => {
     })
   })
 
-  describe("claimUsageRights", async () => {
+  describe("claimLandUsageRights", async () => {
     it("return true", async () => {
       expect(
-        await registryContract.claimUsageRights(await tenant.getAddress(), land.titleNo)
+        await registryContract.claimLandUsageRights(await tenant.getAddress(), land.titleNo)
       ).to.be.true
     })
 
@@ -92,7 +92,7 @@ describe("Registry", () => {
       await time.increase(futureTime)
 
       expect(
-        await registryContract.claimUsageRights(await tenant.getAddress(), land.titleNo)
+        await registryContract.claimLandUsageRights(await tenant.getAddress(), land.titleNo)
       ).to.be.false
     })
   })

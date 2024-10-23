@@ -79,7 +79,7 @@ contract Registry {
     }
 
     // Prove usage rights
-    function claimUsageRights(address tenant_, string memory titleNo_) public view returns (bool) {
+    function claimLandUsageRights(address tenant_, string memory titleNo_) public view returns (bool) {
         UsageRight memory u = usage[tenant_][titleNo_];
         return u.duration > block.timestamp;
     }
