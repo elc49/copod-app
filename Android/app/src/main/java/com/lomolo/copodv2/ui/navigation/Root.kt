@@ -9,6 +9,7 @@ import com.lomolo.copodv2.ui.screens.DashboardScreen
 import com.lomolo.copodv2.ui.screens.DashboardScreenDestination
 import com.lomolo.copodv2.ui.screens.LoginScreen
 import com.lomolo.copodv2.ui.screens.LoginScreenDestination
+import com.lomolo.copodv2.viewmodels.MainViewModel
 
 interface Navigation {
     val title: Int?
@@ -23,7 +24,8 @@ object RootNavigation: Navigation {
 @Composable
 fun NavigationHost(
     modifier: Modifier,
-    navHostController: NavHostController
+    navHostController: NavHostController,
+    mainViewModel: MainViewModel,
 ) {
     NavHost(
         navController = navHostController,
@@ -31,10 +33,16 @@ fun NavigationHost(
         route = RootNavigation.route,
     ) {
         composable(route = LoginScreenDestination.route) {
-            LoginScreen(modifier = modifier)
+            LoginScreen(
+                modifier = modifier,
+                mainViewModel = mainViewModel,
+            )
         }
         composable(route = DashboardScreenDestination.route) {
-            DashboardScreen(modifier = modifier)
+            DashboardScreen(
+                modifier = modifier,
+                mainViewModel = mainViewModel,
+            )
         }
     }
 }

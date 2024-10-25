@@ -5,6 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.lomolo.copodv2.ui.navigation.Navigation
+import com.lomolo.copodv2.viewmodels.MainViewModel
 
 object DashboardScreenDestination: Navigation {
     override val title = null
@@ -14,6 +15,7 @@ object DashboardScreenDestination: Navigation {
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel,
 ) {
     Column(modifier = modifier) {
         Text("Dashboard")
