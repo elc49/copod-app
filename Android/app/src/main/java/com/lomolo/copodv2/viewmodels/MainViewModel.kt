@@ -15,9 +15,26 @@ import com.web3auth.core.types.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import org.web3j.crypto.Credentials
+
+interface InitializeSdk {
+    data object Success: InitializeSdk
+    data object Loading: InitializeSdk
+    data class Error(val msg: String?): InitializeSdk
+}
+
+interface LoginSdk {
+    data object Success: LoginSdk
+    data object Loading: LoginSdk
+    data class Error(val msg: String?): LoginSdk
+}
+
+data class LoginInput(
+    val email: String = "",
+)
 
 class MainViewModel(
     private val web3Auth: IWeb3Auth
@@ -29,6 +46,17 @@ class MainViewModel(
 
     var initializeSdk: InitializeSdk by mutableStateOf(InitializeSdk.Success)
         private set
+    var loginSdk: LoginSdk by mutableStateOf(LoginSdk.Success)
+        private set
+
+    private val _loginInput: MutableStateFlow<LoginInput> = MutableStateFlow(LoginInput())
+    val loginInput: StateFlow<LoginInput> = _loginInput.asStateFlow()
+
+    fun setEmail(email: String) {
+        _loginInput.update {
+            it.copy(email = email)
+        }
+    }
 
     private fun prepareCredentials() {
         credentials = Credentials.create(privateKey())
@@ -62,19 +90,24 @@ class MainViewModel(
     }
 
     fun login() {
-        val loginParams = LoginParams(
-            loginProvider = Provider.EMAIL_PASSWORDLESS,
-            extraLoginOptions = ExtraLoginOptions(login_hint = "workockmoses@gmail.com")
-        )
-        viewModelScope.launch {
-            try {
-                web3Auth.login(loginParams).await()
-                prepareCredentials()
-                prepareUserInfo()
-                _isLoggedIn.emit(true)
-            } catch (e: Exception) {
-                Log.d(TAG, e.message ?: "Something went wrong")
-                _isLoggedIn.emit(false)
+        if (loginSdk !is LoginSdk.Loading) {
+            loginSdk = LoginSdk.Loading
+            val loginParams = LoginParams(
+                loginProvider = Provider.EMAIL_PASSWORDLESS,
+                extraLoginOptions = ExtraLoginOptions(login_hint = _loginInput.value.email)
+            )
+            viewModelScope.launch {
+                loginSdk = try {
+                    web3Auth.login(loginParams).await()
+                    prepareCredentials()
+                    prepareUserInfo()
+                    _isLoggedIn.emit(true)
+                    LoginSdk.Success
+                } catch (e: Exception) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    _isLoggedIn.emit(false)
+                    LoginSdk.Error(e.message)
+                }
             }
         }
     }
@@ -115,10 +148,4 @@ class MainViewModel(
             }
         }
     }
-}
-
-interface InitializeSdk {
-    data object Success: InitializeSdk
-    data object Loading: InitializeSdk
-    data class Error(val msg: String?): InitializeSdk
 }

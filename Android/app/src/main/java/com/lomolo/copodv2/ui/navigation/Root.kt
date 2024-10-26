@@ -4,11 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lomolo.copodv2.ui.screens.DashboardScreen
 import com.lomolo.copodv2.ui.screens.DashboardScreenDestination
+import com.lomolo.copodv2.ui.screens.HomeScreen
+import com.lomolo.copodv2.ui.screens.HomeScreenDestination
 import com.lomolo.copodv2.ui.screens.LoadingScreen
 import com.lomolo.copodv2.ui.screens.LoadingScreenDestination
 import com.lomolo.copodv2.ui.screens.LoginScreen
@@ -47,6 +50,21 @@ fun NavigationHost(
 
         else -> Web3SdkErrorScreenDestination.route
     }
+    val onNavigateTo = { route: String ->
+        navHostController.navigate(route) {
+            // Pop up to the start destination of the graph to
+            // avoid building up a large stack of destinations
+            // on the back stack as users select items
+            popUpTo(navHostController.graph.findStartDestination().id) {
+                saveState = false
+            }
+            // Avoid multiple copies of the same destination when
+            // re-selecting the same item
+            launchSingleTop = true
+            // Restore state when re-selecting a previously selected item
+            restoreState = true
+        }
+    }
 
     NavHost(
         navController = navHostController,
@@ -57,6 +75,9 @@ fun NavigationHost(
             LoginScreen(
                 modifier = modifier,
                 mainViewModel = mainViewModel,
+                onGoBack = {
+                    navHostController.popBackStack()
+                }
             )
         }
         composable(route = DashboardScreenDestination.route) {
@@ -73,6 +94,14 @@ fun NavigationHost(
         composable(route = Web3SdkErrorScreenDestination.route) {
             Web3SdkErrorScreen(
                 modifier = modifier,
+            )
+        }
+        composable(route = HomeScreenDestination.route) {
+            HomeScreen(
+                modifier = modifier,
+                onGoToLogin = {
+                    navHostController.navigate(LoginScreenDestination.route)
+                }
             )
         }
     }

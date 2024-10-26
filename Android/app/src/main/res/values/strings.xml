@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Copod V2</string>
     <string name="web3auth_project_id">BKaGsEtqDep8zK4hDbcw6msPiN-4TEXV_VVzq6uentm_wsedRRixAxzfBkHJSbmbxugKpr6PrYvP33dmasCpomw</string>
+    <string name="email">Email</string>
+    <string name="signin">Sign in</string>
+    <string name="go_back">go back</string>
+    <string name="start_by_email">Email</string>
+    <string name="get_started">Get Started</string>
 </resources>
