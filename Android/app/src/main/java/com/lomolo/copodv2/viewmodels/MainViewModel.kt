@@ -2,6 +2,9 @@ package com.lomolo.copodv2.viewmodels
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lomolo.copodv2.repository.IWeb3Auth
@@ -24,6 +27,9 @@ class MainViewModel(
     private val _isLoggedIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
+    var initializeSdk: InitializeSdk by mutableStateOf(InitializeSdk.Success)
+        private set
+
     private fun prepareCredentials() {
         credentials = Credentials.create(privateKey())
         println(credentials)
@@ -42,7 +48,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 val isLoggedIn = web3Auth.isAuthenticated()
-                Log.d(_tag, isLoggedIn.toString())
+                Log.d(TAG, isLoggedIn.toString())
                 if (isLoggedIn) {
                     prepareCredentials()
                     prepareUserInfo()
@@ -67,7 +73,7 @@ class MainViewModel(
                 prepareUserInfo()
                 _isLoggedIn.emit(true)
             } catch (e: Exception) {
-                Log.d(_tag, e.message ?: "Something went wrong")
+                Log.d(TAG, e.message ?: "Something went wrong")
                 _isLoggedIn.emit(false)
             }
         }
@@ -92,13 +98,27 @@ class MainViewModel(
     }
 
     companion object {
-        private val _tag = "MainViewModel"
+        private const val TAG = "MainViewModel"
     }
 
     fun initialize() {
+        initializeSdk = InitializeSdk.Loading
         viewModelScope.launch {
-            web3Auth.initialize().await()
-            isUserLoggedIn()
+            try {
+                web3Auth.initialize().await()
+                isUserLoggedIn()
+                initializeSdk = InitializeSdk.Success
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.d(TAG, e.message ?: "Something went wrong")
+                initializeSdk = InitializeSdk.Error(e.message)
+            }
         }
     }
+}
+
+interface InitializeSdk {
+    data object Success: InitializeSdk
+    data object Loading: InitializeSdk
+    data class Error(val msg: String?): InitializeSdk
 }
