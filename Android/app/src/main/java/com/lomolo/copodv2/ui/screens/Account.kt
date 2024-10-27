@@ -31,12 +31,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodv2.R
+import com.web3auth.core.types.UserInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountDetails(
     modifier: Modifier = Modifier,
     setDialog: (Boolean) -> Unit,
+    userInfo: UserInfo
 ) {
     BasicAlertDialog(onDismissRequest = {}) {
         Surface(

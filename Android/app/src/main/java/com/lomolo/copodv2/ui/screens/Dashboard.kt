@@ -49,7 +49,7 @@ sealed class Screen(
         R.string.explore,
         R.drawable.explore_outlined,
         R.drawable.explore_filled,
-        "explore",
+        "dashboard",
         false,
     )
 }
@@ -108,12 +108,15 @@ fun DashboardScreen(
         }
     }) { innerPadding ->
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
             if (openDialog) {
-                AccountDetails(setDialog = { openDialog = it })
+                AccountDetails(
+                    setDialog = { openDialog = it },
+                    userInfo = mainViewModel.userInfo,
+                )
             }
         }
     }
