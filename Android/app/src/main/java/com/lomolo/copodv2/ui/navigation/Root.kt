@@ -73,7 +73,6 @@ fun NavigationHost(
     ) {
         composable(route = LoginScreenDestination.route) {
             LoginScreen(
-                modifier = modifier,
                 mainViewModel = mainViewModel,
                 onGoBack = {
                     navHostController.popBackStack()
@@ -82,7 +81,6 @@ fun NavigationHost(
         }
         composable(route = DashboardScreenDestination.route) {
             DashboardScreen(
-                modifier = modifier,
                 mainViewModel = mainViewModel,
             )
         }

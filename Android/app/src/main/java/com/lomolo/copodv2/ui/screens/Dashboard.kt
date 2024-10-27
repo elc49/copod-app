@@ -3,7 +3,6 @@ package com.lomolo.copodv2.ui.screens
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,9 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,11 +39,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodv2.R
 import com.lomolo.copodv2.ui.navigation.Navigation
-import com.lomolo.copodv2.ui.theme.CopodV2Theme
 import com.lomolo.copodv2.viewmodels.MainViewModel
 
 object DashboardScreenDestination : Navigation {
@@ -69,131 +66,120 @@ sealed class Screen(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel,
 ) {
-    Column(Modifier.fillMaxSize()) {}
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun DashboardScreenPreview() {
-    val navItems = listOf(Screen.Explore)
     var openDialog by remember { mutableStateOf(false) }
+    val navItems = listOf(Screen.Explore)
 
-    if (openDialog) {
-        BasicAlertDialog(
-            onDismissRequest = {}
+    Scaffold(topBar = {
+        TopAppBar(title = {}, actions = {
+            Image(
+                painter = painterResource(R.drawable._9872287),
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .clickable { openDialog = true },
+                contentDescription = stringResource(R.string.user),
+            )
+        })
+    }, bottomBar = {
+        NavigationBar {
+            navItems.forEachIndexed { _, item ->
+                // TODO read from current destination
+                val isActive = false
+
+                NavigationBarItem(selected = false, onClick = {}, icon = {
+                    Icon(
+                        painterResource(if (isActive) item.activeIcon else item.defaultIcon),
+                        modifier = Modifier.size(28.dp),
+                        contentDescription = null,
+                    )
+                }, label = {
+                    Text(
+                        stringResource(item.name),
+                        fontWeight = if (isActive) FontWeight.ExtraBold else FontWeight.Normal,
+                    )
+                })
+            }
+        }
+    }) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
-            Surface(
-                Modifier
-                    .wrapContentWidth()
-                    .wrapContentHeight(),
-                shape = MaterialTheme.shapes.large,
-                tonalElevation = AlertDialogDefaults.TonalElevation,
-            ) {
-                Column {
-                    IconButton(
-                        onClick = {
-                            openDialog = false
-                        }
-                    ) {
-                        Icon(
-                            Icons.TwoTone.Close,
-                            contentDescription = stringResource(R.string.close),
-                        )
-                    }
-                    Column(
-                        Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Column {
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Image(
-                                    painter = painterResource(R.drawable._9872287),
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .size(48.dp)
-                                        .clip(CircleShape)
-                                        .clickable { openDialog = true },
-                                    contentDescription = stringResource(R.string.user),
-                                )
-                                Column(
-                                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                                ) {
-                                    Text(
-                                        "email",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                    )
-                                    Text(
-                                        "wallet address",
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                }
-                            }
-                        }
-                        TextButton(
-                            onClick = {}
-                        ) {
-                            Text("Sign out")
-                        }
-                    }
-                }
+            if (openDialog) {
+                AccountDetails(setDialog = { openDialog = it })
             }
         }
     }
-    CopodV2Theme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = {},
-                    actions = {
-                        Image(
-                            painter = painterResource(R.drawable._9872287),
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .clickable { openDialog = true },
-                            contentDescription = stringResource(R.string.user),
-                        )
-                    }
-                )
-            },
-            bottomBar = {
-                NavigationBar {
-                    navItems.forEachIndexed { _, item ->
-                        // TODO read from current destination
-                        val isActive = false
+}
 
-                        NavigationBarItem(selected = false, onClick = {}, icon = {
-                            Icon(
-                                painterResource(if (isActive) item.activeIcon else item.defaultIcon),
-                                modifier = Modifier.size(28.dp),
-                                contentDescription = null,
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun AccountDetails(
+    modifier: Modifier = Modifier,
+    setDialog: (Boolean) -> Unit,
+) {
+    BasicAlertDialog(onDismissRequest = {}) {
+        Surface(
+            modifier
+                .wrapContentWidth()
+                .wrapContentHeight(),
+            shape = MaterialTheme.shapes.large,
+            tonalElevation = AlertDialogDefaults.TonalElevation,
+        ) {
+            Column {
+                IconButton(onClick = {
+                    setDialog(false)
+                }) {
+                    Icon(
+                        Icons.TwoTone.Close,
+                        contentDescription = stringResource(R.string.close),
+                    )
+                }
+                Column(
+                    Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    Column {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable._9872287),
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .clickable { setDialog(true) },
+                                contentDescription = stringResource(R.string.user),
                             )
-                        }, label = {
-                            Text(
-                                stringResource(item.name),
-                                fontWeight = if (isActive) FontWeight.ExtraBold else FontWeight.Normal,
-                            )
-                        })
+                            Column(
+                                verticalArrangement = Arrangement.spacedBy(4.dp),
+                            ) {
+                                Text(
+                                    "email",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                                Text(
+                                    "wallet address",
+                                    color = MaterialTheme.colorScheme.secondary,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+                    }
+                    TextButton(onClick = {}) {
+                        Text("Sign out")
                     }
                 }
-            }) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .padding(8.dp)
-            ) {}
+            }
         }
     }
 }

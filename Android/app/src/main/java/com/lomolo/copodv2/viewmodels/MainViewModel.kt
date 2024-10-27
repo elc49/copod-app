@@ -90,12 +90,18 @@ class MainViewModel(
         }
     }
 
+    fun isValidEmail(email: String): Boolean {
+        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
+        return email.matches(emailRegex.toRegex())
+    }
+
     fun login() {
-        if (loginSdk !is LoginSdk.Loading) {
+        val email = _loginInput.value.email
+        if (loginSdk !is LoginSdk.Loading && isValidEmail(email)) {
             loginSdk = LoginSdk.Loading
             val loginParams = LoginParams(
                 loginProvider = Provider.EMAIL_PASSWORDLESS,
-                extraLoginOptions = ExtraLoginOptions(login_hint = _loginInput.value.email)
+                extraLoginOptions = ExtraLoginOptions(login_hint = email)
             )
             viewModelScope.launch {
                 loginSdk = try {
