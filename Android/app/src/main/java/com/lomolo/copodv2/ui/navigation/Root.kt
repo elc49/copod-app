@@ -44,7 +44,7 @@ fun NavigationHost(
             if (isLoggedIn) {
                 DashboardScreenDestination.route
             } else {
-                LoginScreenDestination.route
+                HomeScreenDestination.route
             }
         }
 

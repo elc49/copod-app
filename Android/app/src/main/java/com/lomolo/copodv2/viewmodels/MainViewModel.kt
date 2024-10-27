@@ -41,6 +41,7 @@ class MainViewModel(
 ) : ViewModel() {
     lateinit var credentials: Credentials
     lateinit var userInfo: UserInfo
+        private set
     private val _isLoggedIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
