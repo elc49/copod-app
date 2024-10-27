@@ -11,4 +11,5 @@
     <string name="explore">Explore</string>
     <string name="user">user</string>
     <string name="close">close</string>
+    <string name="sign_out">Sign out</string>
 </resources>

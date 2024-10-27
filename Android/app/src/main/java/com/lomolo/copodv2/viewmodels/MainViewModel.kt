@@ -123,6 +123,7 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 web3Auth.logout().await()
+                initialize()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {

@@ -83,6 +83,7 @@ fun NavigationHost(
             DashboardScreen(
                 mainViewModel = mainViewModel,
                 onNavigateTo = onNavigateTo,
+                currentDestination = it.destination,
             )
         }
         composable(route = LoadingScreenDestination.route) {

@@ -1,12 +1,9 @@
 package com.lomolo.copodv2.ui.screens
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,13 +19,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavDestination
+import androidx.navigation.NavDestination.Companion.hierarchy
 import com.lomolo.copodv2.R
+import com.lomolo.copodv2.ui.common.Avatar
 import com.lomolo.copodv2.ui.navigation.Navigation
 import com.lomolo.copodv2.viewmodels.MainViewModel
 
@@ -43,7 +41,6 @@ sealed class Screen(
     val activeIcon: Int,
     val route: String,
     var showBadge: Boolean = false,
-    val childRoute: List<String> = listOf(),
 ) {
     data object Explore : Screen(
         R.string.explore,
@@ -60,29 +57,27 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel,
     onNavigateTo: (String) -> Unit,
+    currentDestination: NavDestination,
 ) {
     var openDialog by remember { mutableStateOf(false) }
     val navItems = listOf(Screen.Explore)
+    val userInfo = mainViewModel.userInfo
 
     Scaffold(topBar = {
         TopAppBar(title = {}, actions = {
-            Image(
-                painter = painterResource(R.drawable._9872287),
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(CircleShape)
-                    .clickable { openDialog = true },
-                contentDescription = stringResource(R.string.user),
+            Avatar(
+                avatar = userInfo.profileImage,
+                email = userInfo.email,
+                onClick = { openDialog = true },
             )
         })
     }, bottomBar = {
         NavigationBar {
             navItems.forEachIndexed { _, item ->
                 // TODO read from current destination
-                val isActive = false
+                val isActive = currentDestination.hierarchy.any { it.route == item.route } == true
 
-                NavigationBarItem(selected = false, onClick = { onNavigateTo(item.route) }, icon = {
+                NavigationBarItem(selected = false, onClick = { if (!isActive) onNavigateTo(item.route) }, icon = {
                     if (item.showBadge) {
                         BadgedBox(badge = { Badge() }) {
                             Icon(
@@ -116,6 +111,7 @@ fun DashboardScreen(
                 AccountDetails(
                     setDialog = { openDialog = it },
                     userInfo = mainViewModel.userInfo,
+                    signOut = { mainViewModel.logOut() },
                 )
             }
         }
