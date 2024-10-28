@@ -1,0 +1,8 @@
+query GetLocalLands {
+    getLocalLands {
+        title
+        size
+        symbol
+        town
+    }
+}
