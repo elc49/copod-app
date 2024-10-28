@@ -2,6 +2,7 @@
 .gradle
 /local.properties
 /secrets.properties
+/release.properties
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
@@ -16,4 +17,5 @@
 .cxx
 local.properties
 secrets.properties
+release.properties
 .kotlin

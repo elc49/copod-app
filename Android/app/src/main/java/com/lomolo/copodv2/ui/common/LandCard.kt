@@ -35,7 +35,7 @@ fun LandCard(
     land: Land,
 ) {
     OutlinedCard(
-        Modifier.wrapContentHeight()
+        modifier.wrapContentHeight()
     ) {
         Image(
             painterResource(R.drawable.sealed),
@@ -74,7 +74,7 @@ fun NoLands(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        Modifier.fillMaxSize(),
+        modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
