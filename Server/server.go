@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"copod/handlers"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/elc49/copod/handlers"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"

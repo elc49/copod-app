@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"copod/graph"
 	"net/http"
 	"time"
+
+	"github.com/elc49/copod/graph"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
