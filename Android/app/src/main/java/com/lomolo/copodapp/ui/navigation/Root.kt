@@ -8,8 +8,8 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.lomolo.copodapp.ui.screens.DashboardScreen
-import com.lomolo.copodapp.ui.screens.DashboardScreenDestination
+import com.lomolo.copodapp.ui.screens.MarketScreen
+import com.lomolo.copodapp.ui.screens.ExploreScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
 import com.lomolo.copodapp.ui.screens.HomeScreenDestination
 import com.lomolo.copodapp.ui.screens.LoadingScreen
@@ -42,7 +42,7 @@ fun NavigationHost(
         InitializeSdk.Loading -> LoadingScreenDestination.route
         InitializeSdk.Success -> {
             if (isLoggedIn) {
-                DashboardScreenDestination.route
+                ExploreScreenDestination.route
             } else {
                 HomeScreenDestination.route
             }
@@ -79,8 +79,8 @@ fun NavigationHost(
                 }
             )
         }
-        composable(route = DashboardScreenDestination.route) {
-            DashboardScreen(
+        composable(route = ExploreScreenDestination.route) {
+            MarketScreen(
                 mainViewModel = mainViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,

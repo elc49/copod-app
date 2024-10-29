@@ -2,6 +2,8 @@ package com.lomolo.copodapp.network
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
+import com.apollographql.apollo3.cache.normalized.FetchPolicy
+import com.apollographql.apollo3.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.GetLocalLandsQuery
 
 interface GraphQL {
@@ -11,5 +13,7 @@ interface GraphQL {
 class GraphQLServiceImpl(
     private val apolloClient: ApolloClient
 ) : GraphQL {
-    override suspend fun getLocalLands() = apolloClient.query(GetLocalLandsQuery()).execute()
+    override suspend fun getLocalLands() = apolloClient.query(GetLocalLandsQuery()).fetchPolicy(
+        FetchPolicy.NetworkFirst
+    ).execute()
 }
