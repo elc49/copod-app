@@ -35,7 +35,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="com.lomolo.copodv2" />
+                <data android:scheme="com.lomolo.copodapp" />
             </intent-filter>
         </activity>
     </application>

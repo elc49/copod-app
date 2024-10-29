@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Copod V2"
+rootProject.name = "Copod App"
 include(":app")

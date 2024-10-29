@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.lomolo.copodv2"
+    namespace = "com.lomolo.copodapp"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.lomolo.copodv2"
+        applicationId = "com.lomolo.copodapp"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -88,7 +88,7 @@ dependencies {
 
 apollo {
     service("copod") {
-        packageName.set("com.lomolo.copodv2")
+        packageName.set("com.lomolo.copodapp")
         generateOptionalOperationVariables.set(false)
     }
 }
