@@ -16,4 +16,10 @@
     <string name="no_lands">Lands added to market will be visible here.</string>
     <string name="something_wrong">Something went wrong</string>
     <string name="register_land">Register land</string>
+    <string name="submit">Submit</string>
+    <string name="govt_issued_id">ID</string>
+    <string name="land_title_document">Land title document</string>
+    <string name="image">image</string>
+    <string name="govt_issued_title">Upload govt issued title</string>
+    <string name="upload_govt_issued_id">Upload govt issued ID</string>
 </resources>

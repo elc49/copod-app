@@ -101,9 +101,7 @@ fun NavigationHost(
             })
         }
         composable(route = RegisterLandScreenDestination.route) {
-            RegisterLandScreen(
-                modifier = modifier,
-            )
+            RegisterLandScreen()
         }
     }
 }
