@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
-import com.lomolo.copodapp.ui.screens.ExploreScreenDestination
+import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
 import com.lomolo.copodapp.ui.screens.HomeScreenDestination
 import com.lomolo.copodapp.ui.screens.LoadingScreen
@@ -20,6 +20,7 @@ import com.lomolo.copodapp.ui.screens.RegisterLandScreen
 import com.lomolo.copodapp.ui.screens.RegisterLandScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
+import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
 import com.lomolo.copodapp.viewmodels.InitializeSdk
 import com.lomolo.copodapp.viewmodels.MainViewModel
 
@@ -38,13 +39,14 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
+    marketViewModel: MarketViewModel,
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
         InitializeSdk.Loading -> LoadingScreenDestination.route
         InitializeSdk.Success -> {
             if (isLoggedIn) {
-                ExploreScreenDestination.route
+                ExploreMarketsScreenDestination.route
             } else {
                 HomeScreenDestination.route
             }
@@ -78,11 +80,15 @@ fun NavigationHost(
                 navHostController.popBackStack()
             })
         }
-        composable(route = ExploreScreenDestination.route) {
+        composable(route = ExploreMarketsScreenDestination.route) {
             ExploreMarketsScreen(
                 mainViewModel = mainViewModel,
+                marketViewModel = marketViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
+                onGoToRegisterLand = {
+                    navHostController.navigate(RegisterLandScreenDestination.route)
+                }
             )
         }
         composable(route = LoadingScreenDestination.route) {
@@ -101,7 +107,11 @@ fun NavigationHost(
             })
         }
         composable(route = RegisterLandScreenDestination.route) {
-            RegisterLandScreen()
+            RegisterLandScreen(
+                onGoBack = {
+                    navHostController.popBackStack()
+                }
+            )
         }
     }
 }

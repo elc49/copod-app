@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.lomolo.copodapp.di.appModule
 import com.lomolo.copodapp.ui.theme.CopodAppTheme
+import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
 import com.lomolo.copodapp.viewmodels.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -19,6 +20,7 @@ import org.koin.core.context.startKoin
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
+    private val marketViewModel: MarketViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
                         Modifier.padding(innerPadding),
                         rememberNavController(),
                         mainViewModel = mainViewModel,
+                        marketViewModel = marketViewModel,
                     )
                 }
             }

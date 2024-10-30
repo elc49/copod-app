@@ -1,6 +1,7 @@
 package com.lomolo.copodapp.ui.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,13 +39,16 @@ object RegisterLandScreenDestination : Navigation {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegisterLandScreen() {
+fun RegisterLandScreen(
+    modifier: Modifier = Modifier,
+    onGoBack: () -> Unit,
+) {
     Scaffold(topBar = {
         TopAppBar(title = {
             Text(stringResource(R.string.register_land))
         }, navigationIcon = {
             IconButton(
-                onClick = {},
+                onClick = onGoBack,
             ) {
                 Icon(
                     Icons.AutoMirrored.TwoTone.ArrowBack,
@@ -54,7 +58,7 @@ fun RegisterLandScreen() {
         })
     }) { innerPadding ->
         Column(
-            Modifier
+            modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(8.dp)
@@ -74,7 +78,8 @@ fun RegisterLandScreen() {
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxSize()
-                            .size(120.dp),
+                            .size(120.dp)
+                            .clickable{},
                         contentDescription = stringResource(R.string.image),
                     )
                 }
@@ -91,7 +96,8 @@ fun RegisterLandScreen() {
                         painterResource(R.drawable.upload),
                         modifier = Modifier
                             .fillMaxSize()
-                            .size(120.dp),
+                            .size(120.dp)
+                            .clickable{},
                         contentScale = ContentScale.Fit,
                         contentDescription = stringResource(R.string.image),
                     )

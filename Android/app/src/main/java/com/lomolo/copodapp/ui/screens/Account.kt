@@ -3,10 +3,13 @@ package com.lomolo.copodapp.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
@@ -35,6 +38,7 @@ fun AccountDetails(
     setDialog: (Boolean) -> Unit,
     userInfo: UserInfo,
     signOut: () -> Unit,
+    onGoToRegisterLand: () -> Unit,
 ) {
     BasicAlertDialog(onDismissRequest = {}) {
         Surface(
@@ -77,14 +81,34 @@ fun AccountDetails(
                             }
                         }
                     }
-                    TextButton(onClick = {
-                        setDialog(false)
-                        signOut()
-                    }) {
-                        Text(
-                            stringResource(R.string.sign_out),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
+                    Column {
+                        TextButton(
+                            onClick = {
+                                setDialog(false)
+                                onGoToRegisterLand()
+                            },
+                        ) {
+                            Icon(
+
+                                Icons.TwoTone.Add,
+                                contentDescription = stringResource(R.string.add),
+                            )
+                            Spacer(Modifier.width(16.dp))
+                            Text(
+                                stringResource(R.string.add_land),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                        TextButton(onClick = {
+                            setDialog(false)
+                            signOut()
+                        }) {
+                            Text(
+                                stringResource(R.string.sign_out),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
                     }
                 }
             }

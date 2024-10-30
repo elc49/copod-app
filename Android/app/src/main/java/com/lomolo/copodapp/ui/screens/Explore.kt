@@ -43,7 +43,7 @@ import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
 import com.lomolo.copodapp.viewmodels.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
-object ExploreScreenDestination : Navigation {
+object ExploreMarketsScreenDestination : Navigation {
     override val title = null
     override val route = "explore"
 }
@@ -72,6 +72,7 @@ fun ExploreMarketsScreen(
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,
+    onGoToRegisterLand: () -> Unit,
 ) {
     var openDialog by remember { mutableStateOf(false) }
     val navItems = listOf(Screen.Explore)
@@ -128,6 +129,7 @@ fun ExploreMarketsScreen(
                     setDialog = { openDialog = it },
                     userInfo = mainViewModel.userInfo,
                     signOut = { mainViewModel.logOut() },
+                    onGoToRegisterLand = onGoToRegisterLand,
                 )
             }
             when (marketViewModel.gettingLands) {
