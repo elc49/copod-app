@@ -8,7 +8,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.lomolo.copodapp.ui.screens.MarketScreen
+import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
 import com.lomolo.copodapp.ui.screens.HomeScreenDestination
@@ -16,6 +16,8 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.LoginScreen
 import com.lomolo.copodapp.ui.screens.LoginScreenDestination
+import com.lomolo.copodapp.ui.screens.RegisterLandScreen
+import com.lomolo.copodapp.ui.screens.RegisterLandScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
 import com.lomolo.copodapp.viewmodels.InitializeSdk
@@ -72,15 +74,12 @@ fun NavigationHost(
         route = RootNavigation.route,
     ) {
         composable(route = LoginScreenDestination.route) {
-            LoginScreen(
-                mainViewModel = mainViewModel,
-                onGoBack = {
-                    navHostController.popBackStack()
-                }
-            )
+            LoginScreen(mainViewModel = mainViewModel, onGoBack = {
+                navHostController.popBackStack()
+            })
         }
         composable(route = ExploreScreenDestination.route) {
-            MarketScreen(
+            ExploreMarketsScreen(
                 mainViewModel = mainViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
@@ -97,11 +96,13 @@ fun NavigationHost(
             )
         }
         composable(route = HomeScreenDestination.route) {
-            HomeScreen(
+            HomeScreen(modifier = modifier, onGoToLogin = {
+                navHostController.navigate(LoginScreenDestination.route)
+            })
+        }
+        composable(route = RegisterLandScreenDestination.route) {
+            RegisterLandScreen(
                 modifier = modifier,
-                onGoToLogin = {
-                    navHostController.navigate(LoginScreenDestination.route)
-                }
             )
         }
     }

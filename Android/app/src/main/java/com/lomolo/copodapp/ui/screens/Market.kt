@@ -13,7 +13,7 @@ object MarketScreenDestination: Navigation {
 }
 
 @Composable
-fun MarketScreen(
+fun ExploreMarketsScreen(
     modifier: Modifier = Modifier
 ) {
     Column(

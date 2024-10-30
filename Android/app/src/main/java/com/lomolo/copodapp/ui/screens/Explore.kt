@@ -64,23 +64,9 @@ sealed class Screen(
     )
 }
 
-data class Land(
-    val titleNo: String,
-    val town: String,
-    val size: Int,
-    val symbol: String,
-)
-
-val lands = listOf<Land>(
-    Land("re/fler/834", "Suneka", 24, "HA"),
-    Land("fk/392/rf34", "Ngong", 32000, "HA"),
-    Land("df/3892/sdkjd", "Parklands", 48543, "HA"),
-    Land("fj/489/283/df", "Upperhill", 983923, "HA")
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MarketScreen(
+fun ExploreMarketsScreen(
     modifier: Modifier = Modifier,
     mainViewModel: MainViewModel = koinViewModel<MainViewModel>(),
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),

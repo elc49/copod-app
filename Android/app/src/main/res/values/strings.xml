@@ -15,4 +15,5 @@
     <string name="add">add</string>
     <string name="no_lands">Lands added to market will be visible here.</string>
     <string name="something_wrong">Something went wrong</string>
+    <string name="register_land">Register land</string>
 </resources>
