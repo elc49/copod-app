@@ -65,6 +65,9 @@ func (s *Server) mount() *chi.Mux {
 	r.Use(middleware.Logger)
 	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	r.Handle("/graphql", handlers.GraphQL())
+	r.Route("/api", func(r chi.Router) {
+		r.Handle("/upload", handlers.UploadDoc())
+	})
 	return r
 }
 
