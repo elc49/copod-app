@@ -40,7 +40,7 @@ import com.lomolo.copodapp.ui.common.NoLands
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.GetLocalLands
 import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
-import com.lomolo.copodapp.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import org.koin.androidx.compose.koinViewModel
 
 object ExploreMarketsScreenDestination : Navigation {
@@ -68,7 +68,7 @@ sealed class Screen(
 @Composable
 fun ExploreMarketsScreen(
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = koinViewModel<MainViewModel>(),
+    mainViewModel: MainViewModel,
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,

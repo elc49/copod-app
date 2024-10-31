@@ -33,8 +33,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.viewmodels.LoginSdk
-import com.lomolo.copodapp.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.LoginSdk
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 
 object LoginScreenDestination: Navigation {
     override val title = null

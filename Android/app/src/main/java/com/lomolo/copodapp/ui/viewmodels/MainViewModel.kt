@@ -1,4 +1,4 @@
-package com.lomolo.copodapp.viewmodels
+package com.lomolo.copodapp.ui.viewmodels
 
 import android.net.Uri
 import android.util.Log

@@ -20,9 +20,8 @@ import com.lomolo.copodapp.ui.screens.RegisterLandScreen
 import com.lomolo.copodapp.ui.screens.RegisterLandScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
-import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
-import com.lomolo.copodapp.viewmodels.InitializeSdk
-import com.lomolo.copodapp.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.InitializeSdk
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 
 interface Navigation {
     val title: Int?
@@ -39,7 +38,6 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
-    marketViewModel: MarketViewModel,
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
@@ -83,7 +81,6 @@ fun NavigationHost(
         composable(route = ExploreMarketsScreenDestination.route) {
             ExploreMarketsScreen(
                 mainViewModel = mainViewModel,
-                marketViewModel = marketViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
                 onGoToRegisterLand = {

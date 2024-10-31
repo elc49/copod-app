@@ -31,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
+import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import org.koin.androidx.compose.koinViewModel
 
 object RegisterLandScreenDestination : Navigation {
     override val title = R.string.register_land
@@ -42,6 +44,7 @@ object RegisterLandScreenDestination : Navigation {
 fun RegisterLandScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    viewModel: RegisterLandViewModel = koinViewModel<RegisterLandViewModel>(),
 ) {
     Scaffold(topBar = {
         TopAppBar(title = {
@@ -78,7 +81,7 @@ fun RegisterLandScreen(
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxSize()
-                            .size(120.dp)
+                            .size(240.dp)
                             .clickable{},
                         contentDescription = stringResource(R.string.image),
                     )
@@ -96,7 +99,7 @@ fun RegisterLandScreen(
                         painterResource(R.drawable.upload),
                         modifier = Modifier
                             .fillMaxSize()
-                            .size(120.dp)
+                            .size(240.dp)
                             .clickable{},
                         contentScale = ContentScale.Fit,
                         contentDescription = stringResource(R.string.image),
