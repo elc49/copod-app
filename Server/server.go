@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/handlers"
 
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -24,7 +25,10 @@ func New() *Server {
 }
 
 func (s *Server) Start() {
-	server := &http.Server{Addr: "0.0.0.0:4545", Handler: s.mount()}
+	// Setup config variables
+	config.New()
+
+	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.mount()}
 	// Server ctx
 	sCtx, sStopCtx := context.WithCancel(context.Background())
 	// Listen for syscall signals(interrupt/quit)
@@ -57,12 +61,14 @@ func (s *Server) Start() {
 
 func (s *Server) mount() *chi.Mux {
 	r := chi.NewRouter()
+
 	r.Use(middleware.Heartbeat("/ping"))
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
+
 	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	r.Handle("/graphql", handlers.GraphQL())
 	r.Route("/api", func(r chi.Router) {

@@ -1,0 +1,6 @@
+# flyctl launch added from .gitignore
+fly.toml
+fly-staging.toml
+tailwind.config.js
+package-lock.json
+package.json
