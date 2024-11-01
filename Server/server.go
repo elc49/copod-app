@@ -11,6 +11,7 @@ import (
 
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/handlers"
+	"github.com/elc49/copod/tigris"
 
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
@@ -27,6 +28,9 @@ func New() *Server {
 func (s *Server) Start() {
 	// Setup config variables
 	config.New()
+
+	// Services
+	tigris.New()
 
 	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.mount()}
 	// Server ctx
