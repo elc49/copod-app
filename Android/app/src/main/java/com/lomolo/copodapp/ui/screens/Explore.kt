@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,10 +26,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.ui.common.Avatar
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.LandCard
 import com.lomolo.copodapp.ui.common.NoLands
+import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.GetLocalLands
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
@@ -46,7 +45,7 @@ object ExploreMarketsScreenDestination : Navigation {
 @Composable
 fun ExploreMarketsScreen(
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel,
+    mainViewModel: MainViewModel = koinViewModel<MainViewModel>(),
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,
@@ -56,13 +55,10 @@ fun ExploreMarketsScreen(
     val lands by marketViewModel.lands.collectAsState()
 
     Scaffold(topBar = {
-        TopAppBar(title = {}, actions = {
-            Avatar(
-                avatar = userInfo?.profileImage!!,
-                email = userInfo.email,
-                onClick = { openDialog = true },
-            )
-        })
+        TopBar(
+            userInfo = userInfo!!,
+            onOpenDialog = { openDialog = true },
+        )
     }, bottomBar = {
         BottomNavBar(
             currentDestination = currentDestination, onNavigateTo = onNavigateTo

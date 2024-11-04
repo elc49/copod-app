@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,9 +31,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.BottomNavBar
+import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.GetUserLands
 import com.lomolo.copodapp.ui.viewmodels.LandViewModel
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.web3auth.core.types.UserInfo
 import org.koin.androidx.compose.koinViewModel
 
@@ -46,6 +51,7 @@ fun LandScreen(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
     viewModel: LandViewModel = koinViewModel<LandViewModel>(),
+    mainViewModel: MainViewModel,
     userInfo: UserInfo?,
     onClickAddLand: () -> Unit,
 ) {
@@ -53,8 +59,15 @@ fun LandScreen(
         viewModel.getUserLands(userInfo?.email!!)
     }
     val lands by viewModel.lands.collectAsState()
+    var openDialog by remember { mutableStateOf(false) }
 
     Scaffold(
+        topBar = {
+            TopBar(
+                userInfo = userInfo!!,
+                onOpenDialog = { openDialog = true },
+            )
+        },
         bottomBar = {
             BottomNavBar(
                 currentDestination = currentDestination,
@@ -65,6 +78,13 @@ fun LandScreen(
         Surface(
             modifier = modifier.padding(innerPadding)
         ) {
+            if (openDialog) {
+                AccountDetails(
+                    setDialog = { openDialog = it },
+                    userInfo = mainViewModel.userInfo!!,
+                    signOut = { mainViewModel.logOut() },
+                )
+            }
             when(viewModel.gettingUserLands) {
                 GetUserLands.Success -> {
                     if (lands.isEmpty()) {

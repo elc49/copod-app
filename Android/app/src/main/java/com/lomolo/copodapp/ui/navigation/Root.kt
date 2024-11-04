@@ -114,6 +114,7 @@ fun NavigationHost(
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
+                mainViewModel = mainViewModel,
                 onClickAddLand = {
                     navHostController.navigate(RegisterLandScreenDestination.route)
                 }
