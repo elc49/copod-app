@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,6 +47,7 @@ fun LandScreen(
     onNavigateTo: (String) -> Unit,
     viewModel: LandViewModel = koinViewModel<LandViewModel>(),
     userInfo: UserInfo?,
+    onClickAddLand: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.getUserLands(userInfo?.email!!)
@@ -64,7 +68,9 @@ fun LandScreen(
             when(viewModel.gettingUserLands) {
                 GetUserLands.Success -> {
                     if (lands.isEmpty()) {
-                        NoLand()
+                        NoLand(
+                            onClickAddLand = onClickAddLand,
+                        )
                     }
                 }
                 GetUserLands.Loading -> Column(
@@ -89,6 +95,7 @@ fun LandScreen(
 @Composable
 private fun NoLand(
     modifier: Modifier = Modifier,
+    onClickAddLand: () -> Unit,
 ) {
     Column(
         modifier.fillMaxSize(),
@@ -101,5 +108,13 @@ private fun NoLand(
             contentDescription = stringResource(R.string.land),
         )
         Text(stringResource(R.string.no_user_lands))
+        OutlinedIconButton(
+            onClick = onClickAddLand
+        ) {
+            Icon(
+                Icons.TwoTone.Add,
+                contentDescription = stringResource(R.string.add),
+            )
+        }
     }
 }
