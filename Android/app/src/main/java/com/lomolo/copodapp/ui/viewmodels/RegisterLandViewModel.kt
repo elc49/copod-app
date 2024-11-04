@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.lomolo.copodapp.network.RestFul
+import com.lomolo.copodapp.network.IRestFul
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,7 +27,7 @@ data class UploadDocState(
 )
 
 class RegisterLandViewModel(
-    private val restFul: RestFul,
+    private val IRestFul: IRestFul,
 ) : ViewModel() {
     private val _uploadState: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
     val uploadState: StateFlow<UploadDocState> = _uploadState.asStateFlow()
@@ -48,7 +48,7 @@ class RegisterLandViewModel(
         )
         viewModelScope.launch {
             try {
-                restFul.uploadDoc(filePart)
+                IRestFul.uploadDoc(filePart)
             } catch (e: Exception) {
                 Log.d(TAG, e.message ?: "Something went wrong")
             }

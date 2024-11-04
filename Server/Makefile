@@ -4,3 +4,6 @@ tidy:
 # Make server
 server:
 	go run ./server.go
+# graphql
+graphql:
+	go generate ./...

@@ -39,8 +39,9 @@ data class LoginInput(
 class MainViewModel(
     private val web3Auth: IWeb3Auth
 ) : ViewModel() {
-    lateinit var credentials: Credentials
-    lateinit var userInfo: UserInfo
+    var credentials: Credentials? by mutableStateOf(null)
+        private set
+    var userInfo: UserInfo? by mutableStateOf(null)
         private set
     private val _isLoggedIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
@@ -61,12 +62,10 @@ class MainViewModel(
 
     private fun prepareCredentials() {
         credentials = Credentials.create(privateKey())
-        println(credentials)
     }
 
     private fun prepareUserInfo() {
         userInfo = web3Auth.getUserInfo()
-        println(userInfo)
     }
 
     private fun privateKey(): String {

@@ -1,6 +1,6 @@
 package graph
 
-//go:generate go run github.com/99designs/gqlgen generate
+//go:generate go run github.com/99designs/gqlgen generate --verbose
 
 // This file will not be regenerated automatically.
 //

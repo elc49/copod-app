@@ -12,6 +12,8 @@ type Land {
 
 type Query {
   getLocalLands: [Land!]!
+
+  getUserLands(email: String!): [Land!]!
 }
 
 # See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665

@@ -12,6 +12,8 @@ import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
 import com.lomolo.copodapp.ui.screens.HomeScreenDestination
+import com.lomolo.copodapp.ui.screens.LandScreen
+import com.lomolo.copodapp.ui.screens.LandScreenDestination
 import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.LoginScreen
@@ -83,9 +85,6 @@ fun NavigationHost(
                 mainViewModel = mainViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
-                onGoToRegisterLand = {
-                    navHostController.navigate(RegisterLandScreenDestination.route)
-                }
             )
         }
         composable(route = LoadingScreenDestination.route) {
@@ -108,6 +107,13 @@ fun NavigationHost(
                 onGoBack = {
                     navHostController.popBackStack()
                 }
+            )
+        }
+        composable(route = LandScreenDestination.route) {
+            LandScreen(
+                onNavigateTo = onNavigateTo,
+                currentDestination = it.destination,
+                userInfo = mainViewModel.userInfo,
             )
         }
     }

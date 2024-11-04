@@ -15,6 +15,11 @@ func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error
 	return make([]*model.Land, 0), nil
 }
 
+// GetUserLands is the resolver for the getUserLands field.
+func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Land, error) {
+	return make([]*model.Land, 0), nil
+}
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 

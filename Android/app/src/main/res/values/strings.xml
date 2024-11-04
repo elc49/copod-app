@@ -6,7 +6,7 @@
     <string name="go_back">go back</string>
     <string name="start_by_email">Email</string>
     <string name="get_started">Get Started</string>
-    <string name="land">land</string>
+    <string name="land">Land</string>
     <string name="home_headline">Register land. Verify land. Buy land space</string>
     <string name="explore">Explore</string>
     <string name="user">user</string>
@@ -23,4 +23,6 @@
     <string name="govt_issued_title">Upload govt issued title</string>
     <string name="upload_govt_issued_id">Upload govt issued ID</string>
     <string name="add_land">Add land</string>
+    <string name="your_land">Your land</string>
+    <string name="no_user_lands">No land</string>
 </resources>

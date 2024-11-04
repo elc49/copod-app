@@ -9,4 +9,5 @@ type Land {
 
 type Query {
   getLocalLands: [Land!]!
+  getUserLands(email: String!): [Land!]!
 }

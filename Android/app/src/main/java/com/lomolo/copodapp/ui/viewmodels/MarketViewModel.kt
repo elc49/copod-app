@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo3.exception.ApolloException
 import com.lomolo.copodapp.GetLocalLandsQuery
-import com.lomolo.copodapp.network.GraphQL
+import com.lomolo.copodapp.network.IGraphQL
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +22,7 @@ interface GetLocalLands {
 }
 
 class MarketViewModel(
-    private val graphqlService: GraphQL
+    private val graphqlService: IGraphQL
 ): ViewModel() {
     private val _lands: MutableStateFlow<List<GetLocalLandsQuery.GetLocalLand>> = MutableStateFlow(listOf())
     val lands: StateFlow<List<GetLocalLandsQuery.GetLocalLand>> = _lands.asStateFlow()

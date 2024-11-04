@@ -1,8 +1,8 @@
 package com.lomolo.copodapp.rest
 
-import com.lomolo.copodapp.network.RestFul
+import com.lomolo.copodapp.network.IRestFul
 import retrofit2.Retrofit
 
-fun getRestService(retrofit: Retrofit): RestFul {
-    return retrofit.create(RestFul::class.java)
+fun getRestService(retrofit: Retrofit): IRestFul {
+    return retrofit.create(IRestFul::class.java)
 }

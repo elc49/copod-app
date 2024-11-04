@@ -9,7 +9,7 @@ data class UploadRes(
     val imageUri: String,
 )
 
-interface RestFul {
+interface IRestFul {
     @Multipart
     @POST("/api/upload")
     suspend fun uploadDoc(@Part body: MultipartBody.Part): UploadRes

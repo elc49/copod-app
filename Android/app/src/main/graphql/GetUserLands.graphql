@@ -1,0 +1,6 @@
+query GetUserLand($email: String!) {
+    getUserLands(email: $email) {
+        title
+        size
+    }
+}
