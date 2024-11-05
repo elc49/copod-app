@@ -11,6 +11,7 @@ import (
 
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/handlers"
+	"github.com/elc49/copod/sql"
 	"github.com/elc49/copod/tigris"
 
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -31,6 +32,7 @@ func (s *Server) Start() {
 
 	// Services
 	tigris.New()
+	sql.InitDB(config.C.Database.Rdbms)
 
 	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.mount()}
 	// Server ctx

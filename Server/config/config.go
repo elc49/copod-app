@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/logger"
 	"github.com/joho/godotenv"
 )
@@ -13,8 +14,9 @@ var (
 )
 
 type config struct {
-	Tigris Tigris
-	Server Server
+	Tigris   Tigris
+	Server   Server
+	Database Database
 }
 
 func env() {
@@ -29,15 +31,26 @@ func New() {
 
 	c.Server = serverConfig()
 	c.Tigris = tigrisConfig()
+	c.Database = databaseConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
+}
+
+func getEnv() string {
+	env := strings.TrimSpace(os.Getenv("ENV"))
+	if env == "" {
+		return "dev"
+	}
+
+	return env
 }
 
 func serverConfig() Server {
 	var config Server
 
 	config.Port = strings.TrimSpace(os.Getenv("PORT"))
+	config.Env = getEnv()
 
 	return config
 }
@@ -52,4 +65,17 @@ func tigrisConfig() Tigris {
 	config.Region = strings.TrimSpace(os.Getenv("AWS_S3_REGION"))
 
 	return config
+}
+
+func databaseConfig() Database {
+	var config Database
+	p := postgres.Postgres{}
+
+	config.Rdbms = p.PostgresConfig()
+
+	return config
+}
+
+func IsProd() bool {
+	return C != nil && (C.Server.Env == "staging" || C.Server.Env == "prod")
 }
