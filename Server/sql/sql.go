@@ -36,7 +36,7 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_rasters; --OPTIONAL")
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_topology; --OPTIONAL")
 
-	if err := runMigration(opt.DbMigration, opt.DbDriver, opt.DbMigrate, conn); err != nil {
+	if err := runMigration(opt, conn); err != nil {
 		log.WithError(err).Fatalln("sql: runMigration")
 	} else {
 		log.Infoln("Write table schema...OK")
@@ -45,21 +45,20 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	return sql.New(conn)
 }
 
-func runMigration(migration, driver string, forceMigrate bool, conn *db.DB) error {
+func runMigration(opt postgres.Postgres, conn *db.DB) error {
 	d, err := p.WithInstance(conn, &p.Config{})
 	if err != nil {
 		return err
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(migration, driver, d)
+	m, err := migrate.NewWithDatabaseInstance(opt.DbMigration, opt.DbDriver, d)
 	if err != nil {
 		return err
 	}
 
-	if forceMigrate {
-		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
-			return err
-		}
+	if opt.DbMigrate {
+		conn.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s;", opt.DbName))
+		conn.Exec(fmt.Sprintf("CREATE DATABASE %s;", opt.DbName))
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
