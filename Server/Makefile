@@ -4,6 +4,9 @@ tidy:
 # Make server
 server:
 	go run ./server.go
-# graphql
+# Graphql
 graphql:
 	go generate ./...
+# Make postgres
+sqldb:
+	sqlc generate
