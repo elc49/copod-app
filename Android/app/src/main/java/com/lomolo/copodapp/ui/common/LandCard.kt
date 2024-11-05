@@ -55,7 +55,6 @@ fun LandCard(
                         land.title,
                         fontWeight = FontWeight.Bold,
                     )
-                    Text(land.town)
                 }
                 Spacer(Modifier.weight(1f))
                 Text(

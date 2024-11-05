@@ -6,11 +6,13 @@ package sql
 
 import (
 	"context"
-	"database/sql"
 )
 
 type Querier interface {
-	CreateUpload(ctx context.Context, arg CreateUploadParams) (sql.Result, error)
+	CreateUpload(ctx context.Context, arg CreateUploadParams) (Upload, error)
+	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetUser(ctx context.Context, walletAddress string) (User, error)
+	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

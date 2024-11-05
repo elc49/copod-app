@@ -10,7 +10,9 @@ import (
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/golang-migrate/migrate/v4"
-	gm "github.com/golang-migrate/migrate/v4/database/postgres"
+	p "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/lib/pq"
 )
 
 func InitDB(opt postgres.Postgres) *sql.Queries {
@@ -30,11 +32,11 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	}
 
 	conn.Exec(fmt.Sprintf("CREATE EXTENSION IF NOT EXISTS %q;", "uuid-ossp"))
-	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis")
+	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis;")
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_rasters; --OPTIONAL")
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_topology; --OPTIONAL")
 
-	if err := runMigration(opt.DbMigration, opt.DbMigrate, conn); err != nil {
+	if err := runMigration(opt.DbMigration, opt.DbDriver, opt.DbMigrate, conn); err != nil {
 		log.WithError(err).Fatalln("sql: runMigration")
 	} else {
 		log.Infoln("Write table schema...OK")
@@ -43,25 +45,25 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	return sql.New(conn)
 }
 
-func runMigration(migration string, forceMigrate bool, conn *db.DB) error {
-	driver, err := gm.WithInstance(conn, &gm.Config{})
+func runMigration(migration, driver string, forceMigrate bool, conn *db.DB) error {
+	d, err := p.WithInstance(conn, &p.Config{})
 	if err != nil {
 		return err
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(migration, "postgres", driver)
+	m, err := migrate.NewWithDatabaseInstance(migration, driver, d)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	if forceMigrate {
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
-			return nil
+			return err
 		}
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-		return nil
+		return err
 	}
 
 	return nil

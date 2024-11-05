@@ -1,6 +1,6 @@
--- name: CreateUpload :execresult
+-- name: CreateUpload :one
 INSERT INTO uploads (
-  email, public_address, type, uri, verification
+  type, uri, verification, wallet_address
 ) VALUES (
-  $1, $2, $3, $4, $5
-);
+  $1, $2, $3, $4
+) RETURNING *;

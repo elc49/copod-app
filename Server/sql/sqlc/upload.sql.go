@@ -10,28 +10,38 @@ import (
 	"database/sql"
 )
 
-const createUpload = `-- name: CreateUpload :execresult
+const createUpload = `-- name: CreateUpload :one
 INSERT INTO uploads (
-  email, public_address, type, uri, verification
+  type, uri, verification, wallet_address
 ) VALUES (
-  $1, $2, $3, $4, $5
-)
+  $1, $2, $3, $4
+) RETURNING id, type, uri, verification, land_id, wallet_address, created_at, updated_at
 `
 
 type CreateUploadParams struct {
-	Email         string `json:"email"`
-	PublicAddress string `json:"public_address"`
-	Type          string `json:"type"`
-	Uri           string `json:"uri"`
-	Verification  string `json:"verification"`
+	Type          string         `json:"type"`
+	Uri           string         `json:"uri"`
+	Verification  string         `json:"verification"`
+	WalletAddress sql.NullString `json:"wallet_address"`
 }
 
-func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (sql.Result, error) {
-	return q.db.ExecContext(ctx, createUpload,
-		arg.Email,
-		arg.PublicAddress,
+func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (Upload, error) {
+	row := q.db.QueryRowContext(ctx, createUpload,
 		arg.Type,
 		arg.Uri,
 		arg.Verification,
+		arg.WalletAddress,
 	)
+	var i Upload
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Uri,
+		&i.Verification,
+		&i.LandID,
+		&i.WalletAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
