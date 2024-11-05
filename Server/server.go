@@ -10,8 +10,10 @@ import (
 	"time"
 
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
-	"github.com/elc49/copod/sql"
+	db "github.com/elc49/copod/sql"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/tigris"
 
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -19,7 +21,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
-type Server struct{}
+type Server struct {
+	sql *sql.Queries
+}
 
 func New() *Server {
 	s := &Server{}
@@ -31,10 +35,11 @@ func (s *Server) Start() {
 	config.New()
 
 	// Services
+	s.sql = db.InitDB(config.C.Database.Rdbms)
 	tigris.New()
-	sql.InitDB(config.C.Database.Rdbms)
+	s.MountController()
 
-	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.mount()}
+	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter()}
 	// Server ctx
 	sCtx, sStopCtx := context.WithCancel(context.Background())
 	// Listen for syscall signals(interrupt/quit)
@@ -65,7 +70,7 @@ func (s *Server) Start() {
 	<-sCtx.Done()
 }
 
-func (s *Server) mount() *chi.Mux {
+func (s *Server) MountRouter() *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(middleware.Heartbeat("/ping"))
@@ -81,6 +86,11 @@ func (s *Server) mount() *chi.Mux {
 		r.Handle("/upload", handlers.UploadDoc())
 	})
 	return r
+}
+
+func (s *Server) MountController() {
+	u := controller.User{}
+	u.Init(s.sql)
 }
 
 func main() {

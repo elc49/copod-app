@@ -69,9 +69,8 @@ func tigrisConfig() Tigris {
 
 func databaseConfig() Database {
 	var config Database
-	p := postgres.Postgres{}
 
-	config.Rdbms = p.PostgresConfig()
+	config.Rdbms = postgres.PostgresConfig()
 
 	return config
 }

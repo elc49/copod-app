@@ -2,13 +2,129 @@
 
 package model
 
+import (
+	"fmt"
+	"io"
+	"strconv"
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type Land struct {
-	Title         string `json:"title"`
-	Size          int    `json:"size"`
-	Symbol        string `json:"symbol"`
-	Town          string `json:"town"`
-	TitleDocument string `json:"titleDocument"`
+	ID            uuid.UUID    `json:"id"`
+	Title         string       `json:"title"`
+	Size          int          `json:"size"`
+	Symbol        string       `json:"symbol"`
+	Town          *string      `json:"town,omitempty"`
+	TitleDocument string       `json:"titleDocument"`
+	Verified      Verification `json:"verified"`
+	CreatedAt     time.Time    `json:"created_at"`
+	UpdatedAt     time.Time    `json:"updated_at"`
 }
 
 type Query struct {
+}
+
+type Upload struct {
+	ID        uuid.UUID `json:"id"`
+	URI       string    `json:"uri"`
+	Type      Doc       `json:"type"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type User struct {
+	ID            uuid.UUID `json:"id"`
+	Firstname     *string   `json:"firstname,omitempty"`
+	Lastname      *string   `json:"lastname,omitempty"`
+	Email         string    `json:"email"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+type Doc string
+
+const (
+	DocGovtID    Doc = "GOVT_ID"
+	DocLandTitle Doc = "LAND_TITLE"
+)
+
+var AllDoc = []Doc{
+	DocGovtID,
+	DocLandTitle,
+}
+
+func (e Doc) IsValid() bool {
+	switch e {
+	case DocGovtID, DocLandTitle:
+		return true
+	}
+	return false
+}
+
+func (e Doc) String() string {
+	return string(e)
+}
+
+func (e *Doc) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Doc(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Doc", str)
+	}
+	return nil
+}
+
+func (e Doc) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type Verification string
+
+const (
+	VerificationOnboarding Verification = "ONBOARDING"
+	VerificationVerified   Verification = "VERIFIED"
+	VerificationRejected   Verification = "REJECTED"
+)
+
+var AllVerification = []Verification{
+	VerificationOnboarding,
+	VerificationVerified,
+	VerificationRejected,
+}
+
+func (e Verification) IsValid() bool {
+	switch e {
+	case VerificationOnboarding, VerificationVerified, VerificationRejected:
+		return true
+	}
+	return false
+}
+
+func (e Verification) String() string {
+	return string(e)
+}
+
+func (e *Verification) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = Verification(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Verification", str)
+	}
+	return nil
+}
+
+func (e Verification) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }

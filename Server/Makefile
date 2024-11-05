@@ -8,5 +8,8 @@ server:
 graphql:
 	go generate ./...
 # Make postgres
-sqldb:
+sqlc:
 	sqlc generate
+# Test
+tests:
+	go test ./test

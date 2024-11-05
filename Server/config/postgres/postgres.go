@@ -16,7 +16,7 @@ type Postgres struct {
 	DbMigration string
 }
 
-func (p Postgres) PostgresConfig() Postgres {
+func PostgresConfig() Postgres {
 	var config Postgres
 
 	config.DbName = strings.TrimSpace(os.Getenv("POSTGRES_NAME"))

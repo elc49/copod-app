@@ -1,13 +1,55 @@
 # GraphQL schema example
+# Land
 type Land {
+  id: UUID!
   title: String!
   size: Int!
   symbol: String!
-  town: String!
+  town: String
   titleDocument: String!
+  verified: Verification!
+  created_at: Time!
+  updated_at: Time!
+}
+
+# Upload
+type Upload {
+  id: UUID!
+  uri: String!
+  type: Doc!
+  email: String!
+  created_at: Time!
+  updated_at: Time!
+}
+
+# User
+type User {
+  id: UUID!
+  firstname: String
+  lastname: String
+  email: String!
+  wallet_address: String!
+  created_at: Time!
+  updated_at: Time!
 }
 
 type Query {
   getLocalLands: [Land!]!
   getUserLands(email: String!): [Land!]!
 }
+
+# Document type
+enum Doc {
+  GOVT_ID
+  LAND_TITLE
+}
+
+# Verification status
+enum Verification {
+  ONBOARDING
+  VERIFIED
+  REJECTED
+}
+
+scalar UUID
+scalar Time
