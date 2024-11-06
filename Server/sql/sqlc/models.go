@@ -5,7 +5,6 @@
 package sql
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -23,14 +22,13 @@ type Land struct {
 }
 
 type Upload struct {
-	ID            uuid.UUID      `json:"id"`
-	Type          string         `json:"type"`
-	Uri           string         `json:"uri"`
-	Verification  string         `json:"verification"`
-	LandID        uuid.NullUUID  `json:"land_id"`
-	WalletAddress sql.NullString `json:"wallet_address"`
-	CreatedAt     time.Time      `json:"created_at"`
-	UpdatedAt     time.Time      `json:"updated_at"`
+	ID            uuid.UUID `json:"id"`
+	Type          string    `json:"type"`
+	Uri           string    `json:"uri"`
+	Verification  string    `json:"verification"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type User struct {

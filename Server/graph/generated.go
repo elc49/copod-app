@@ -67,11 +67,11 @@ type ComplexityRoot struct {
 
 	Upload struct {
 		CreatedAt func(childComplexity int) int
-		Email     func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Type      func(childComplexity int) int
 		URI       func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
+		Verified  func(childComplexity int) int
 	}
 
 	User struct {
@@ -198,13 +198,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Upload.CreatedAt(childComplexity), true
 
-	case "Upload.email":
-		if e.complexity.Upload.Email == nil {
-			break
-		}
-
-		return e.complexity.Upload.Email(childComplexity), true
-
 	case "Upload.id":
 		if e.complexity.Upload.ID == nil {
 			break
@@ -232,6 +225,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Upload.UpdatedAt(childComplexity), true
+
+	case "Upload.verified":
+		if e.complexity.Upload.Verified == nil {
+			break
+		}
+
+		return e.complexity.Upload.Verified(childComplexity), true
 
 	case "User.created_at":
 		if e.complexity.User.CreatedAt == nil {
@@ -1283,8 +1283,8 @@ func (ec *executionContext) fieldContext_Upload_type(_ context.Context, field gr
 	return fc, nil
 }
 
-func (ec *executionContext) _Upload_email(ctx context.Context, field graphql.CollectedField, obj *model.Upload) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Upload_email(ctx, field)
+func (ec *executionContext) _Upload_verified(ctx context.Context, field graphql.CollectedField, obj *model.Upload) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Upload_verified(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1297,7 +1297,7 @@ func (ec *executionContext) _Upload_email(ctx context.Context, field graphql.Col
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Email, nil
+		return obj.Verified, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1309,19 +1309,19 @@ func (ec *executionContext) _Upload_email(ctx context.Context, field graphql.Col
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(model.Verification)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Upload_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Upload_verified(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Upload",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Verification does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3694,8 +3694,8 @@ func (ec *executionContext) _Upload(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "email":
-			out.Values[i] = ec._Upload_email(ctx, field, obj)
+		case "verified":
+			out.Values[i] = ec._Upload_verified(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

@@ -7,22 +7,30 @@ package sql
 
 import (
 	"context"
-	"database/sql"
 )
+
+const clearTestUploads = `-- name: ClearTestUploads :exec
+DELETE FROM uploads
+`
+
+func (q *Queries) ClearTestUploads(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, clearTestUploads)
+	return err
+}
 
 const createUpload = `-- name: CreateUpload :one
 INSERT INTO uploads (
   type, uri, verification, wallet_address
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING id, type, uri, verification, land_id, wallet_address, created_at, updated_at
+) RETURNING id, type, uri, verification, wallet_address, created_at, updated_at
 `
 
 type CreateUploadParams struct {
-	Type          string         `json:"type"`
-	Uri           string         `json:"uri"`
-	Verification  string         `json:"verification"`
-	WalletAddress sql.NullString `json:"wallet_address"`
+	Type          string `json:"type"`
+	Uri           string `json:"uri"`
+	Verification  string `json:"verification"`
+	WalletAddress string `json:"wallet_address"`
 }
 
 func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (Upload, error) {
@@ -38,7 +46,31 @@ func (q *Queries) CreateUpload(ctx context.Context, arg CreateUploadParams) (Upl
 		&i.Type,
 		&i.Uri,
 		&i.Verification,
-		&i.LandID,
+		&i.WalletAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUpload = `-- name: GetUpload :one
+SELECT id, type, uri, verification, wallet_address, created_at, updated_at FROM uploads
+WHERE type = $1 AND wallet_address = $2
+`
+
+type GetUploadParams struct {
+	Type          string `json:"type"`
+	WalletAddress string `json:"wallet_address"`
+}
+
+func (q *Queries) GetUpload(ctx context.Context, arg GetUploadParams) (Upload, error) {
+	row := q.db.QueryRowContext(ctx, getUpload, arg.Type, arg.WalletAddress)
+	var i Upload
+	err := row.Scan(
+		&i.ID,
+		&i.Type,
+		&i.Uri,
+		&i.Verification,
 		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,

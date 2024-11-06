@@ -9,21 +9,31 @@ import (
 	"context"
 )
 
+const clearTestUsers = `-- name: ClearTestUsers :exec
+DELETE FROM users
+`
+
+func (q *Queries) ClearTestUsers(ctx context.Context) error {
+	_, err := q.db.ExecContext(ctx, clearTestUsers)
+	return err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  email, wallet_address
+  email, wallet_address, govt_id
 ) VALUES (
-  $1, $2
+  $1, $2, $3
 ) RETURNING id, firstname, lastname, govt_id, email, wallet_address, created_at, updated_at
 `
 
 type CreateUserParams struct {
 	Email         string `json:"email"`
 	WalletAddress string `json:"wallet_address"`
+	GovtID        string `json:"govt_id"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.WalletAddress)
+	row := q.db.QueryRowContext(ctx, createUser, arg.Email, arg.WalletAddress, arg.GovtID)
 	var i User
 	err := row.Scan(
 		&i.ID,
@@ -60,25 +70,19 @@ func (q *Queries) GetUser(ctx context.Context, walletAddress string) (User, erro
 }
 
 const updateUser = `-- name: UpdateUser :one
-UPDATE users SET firstname = $1, lastname = $2, govt_id = $3
-WHERE email = $4
+UPDATE users SET firstname = $1, lastname = $2
+WHERE email = $3
 RETURNING  id, firstname, lastname, govt_id, email, wallet_address, created_at, updated_at
 `
 
 type UpdateUserParams struct {
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
-	GovtID    string `json:"govt_id"`
 	Email     string `json:"email"`
 }
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
-		arg.Firstname,
-		arg.Lastname,
-		arg.GovtID,
-		arg.Email,
-	)
+	row := q.db.QueryRowContext(ctx, updateUser, arg.Firstname, arg.Lastname, arg.Email)
 	var i User
 	err := row.Scan(
 		&i.ID,

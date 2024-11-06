@@ -17,7 +17,7 @@ type Upload {
   id: UUID!
   uri: String!
   type: Doc!
-  email: String!
+  verified: Verification!
   created_at: Time!
   updated_at: Time!
 }

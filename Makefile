@@ -8,7 +8,7 @@ test-server:
 tidy:
 	cd Server && go mod tidy
 # Make server
-server:
+api-server:
 	cd Server && go run ./server.go
 # Graphql
 graphql:
