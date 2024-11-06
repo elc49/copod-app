@@ -2,7 +2,6 @@ package test
 
 import (
 	"context"
-	"fmt"
 	"testing"
 
 	"github.com/elc49/copod/controller"
@@ -13,14 +12,16 @@ import (
 
 func Test_Upload_Controller(t *testing.T) {
 	defer func() {
-		q.ClearTestUploads(context.Background())
+		ctx := context.Background()
+		q.ClearTestUploads(ctx)
+		q.ClearTestUsers(ctx)
 	}()
 
 	t.Run("create_upload", func(t *testing.T) {
 		uc := controller.UC
 		u, _ := uc.CreateUser(context.Background(), sql.CreateUserParams{
-			Email:         fmt.Sprintf("%s@em.com", RandomStringByLength(4)),
-			WalletAddress: fmt.Sprintf("0x41eD3Ce6DC13fD4F67Eb715f5c3B105B%s", RandomStringByLength(8)),
+			Email:         RandomEmailAddress(),
+			WalletAddress: RandomWalletAddress(),
 			GovtID:        RandomGovtID(),
 		})
 
