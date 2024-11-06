@@ -13,4 +13,4 @@ jobs:
     - name: Install dependencies
       run: cd SmartContract && npm ci
     - name: Test smart contracts
-      run: make tests
+      run: make test-contracts
