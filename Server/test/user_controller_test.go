@@ -10,15 +10,22 @@ import (
 )
 
 func Test_User_Controller(t *testing.T) {
+	defer func() {
+		q.ClearTestUsers(context.Background())
+	}()
+
 	t.Run("create_user", func(t *testing.T) {
 		uc := controller.UC
+		email := RandomEmailAddress()
+		wallet := RandomWalletAddress()
 		u, err := uc.CreateUser(context.Background(), sql.CreateUserParams{
 			Email:         email,
-			WalletAddress: walletAddress,
+			WalletAddress: wallet,
+			GovtID:        RandomGovtID(),
 		})
 
+		assert.Equal(t, u.WalletAddress, wallet)
 		assert.Equal(t, u.Email, email)
-		assert.Equal(t, u.WalletAddress, walletAddress)
 		assert.Nil(t, err)
 	})
 }

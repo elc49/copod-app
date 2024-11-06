@@ -4,11 +4,12 @@ import (
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/sql"
+	sqlc "github.com/elc49/copod/sql/sqlc"
 )
 
 var (
-	email         = "email@exmpl.com"
-	walletAddress = "0x41eD3Ce6DC13fD4F67Eb715f5c3B105Bc7FA8D45"
+	docUri = "https://doc.io/title"
+	q      *sqlc.Queries
 )
 
 func init() {
@@ -23,9 +24,12 @@ func init() {
 	}
 
 	// Database
-	q := sql.InitDB(opt)
+	q = sql.InitDB(opt)
 	// Controller
 	// User
 	u := controller.User{}
 	u.Init(q)
+	// Upload
+	p := controller.Upload{}
+	p.Init(q)
 }
