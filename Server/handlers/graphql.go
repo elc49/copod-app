@@ -25,5 +25,6 @@ func GraphQL() *handler.Server {
 		},
 	})
 	h.Use(extension.Introspection{})
+
 	return h
 }

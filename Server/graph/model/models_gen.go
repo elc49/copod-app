@@ -23,6 +23,9 @@ type Land struct {
 	UpdatedAt     time.Time    `json:"updated_at"`
 }
 
+type Mutation struct {
+}
+
 type Query struct {
 }
 
@@ -33,6 +36,12 @@ type Upload struct {
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`
+}
+
+type UploadInput struct {
+	Type          Doc    `json:"type"`
+	URI           string `json:"uri"`
+	WalletAddress string `json:"wallet_address"`
 }
 
 type User struct {

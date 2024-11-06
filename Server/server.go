@@ -62,8 +62,7 @@ func (s *Server) Start() {
 		}
 		sStopCtx()
 	}()
-	err := server.ListenAndServe()
-	if err != nil && err != http.ErrServerClosed {
+	if err := server.ListenAndServe(); err != nil {
 		log.Fatalln(err)
 	}
 	// Wait for server ctx to be stopped
@@ -89,8 +88,12 @@ func (s *Server) MountRouter() *chi.Mux {
 }
 
 func (s *Server) MountController() {
+	// User
 	u := controller.User{}
 	u.Init(s.sql)
+	// Upload
+	p := controller.Upload{}
+	p.Init(s.sql)
 }
 
 func main() {

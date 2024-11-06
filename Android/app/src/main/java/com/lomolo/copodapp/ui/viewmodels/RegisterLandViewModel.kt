@@ -23,7 +23,7 @@ interface UploadingDoc {
 }
 
 data class UploadDocState(
-    val state: Map<String, UploadDocState> = mapOf(),
+    val state: Map<String, String> = mapOf(),
 )
 
 class RegisterLandViewModel(
@@ -32,8 +32,6 @@ class RegisterLandViewModel(
     private val _uploadState: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
     val uploadState: StateFlow<UploadDocState> = _uploadState.asStateFlow()
 
-    var uploadingDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
-        private set
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
     var uploadingGovtId: UploadingDoc by mutableStateOf(UploadingDoc.Success)

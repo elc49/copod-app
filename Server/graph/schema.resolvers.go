@@ -6,9 +6,15 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/graph/model"
 )
+
+// CreateUploads is the resolver for the createUploads field.
+func (r *mutationResolver) CreateUploads(ctx context.Context, input []*model.UploadInput) (*bool, error) {
+	panic(fmt.Errorf("not implemented: CreateUploads - createUploads"))
+}
 
 // GetLocalLands is the resolver for the getLocalLands field.
 func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error) {
@@ -20,7 +26,11 @@ func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*mode
 	return make([]*model.Land, 0), nil
 }
 
+// Mutation returns MutationResolver implementation.
+func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }

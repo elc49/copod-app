@@ -38,6 +38,16 @@ type Query {
   getUserLands(email: String!): [Land!]!
 }
 
+type Mutation {
+  createUploads(input: [UploadInput!]!): Boolean
+}
+
+input UploadInput {
+  type: Doc!
+  uri: String!
+  wallet_address: String!
+}
+
 # Document type
 enum Doc {
   GOVT_ID

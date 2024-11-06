@@ -15,14 +15,10 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var t Tigris
+var T tigris
 
-type Tigris interface {
+type tigris interface {
 	Upload(context.Context, multipart.File, *multipart.FileHeader) (*string, error)
-}
-
-func GetTigris() Tigris {
-	return t
 }
 
 type tigrisClient struct {
@@ -48,7 +44,7 @@ func New() {
 		o.BaseEndpoint = aws.String(cfg.C.Tigris.S3Endpoint)
 	})
 
-	t = &tigrisClient{log, manager.NewUploader(c)}
+	T = &tigrisClient{log, manager.NewUploader(c)}
 }
 
 func (tc *tigrisClient) Upload(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader) (*string, error) {
@@ -63,6 +59,7 @@ func (tc *tigrisClient) Upload(ctx context.Context, file multipart.File, fileHea
 	res, err := tc.s3.Upload(ctx, params)
 	if err != nil {
 		tc.log.WithError(err).WithFields(logrus.Fields{"file_size": fileHeader.Size, "file_name": fileHeader.Filename}).Errorf("tigris: Upload")
+		return nil, err
 	}
 
 	return &res.Location, nil

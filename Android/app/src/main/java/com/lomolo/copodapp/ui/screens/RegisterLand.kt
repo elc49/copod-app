@@ -1,8 +1,8 @@
 package com.lomolo.copodapp.ui.screens
 
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,17 +25,22 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 object RegisterLandScreenDestination : Navigation {
@@ -50,14 +55,37 @@ fun RegisterLandScreen(
     onGoBack: () -> Unit,
     viewModel: RegisterLandViewModel = koinViewModel<RegisterLandViewModel>(),
 ) {
+    val doc by viewModel.uploadState.collectAsState()
+    val landTitle = when(viewModel.uploadingLandDoc) {
+        UploadingDoc.Loading -> R.drawable.loading_img
+        UploadingDoc.Success -> R.drawable.upload
+        else -> R.drawable.upload
+    }
+    val idDoc = when(viewModel.uploadingGovtId) {
+        UploadingDoc.Loading -> R.drawable.loading_img
+        UploadingDoc.Success -> R.drawable.upload
+        else -> R.drawable.upload
+    }
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val pickMedia = rememberLauncherForActivityResult(
+    val pickLandTitleMedia = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
             val stream = context.contentResolver.openInputStream(it)
-            if (stream != null) {}
+            if (stream != null) {
+                viewModel.uploadLandTitle(stream)
+            }
+        }
+    }
+    val pickGovtIdMedia = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia()
+    ) {
+        if (it != null) {
+            val stream = context.contentResolver.openInputStream(it)
+            if (stream != null) {
+                viewModel.uploadGovtIssuedId(stream)
+            }
         }
     }
 
@@ -91,13 +119,26 @@ fun RegisterLandScreen(
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(stringResource(R.string.govt_issued_title))
-                    Image(
-                        painterResource(R.drawable.upload),
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(landTitle)
+                            .crossfade(true)
+                            .build(),
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
                             .fillMaxSize()
                             .size(240.dp)
-                            .clickable{},
+                            .clickable {
+                                if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
+                                    scope.launch {
+                                        pickLandTitleMedia.launch(
+                                            PickVisualMediaRequest(
+                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         contentDescription = stringResource(R.string.image),
                     )
                 }
@@ -110,12 +151,25 @@ fun RegisterLandScreen(
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(stringResource(R.string.upload_govt_issued_id))
-                    Image(
-                        painterResource(R.drawable.upload),
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(idDoc)
+                            .crossfade(true)
+                            .build(),
                         modifier = Modifier
                             .fillMaxSize()
                             .size(240.dp)
-                            .clickable{},
+                            .clickable {
+                                if (viewModel.uploadingGovtId !is UploadingDoc.Loading) {
+                                    scope.launch {
+                                        pickGovtIdMedia.launch(
+                                            PickVisualMediaRequest(
+                                                ActivityResultContracts.PickVisualMedia.ImageOnly
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         contentScale = ContentScale.Fit,
                         contentDescription = stringResource(R.string.image),
                     )

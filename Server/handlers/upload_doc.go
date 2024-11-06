@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/elc49/copod/logger"
+	"github.com/elc49/copod/tigris"
 )
 
 const (
@@ -12,7 +12,7 @@ const (
 
 func UploadDoc() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		log := logger.GetLogger()
+		tigris := tigris.T
 		err := r.ParseMultipartForm(MAX_MEMORY)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
@@ -24,7 +24,19 @@ func UploadDoc() http.Handler {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 		}
 		defer file.Close()
-		log.Infoln(fileHeader)
-		// TODO upload image to tigris and return uri
+		url, err := tigris.Upload(r.Context(), file, fileHeader)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if err := writeJSON(w, struct {
+			ImageUri string `json:"image_uri"`
+		}{
+			ImageUri: *url,
+		}, http.StatusCreated); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	})
 }

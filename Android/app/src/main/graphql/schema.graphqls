@@ -24,6 +24,10 @@ type Land {
   updated_at: Time!
 }
 
+type Mutation {
+  createUploads(input: [UploadInput!]!): Boolean
+}
+
 type Query {
   getLocalLands: [Land!]!
 
@@ -41,11 +45,19 @@ type Upload {
 
   type: Doc!
 
-  email: String!
+  verified: Verification!
 
   created_at: Time!
 
   updated_at: Time!
+}
+
+input UploadInput {
+  type: Doc!
+
+  uri: String!
+
+  wallet_address: String!
 }
 
 type User {
@@ -263,4 +275,5 @@ directive @specifiedBy (url: String!) on SCALAR
 
 schema {
   query: Query
+  mutation: Mutation
 }
