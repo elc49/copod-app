@@ -31,7 +31,7 @@ func UploadDoc() http.Handler {
 		}
 
 		if err := writeJSON(w, struct {
-			ImageUri string `json:"image_uri"`
+			ImageUri string `json:"imageUri"`
 		}{
 			ImageUri: *url,
 		}, http.StatusCreated); err != nil {

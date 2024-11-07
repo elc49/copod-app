@@ -1,6 +1,7 @@
 package sql
 
 import (
+	"context"
 	"fmt"
 
 	db "database/sql"
@@ -9,10 +10,12 @@ import (
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/elc49/copod/tigris"
 	"github.com/golang-migrate/migrate/v4"
 	p "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 func InitDB(opt postgres.Postgres) *sql.Queries {
@@ -36,7 +39,7 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_rasters; --OPTIONAL")
 	conn.Exec("CREATE EXTENSION IF NOT EXISTS postgis_topology; --OPTIONAL")
 
-	if err := runMigration(opt, conn); err != nil {
+	if err := runMigration(opt, conn, log); err != nil {
 		log.WithError(err).Fatalln("sql: runMigration")
 	} else {
 		log.Infoln("Write table schema...OK")
@@ -45,7 +48,7 @@ func InitDB(opt postgres.Postgres) *sql.Queries {
 	return sql.New(conn)
 }
 
-func runMigration(opt postgres.Postgres, conn *db.DB) error {
+func runMigration(opt postgres.Postgres, conn *db.DB, log *logrus.Logger) error {
 	d, err := p.WithInstance(conn, &p.Config{})
 	if err != nil {
 		return err
@@ -59,6 +62,12 @@ func runMigration(opt postgres.Postgres, conn *db.DB) error {
 	if opt.DbMigrate {
 		conn.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s;", opt.DbName))
 		conn.Exec(fmt.Sprintf("CREATE DATABASE %s;", opt.DbName))
+		if config.C != nil {
+			if err := tigris.T.DeleteObjects(context.Background()); err != nil {
+				log.WithError(err).Fatalln("sql: DeleteObjects")
+				return err
+			}
+		}
 	}
 
 	if err := m.Up(); err != nil && err != migrate.ErrNoChange {

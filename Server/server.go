@@ -26,17 +26,16 @@ type Server struct {
 }
 
 func New() *Server {
+	// Setup config variables
+	config.New()
 	s := &Server{}
 	return s
 }
 
 func (s *Server) Start() {
-	// Setup config variables
-	config.New()
-
 	// Services
-	s.sql = db.InitDB(config.C.Database.Rdbms)
 	tigris.New()
+	s.sql = db.InitDB(config.C.Database.Rdbms)
 	s.MountController()
 
 	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter()}
