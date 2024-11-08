@@ -22,8 +22,13 @@ func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error
 }
 
 // GetUserLands is the resolver for the getUserLands field.
-func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Land, error) {
+func (r *queryResolver) GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error) {
 	return make([]*model.Land, 0), nil
+}
+
+// HasPendingLandRecords is the resolver for the hasPendingLandRecords field.
+func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress string) (bool, error) {
+	return false, nil
 }
 
 // Mutation returns MutationResolver implementation.

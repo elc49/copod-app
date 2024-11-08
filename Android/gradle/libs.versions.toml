@@ -1,25 +1,25 @@
 [versions]
-agp = "8.7.1"
-apolloRuntime = "4.0.0-alpha.3"
+agp = "8.7.2"
+apolloRuntime = "4.1.0"
 coilCompose = "2.4.0"
 converterMoshi = "2.9.0"
 core = "4.8.7-android"
 koinBom = "4.0.0"
-kotlin = "1.9.0"
-coreKtx = "1.13.1"
+kotlin = "2.0.0"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.6"
+lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
-composeBom = "2024.10.00"
+composeBom = "2024.10.01"
 moshiKotlin = "1.13.0"
 navigationTesting = "2.8.3"
 okhttpBom = "4.11.0"
 retrofit = "2.11.0"
 roomCompiler = "2.6.1"
 secretsGradlePlugin = "2.0.1"
-uiTextGoogleFonts = "1.7.4"
+uiTextGoogleFonts = "1.7.5"
 web3authAndroidSdk = "8.0.3"
 
 [libraries]
@@ -28,8 +28,9 @@ androidx-navigation-compose = { module = "androidx.navigation:navigation-compose
 androidx-navigation-testing = { module = "androidx.navigation:navigation-testing", version.ref = "navigationTesting" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompiler" }
 androidx-ui-text-google-fonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
-apollo-normalized-cache-sqlite = { module = "com.apollographql.apollo3:apollo-normalized-cache-sqlite", version.ref = "apolloRuntime" }
-apollo-runtime = { module = "com.apollographql.apollo3:apollo-runtime", version.ref = "apolloRuntime" }
+apollo-normalized-cache = { module = "com.apollographql.apollo:apollo-normalized-cache", version.ref = "apolloRuntime" }
+apollo-normalized-cache-sqlite = { module = "com.apollographql.apollo:apollo-normalized-cache-sqlite", version.ref = "apolloRuntime" }
+apollo-runtime = { module = "com.apollographql.apollo:apollo-runtime", version.ref = "apolloRuntime" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 coil-svg = { module = "io.coil-kt:coil-svg", version.ref = "coilCompose" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
@@ -62,3 +63,4 @@ web3auth-android-sdk = { module = "com.github.Web3Auth:web3auth-android-sdk", ve
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

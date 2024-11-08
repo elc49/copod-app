@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.apollographql.apollo3.exception.ApolloException
+import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.GetLocalLandsQuery
 import com.lomolo.copodapp.network.IGraphQL
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,5 +1,5 @@
-query GetUserLand($email: String!) {
-    getUserLands(email: $email) {
+query GetUserLand($walletAddress: String!) {
+    getUserLands(walletAddress: $walletAddress) {
         title
         size
     }

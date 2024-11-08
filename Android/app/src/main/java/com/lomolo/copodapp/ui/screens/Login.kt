@@ -16,10 +16,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -77,7 +77,7 @@ fun LoginScreen(
                     .padding(innerPadding)
                     .padding(8.dp),
             ) {
-                TextField(
+                OutlinedTextField(
                     isError = loginData.email.isNotEmpty() && !mainViewModel.isValidEmail(email = loginData.email),
                     value = loginData.email,
                     onValueChange = { mainViewModel.setEmail(it) },

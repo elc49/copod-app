@@ -1,15 +1,15 @@
 package com.lomolo.copodapp.network
 
-import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloResponse
-import com.apollographql.apollo3.cache.normalized.FetchPolicy
-import com.apollographql.apollo3.cache.normalized.fetchPolicy
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.ApolloResponse
+import com.apollographql.apollo.cache.normalized.FetchPolicy
+import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.GetLocalLandsQuery
 import com.lomolo.copodapp.GetUserLandQuery
 
 interface IGraphQL {
     suspend fun getLocalLands(): ApolloResponse<GetLocalLandsQuery.Data>
-    suspend fun getUserLands(email: String): ApolloResponse<GetUserLandQuery.Data>
+    suspend fun getUserLands(walletAddress: String): ApolloResponse<GetUserLandQuery.Data>
 }
 
 class GraphQLServiceImpl(
@@ -19,7 +19,7 @@ class GraphQLServiceImpl(
         FetchPolicy.NetworkFirst
     ).execute()
 
-    override suspend fun getUserLands(email: String) = apolloClient.query(GetUserLandQuery(email)).fetchPolicy(
+    override suspend fun getUserLands(walletAddress: String) = apolloClient.query(GetUserLandQuery(walletAddress)).fetchPolicy(
         FetchPolicy.NetworkFirst
     ).execute()
 }

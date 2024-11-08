@@ -10,6 +10,7 @@ import com.lomolo.copodapp.network.IRestFul
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -23,46 +24,40 @@ interface UploadingDoc {
 }
 
 data class UploadDocState(
-    val state: Map<String, String> = mapOf(),
+    val images: Map<String, String> = mapOf(),
 )
 
 class RegisterLandViewModel(
-    private val IRestFul: IRestFul,
+    private val iRestFul: IRestFul,
 ) : ViewModel() {
-    private val _uploadState: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
-    val uploadState: StateFlow<UploadDocState> = _uploadState.asStateFlow()
+    private val _images: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
+    val images: StateFlow<UploadDocState> = _images.asStateFlow()
 
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
     var uploadingGovtId: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
-    private fun uploadDoc(stream: InputStream) {
-        val request = stream.readBytes().toRequestBody()
-        val filePart = MultipartBody.Part.createFormData(
-            "file",
-            "${System.currentTimeMillis()}.jpg",
-            request,
-        )
-        viewModelScope.launch {
-            try {
-                IRestFul.uploadDoc(filePart)
-            } catch (e: Exception) {
-                Log.d(TAG, e.message ?: "Something went wrong")
-            }
-        }
-    }
-
     fun uploadLandTitle(stream: InputStream) {
         if (uploadingLandDoc !is UploadingDoc.Loading) {
             uploadingLandDoc = UploadingDoc.Loading
+            val request = stream.readBytes().toRequestBody()
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                "${System.currentTimeMillis()}.jpg",
+                request,
+            )
             viewModelScope.launch {
                 uploadingLandDoc = try {
-                    uploadDoc(stream)
+                    val res = iRestFul.uploadDoc(filePart)
+                    _images.update {
+                        val m = it.images.toMutableMap()
+                        it
+                    }
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
-                    UploadingDoc.Error(e.message)
+                    UploadingDoc.Error(e.message ?: "Something went wrong")
                 }
             }
         }
@@ -71,13 +66,19 @@ class RegisterLandViewModel(
     fun uploadGovtIssuedId(stream: InputStream) {
         if (uploadingGovtId !is UploadingDoc.Loading) {
             uploadingGovtId = UploadingDoc.Loading
+            val request = stream.readBytes().toRequestBody()
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                "${System.currentTimeMillis()}.jpg",
+                request,
+            )
             viewModelScope.launch {
                 uploadingGovtId = try {
-                    uploadDoc(stream)
+                    val res = iRestFul.uploadDoc(filePart)
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
-                    UploadingDoc.Error(e.message)
+                    UploadingDoc.Error(e.message ?: "Something went wrong")
                 }
             }
         }

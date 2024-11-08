@@ -1,4 +1,20 @@
 # GraphQL schema example
+# Document type
+scalar UUID
+scalar Time
+
+enum Doc {
+  GOVT_ID
+  LAND_TITLE
+}
+
+# Verification status
+enum Verification {
+  ONBOARDING
+  VERIFIED
+  REJECTED
+}
+
 # Land
 type Land {
   id: UUID!
@@ -35,11 +51,8 @@ type User {
 
 type Query {
   getLocalLands: [Land!]!
-  getUserLands(email: String!): [Land!]!
-}
-
-type Mutation {
-  createUploads(input: [UploadInput!]!): Boolean
+  getUserLands(walletAddress: String!): [Land!]!
+  hasPendingLandRecords(walletAddress: String!): Boolean!
 }
 
 input UploadInput {
@@ -48,18 +61,6 @@ input UploadInput {
   wallet_address: String!
 }
 
-# Document type
-enum Doc {
-  GOVT_ID
-  LAND_TITLE
+type Mutation {
+  createUploads(input: [UploadInput!]!): Boolean
 }
-
-# Verification status
-enum Verification {
-  ONBOARDING
-  VERIFIED
-  REJECTED
-}
-
-scalar UUID
-scalar Time

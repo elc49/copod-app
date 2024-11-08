@@ -31,7 +31,9 @@ type Mutation {
 type Query {
   getLocalLands: [Land!]!
 
-  getUserLands(email: String!): [Land!]!
+  getUserLands(walletAddress: String!): [Land!]!
+
+  hasPendingLandRecords(walletAddress: String!): Boolean!
 }
 
 scalar Time
@@ -84,8 +86,6 @@ enum Verification {
   REJECTED
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __Directive {
   name: String!
 
@@ -98,8 +98,6 @@ type __Directive {
   isRepeatable: Boolean!
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 enum __DirectiveLocation {
   QUERY
 
@@ -140,8 +138,6 @@ enum __DirectiveLocation {
   INPUT_FIELD_DEFINITION
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __EnumValue {
   name: String!
 
@@ -152,8 +148,6 @@ type __EnumValue {
   deprecationReason: String
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __Field {
   name: String!
 
@@ -168,8 +162,6 @@ type __Field {
   deprecationReason: String
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __InputValue {
   name: String!
 
@@ -180,8 +172,6 @@ type __InputValue {
   defaultValue: String
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __Schema {
   description: String
 
@@ -196,8 +186,6 @@ type __Schema {
   directives: [__Directive!]!
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 type __Type {
   kind: __TypeKind!
 
@@ -220,8 +208,6 @@ type __Type {
   specifiedByURL: String
 }
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 enum __TypeKind {
   SCALAR
 
@@ -245,29 +231,21 @@ The @defer directive may be specified on a fragment spread to imply de-prioritiz
 """
 directive @defer (if: Boolean = true, label: String) on FRAGMENT_SPREAD|INLINE_FRAGMENT
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 """
 The @deprecated built-in directive is used within the type system definition language to indicate deprecated portions of a GraphQL service's schema, such as deprecated fields on a type, arguments on a field, input fields on an input type, or values of an enum type.
 """
 directive @deprecated (reason: String = "No longer supported") on FIELD_DEFINITION|ARGUMENT_DEFINITION|INPUT_FIELD_DEFINITION|ENUM_VALUE
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 """
 The @include directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional inclusion during execution as described by the if argument.
 """
 directive @include (if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 """
 The @skip directive may be provided for fields, fragment spreads, and inline fragments, and allows for conditional exclusion during execution as described by the if argument.
 """
 directive @skip (if: Boolean!) on FIELD|FRAGMENT_SPREAD|INLINE_FRAGMENT
 
-# See https://github.com/JetBrains/js-graphql-intellij-plugin/issues/665
-# noinspection GraphQLTypeRedefinition
 """
 The @specifiedBy built-in directive is used within the type system definition language to provide a scalar specification URL for specifying the behavior of custom scalar types.
 """

@@ -2,14 +2,16 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     //alias(libs.plugins.kotlin.compose)
+    //alias(libs.plugins.compose.compiler) apply false
     id("com.google.devtools.ksp")
-    id("com.apollographql.apollo3") version "4.0.0-alpha.3"
+    id("com.apollographql.apollo") version "4.1.0"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
+    id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
 }
 
 android {
     namespace = "com.lomolo.copodapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.lomolo.copodapp"
@@ -40,9 +42,6 @@ android {
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
     }
 }
 
@@ -77,6 +76,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     implementation(libs.converter.moshi)
     implementation(libs.retrofit)
+    implementation(libs.apollo.normalized.cache)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,9 +87,13 @@ dependencies {
 }
 
 apollo {
-    service("copod") {
+    service("service") {
         packageName.set("com.lomolo.copodapp")
-        generateOptionalOperationVariables.set(false)
+        introspection {
+            endpointUrl.set("https://boss-freely-koi.ngrok-free.app/graphql")
+            schemaFile.set(file("src/main/graphql/schema.graphqls"))
+        }
+        generateApolloMetadata.set(true)
     }
 }
 

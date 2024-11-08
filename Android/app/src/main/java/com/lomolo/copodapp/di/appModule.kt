@@ -1,6 +1,6 @@
 package com.lomolo.copodapp.di
 
-import com.apollographql.apollo3.ApolloClient
+import com.apollographql.apollo.ApolloClient
 import com.lomolo.copodapp.graphql.getGraphqlClient
 import com.lomolo.copodapp.http.getHttpClient
 import com.lomolo.copodapp.json.getJsonAdapter
