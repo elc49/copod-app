@@ -33,6 +33,7 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -46,9 +47,11 @@ fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     viewModel: MpesaViewModel = koinViewModel<MpesaViewModel>(),
+    mainViewModel: MainViewModel,
 ) {
     val mpesa by viewModel.mpesa.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val userInfo = mainViewModel.userInfo
 
     Scaffold(topBar = {
         TopBar(title = {
@@ -86,11 +89,11 @@ fun MpesaScreen(
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide()
-                        // TODO submit request
+                        viewModel.chargeMpesa(userInfo?.email!!)
                     })
                 )
                 Button(
-                    onClick = { viewModel.chargeMpesa() },
+                    onClick = { viewModel.chargeMpesa(userInfo?.email!!) },
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraSmall,

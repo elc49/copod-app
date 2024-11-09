@@ -146,7 +146,8 @@ fun NavigationHost(
             MpesaScreen(
                 onGoBack = {
                     navHostController.popBackStack()
-                }
+                },
+                mainViewModel = mainViewModel,
             )
         }
     }

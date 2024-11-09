@@ -69,7 +69,6 @@ input UploadInput {
 input PayWithMpesaInput {
   reason: PaymentReason!
   phone: String!
-  amount: Int!
   email: String!
   currency: String!
 }

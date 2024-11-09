@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"sync"
 
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
@@ -46,6 +48,18 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*M
 		input.Provider.Phone = config.C.Paystack.MobileTestAccount
 	}
 
+	fees := 0
+	switch input.Reason {
+	case model.PaymentReasonLandRegistration.String():
+		i, err := strconv.Atoi(config.C.Paystack.LandFees)
+		if err != nil {
+			p.log.WithError(err).WithFields(logrus.Fields{"int": config.C.Paystack.LandFees}).Errorf("paystack: strconv.Atoi")
+			return nil, err
+		}
+		fees = i
+	}
+	input.Amount = fees * 100
+
 	payload, err := json.Marshal(input)
 	if err != nil {
 		p.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("paystack: json.Marshal")
@@ -58,7 +72,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*M
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", config.C.Paystack.SecretKey)
+	req.Header.Add("Authorization", "Bearer "+config.C.Paystack.SecretKey)
 
 	res, err := p.http.Do(req)
 	if err != nil {

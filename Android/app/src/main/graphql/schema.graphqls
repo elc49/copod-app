@@ -35,8 +35,6 @@ input PayWithMpesaInput {
 
   phone: String!
 
-  amount: Int!
-
   email: String!
 
   currency: String!

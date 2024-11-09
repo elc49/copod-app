@@ -39,7 +39,7 @@ class MpesaViewModel(
         _mpesa.update { it.copy(phone = phone) }
     }
 
-    fun chargeMpesa() {
+    fun chargeMpesa(email: String) {
         if (chargingMpesa !is ChargingMpesa.Loading) {
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
@@ -47,8 +47,7 @@ class MpesaViewModel(
                     val input = PayWithMpesaInput(
                         reason = PaymentReason.LAND_REGISTRATION,
                         phone = _mpesa.value.phone,
-                        amount = 0,
-                        email = "",
+                        email = email,
                         currency = "KES",
                     )
                     graphqlApiService.chargeMpesa(input)

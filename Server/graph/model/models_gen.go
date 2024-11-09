@@ -29,7 +29,6 @@ type Mutation struct {
 type PayWithMpesaInput struct {
 	Reason   PaymentReason `json:"reason"`
 	Phone    string        `json:"phone"`
-	Amount   int           `json:"amount"`
 	Email    string        `json:"email"`
 	Currency string        `json:"currency"`
 }
