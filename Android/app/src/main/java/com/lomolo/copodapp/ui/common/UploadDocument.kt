@@ -1,0 +1,90 @@
+package com.lomolo.copodapp.ui.common
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.lomolo.copodapp.R
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UploadDocument(
+    modifier: Modifier = Modifier,
+    onNext: () -> Unit,
+    title: @Composable () -> Unit,
+    onGoBack: () -> Unit,
+    onSelectImage: () -> Unit,
+    image: Any,
+    buttonText: @Composable (RowScope.() -> Unit),
+) {
+    val context = LocalContext.current
+
+    Scaffold(topBar = {
+        TopAppBar(title = title, navigationIcon = {
+            IconButton(
+                onClick = onGoBack,
+            ) {
+                Icon(
+                    Icons.AutoMirrored.TwoTone.ArrowBack,
+                    contentDescription = stringResource(R.string.go_back),
+                )
+            }
+        })
+    }) { innerPadding ->
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(8.dp),
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+            ) {
+                AsyncImage(
+                    model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
+                    contentScale = ContentScale.Fit,
+                    placeholder = painterResource(R.drawable.loading_img),
+                    error = painterResource(R.drawable.ic_broken_image),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(MaterialTheme.shapes.small)
+                        .clickable { onSelectImage() },
+                    contentDescription = stringResource(R.string.image),
+                )
+            }
+            Button(
+                onClick = onNext,
+                shape = MaterialTheme.shapes.extraSmall,
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.BottomCenter),
+            ) {
+                buttonText()
+            }
+        }
+    }
+}

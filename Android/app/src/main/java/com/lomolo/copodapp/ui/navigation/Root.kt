@@ -18,12 +18,16 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.LoginScreen
 import com.lomolo.copodapp.ui.screens.LoginScreenDestination
-import com.lomolo.copodapp.ui.screens.RegisterLandScreen
-import com.lomolo.copodapp.ui.screens.RegisterLandScreenDestination
+import com.lomolo.copodapp.ui.screens.UploadGovtIssuedId
+import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
+import com.lomolo.copodapp.ui.screens.UploadLandTitle
+import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
 import com.lomolo.copodapp.ui.viewmodels.InitializeSdk
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import org.koin.androidx.compose.navigation.koinNavViewModel
 
 interface Navigation {
     val title: Int?
@@ -40,6 +44,7 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
+    registerLandViewModel: RegisterLandViewModel = koinNavViewModel(),
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
@@ -102,11 +107,23 @@ fun NavigationHost(
                 navHostController.navigate(LoginScreenDestination.route)
             })
         }
-        composable(route = RegisterLandScreenDestination.route) {
-            RegisterLandScreen(
+        composable(route = UploadLandTitleScreenDestination.route) {
+            UploadLandTitle(
                 onGoBack = {
                     navHostController.popBackStack()
-                }
+                },
+                onNavigateTo = {
+                    navHostController.navigate(it)
+                },
+                viewModel = registerLandViewModel,
+            )
+        }
+        composable(route = UploadGovtIssuedIdScreenDestination.route) {
+            UploadGovtIssuedId(
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                viewModel = registerLandViewModel,
             )
         }
         composable(route = LandScreenDestination.route) {
@@ -116,7 +133,7 @@ fun NavigationHost(
                 userInfo = mainViewModel.userInfo,
                 mainViewModel = mainViewModel,
                 onClickAddLand = {
-                    navHostController.navigate(RegisterLandScreenDestination.route)
+                    navHostController.navigate(UploadLandTitleScreenDestination.route)
                 }
             )
         }

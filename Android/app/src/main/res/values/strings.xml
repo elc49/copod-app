@@ -25,4 +25,5 @@
     <string name="add_land">Add land</string>
     <string name="your_land">Your land</string>
     <string name="no_user_lands">No land</string>
+    <string name="proceed">Next</string>
 </resources>
