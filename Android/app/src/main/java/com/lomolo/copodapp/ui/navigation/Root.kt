@@ -18,6 +18,8 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.LoginScreen
 import com.lomolo.copodapp.ui.screens.LoginScreenDestination
+import com.lomolo.copodapp.ui.screens.MpesaScreen
+import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedId
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadLandTitle
@@ -124,6 +126,9 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 viewModel = registerLandViewModel,
+                onNext = {
+                    navHostController.navigate(MpesaScreenDestination.route)
+                }
             )
         }
         composable(route = LandScreenDestination.route) {
@@ -134,6 +139,13 @@ fun NavigationHost(
                 mainViewModel = mainViewModel,
                 onClickAddLand = {
                     navHostController.navigate(UploadLandTitleScreenDestination.route)
+                }
+            )
+        }
+        composable(route = MpesaScreenDestination.route) {
+            MpesaScreen(
+                onGoBack = {
+                    navHostController.popBackStack()
                 }
             )
         }

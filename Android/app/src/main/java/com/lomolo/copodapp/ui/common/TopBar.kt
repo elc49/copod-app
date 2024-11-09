@@ -10,14 +10,18 @@ import com.web3auth.core.types.UserInfo
 @Composable
 fun TopBar(
     modifier: Modifier = Modifier,
-    userInfo: UserInfo,
-    onOpenDialog: () -> Unit,
+    userInfo: UserInfo? = null,
+    onOpenDialog: () -> Unit = {},
+    title: @Composable (() -> Unit) = {},
+    navigationIcon: @Composable (() -> Unit) = {}
 ) {
-    TopAppBar(title = {}, actions = {
-        Avatar(
-            avatar = userInfo.profileImage,
-            email = userInfo.email,
-            onClick = onOpenDialog,
-        )
-    })
+    TopAppBar(modifier = modifier, title = title, actions = {
+        if (userInfo != null) {
+            Avatar(
+                avatar = userInfo.profileImage,
+                email = userInfo.email,
+                onClick = onOpenDialog,
+            )
+        }
+    }, navigationIcon = navigationIcon)
 }

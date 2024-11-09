@@ -26,4 +26,7 @@
     <string name="your_land">Your land</string>
     <string name="no_user_lands">No land</string>
     <string name="proceed">Next</string>
+    <string name="mpesa">M-pesa</string>
+    <string name="phone_number">Phone number</string>
+    <string name="pay">Pay</string>
 </resources>

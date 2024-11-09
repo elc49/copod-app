@@ -34,6 +34,7 @@ object UploadGovtIssuedIdScreenDestination : Navigation {
 fun UploadGovtIssuedId(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    onNext: () -> Unit,
     viewModel: RegisterLandViewModel,
 ) {
     val images by viewModel.images.collectAsState()
@@ -89,7 +90,11 @@ fun UploadGovtIssuedId(
             }
         },
         image = idDoc,
-        onNext = {},
+        onNext = {
+            if (!govtId.isNullOrEmpty()) {
+                onNext()
+            }
+        },
         onGoBack = onGoBack,
         onSelectImage = {
             if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
