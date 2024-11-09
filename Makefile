@@ -9,7 +9,7 @@ tidy:
 	cd Server && go mod tidy
 # Make server
 api-server:
-	cd Server && go run ./server.go
+	cd Server && go run ./main.go
 # Graphql
 graphql:
 	cd Server && go generate ./...

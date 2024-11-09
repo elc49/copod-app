@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"context"
@@ -9,14 +9,15 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
+	"github.com/elc49/copod/paystack"
 	db "github.com/elc49/copod/sql"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/tigris"
-
-	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -28,16 +29,12 @@ type Server struct {
 func New() *Server {
 	// Setup config variables
 	config.New()
+
 	s := &Server{}
 	return s
 }
 
 func (s *Server) Start() {
-	// Services
-	tigris.New()
-	s.sql = db.InitDB(config.C.Database.Rdbms)
-	s.MountController()
-
 	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter()}
 	// Server ctx
 	sCtx, sStopCtx := context.WithCancel(context.Background())
@@ -95,7 +92,15 @@ func (s *Server) MountController() {
 	p.Init(s.sql)
 }
 
-func main() {
-	s := New()
-	s.Start()
+func (s *Server) Database(opt postgres.Postgres) {
+	sqlStore := db.InitDB(config.C.Database.Rdbms)
+	s.sql = sqlStore
+}
+
+func (s *Server) TigrisService() {
+	tigris.New()
+}
+
+func (s *Server) PaystackService() {
+	paystack.New(s.sql)
 }

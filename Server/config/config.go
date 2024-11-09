@@ -17,6 +17,7 @@ type config struct {
 	Tigris   Tigris
 	Server   Server
 	Database Database
+	Paystack Paystack
 }
 
 func env() {
@@ -32,6 +33,7 @@ func New() {
 	c.Server = serverConfig()
 	c.Tigris = tigrisConfig()
 	c.Database = databaseConfig()
+	c.Paystack = paystackConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
@@ -77,4 +79,15 @@ func databaseConfig() Database {
 
 func IsProd() bool {
 	return C != nil && (C.Server.Env == "staging" || C.Server.Env == "prod")
+}
+
+func paystackConfig() Paystack {
+	var config Paystack
+
+	config.BaseApi = strings.TrimSpace(os.Getenv("PAYSTACK_BASE_API"))
+	config.ApiKey = strings.TrimSpace(os.Getenv("PAYSTACK_API_KEY"))
+	config.MobileTestAccount = strings.TrimSpace(os.Getenv("PAYSTACK_TEST_ACCOUNT"))
+	config.LandFees = strings.TrimSpace(os.Getenv("PAYSTACK_LAND_FEES"))
+
+	return config
 }
