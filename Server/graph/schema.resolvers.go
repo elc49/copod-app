@@ -6,14 +6,31 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/elc49/copod/graph/model"
+	"github.com/elc49/copod/paystack"
 )
 
 // CreateUploads is the resolver for the createUploads field.
 func (r *mutationResolver) CreateUploads(ctx context.Context, input []*model.UploadInput) (*bool, error) {
-	panic(fmt.Errorf("not implemented: CreateUploads - createUploads"))
+	b := false
+	return &b, nil
+}
+
+// ChargeMpesa is the resolver for the chargeMpesa field.
+func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
+	charge := paystack.MpesaCharge{
+		Email:    input.Email,
+		Reason:   input.Reason.String(),
+		Currency: input.Currency,
+	}
+
+	res, err := r.paystack.ChargeMpesa(ctx, charge)
+	if err != nil {
+		return nil, err
+	}
+
+	return &res.Data.Reference, nil
 }
 
 // GetLocalLands is the resolver for the getLocalLands field.

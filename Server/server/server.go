@@ -14,6 +14,8 @@ import (
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
+	"github.com/elc49/copod/handlers/webhook"
+	copodMiddleware "github.com/elc49/copod/middleware"
 	"github.com/elc49/copod/paystack"
 	db "github.com/elc49/copod/sql"
 	sql "github.com/elc49/copod/sql/sqlc"
@@ -79,6 +81,7 @@ func (s *Server) MountRouter() *chi.Mux {
 	r.Handle("/graphql", handlers.GraphQL())
 	r.Route("/api", func(r chi.Router) {
 		r.Handle("/upload", handlers.UploadDoc())
+		r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
 	})
 	return r
 }

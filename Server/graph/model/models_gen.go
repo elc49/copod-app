@@ -26,6 +26,13 @@ type Land struct {
 type Mutation struct {
 }
 
+type PayWithMpesaInput struct {
+	Reason   PaymentReason `json:"reason"`
+	Phone    string        `json:"phone"`
+	Email    string        `json:"email"`
+	Currency string        `json:"currency"`
+}
+
 type Query struct {
 }
 
@@ -92,6 +99,45 @@ func (e *Doc) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Doc) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PaymentReason string
+
+const (
+	PaymentReasonLandRegistration PaymentReason = "LAND_REGISTRATION"
+)
+
+var AllPaymentReason = []PaymentReason{
+	PaymentReasonLandRegistration,
+}
+
+func (e PaymentReason) IsValid() bool {
+	switch e {
+	case PaymentReasonLandRegistration:
+		return true
+	}
+	return false
+}
+
+func (e PaymentReason) String() string {
+	return string(e)
+}
+
+func (e *PaymentReason) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PaymentReason(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PaymentReason", str)
+	}
+	return nil
+}
+
+func (e PaymentReason) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/elc49/copod/tigris"
+	"github.com/elc49/copod/util"
 )
 
 const (
@@ -30,7 +31,7 @@ func UploadDoc() http.Handler {
 			return
 		}
 
-		if err := writeJSON(w, struct {
+		if err := util.WriteHttp(w, struct {
 			ImageUri string `json:"imageUri"`
 		}{
 			ImageUri: *url,

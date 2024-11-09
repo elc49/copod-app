@@ -6,11 +6,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,6 +21,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
@@ -28,6 +32,10 @@ import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
+import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
+import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
+import org.koin.androidx.compose.koinViewModel
 
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
@@ -38,8 +46,12 @@ object MpesaScreenDestination : Navigation {
 fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    viewModel: MpesaViewModel = koinViewModel<MpesaViewModel>(),
+    mainViewModel: MainViewModel,
 ) {
+    val mpesa by viewModel.mpesa.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
+    val userInfo = mainViewModel.userInfo
 
     Scaffold(topBar = {
         TopBar(title = {
@@ -64,8 +76,8 @@ fun MpesaScreen(
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
                 OutlinedTextField(
-                    value = "",
-                    onValueChange = {},
+                    value = mpesa.phone,
+                    onValueChange = { viewModel.setPhone(it) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     label = {
@@ -77,19 +89,26 @@ fun MpesaScreen(
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide()
-                        // TODO submit request
+                        viewModel.chargeMpesa(userInfo?.email!!)
                     })
                 )
                 Button(
-                    onClick = {},
+                    onClick = { viewModel.chargeMpesa(userInfo?.email!!) },
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraSmall,
                 ) {
-                    Text(
-                        stringResource(R.string.pay),
-                        style = MaterialTheme.typography.titleMedium,
-                    )
+                    when (viewModel.chargingMpesa) {
+                        ChargingMpesa.Success -> Text(
+                            stringResource(R.string.pay),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        ChargingMpesa.Loading -> CircularProgressIndicator(
+                            Modifier.size(20.dp),
+                            MaterialTheme.colorScheme.onPrimary,
+                        )
+                    }
                 }
             }
         }
