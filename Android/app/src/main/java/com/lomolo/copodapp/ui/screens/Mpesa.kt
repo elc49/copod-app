@@ -12,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -36,6 +37,7 @@ object MpesaScreenDestination : Navigation {
 @Composable
 fun MpesaScreen(
     modifier: Modifier = Modifier,
+    onGoBack: () -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -43,10 +45,14 @@ fun MpesaScreen(
         TopBar(title = {
             Text(stringResource(R.string.mpesa))
         }, navigationIcon = {
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowBack,
-                contentDescription = stringResource(R.string.go_back),
-            )
+            IconButton(
+                onClick = onGoBack,
+            ) {
+                Icon(
+                    Icons.AutoMirrored.TwoTone.ArrowBack,
+                    contentDescription = stringResource(R.string.go_back),
+                )
+            }
         })
     }) { innerPadding ->
         Surface(modifier = modifier) {
@@ -78,7 +84,7 @@ fun MpesaScreen(
                     onClick = {},
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth(),
-                    shape = MaterialTheme.shapes.small,
+                    shape = MaterialTheme.shapes.extraSmall,
                 ) {
                     Text(
                         stringResource(R.string.pay),

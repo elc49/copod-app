@@ -126,6 +126,9 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 viewModel = registerLandViewModel,
+                onNext = {
+                    navHostController.navigate(MpesaScreenDestination.route)
+                }
             )
         }
         composable(route = LandScreenDestination.route) {
@@ -140,7 +143,11 @@ fun NavigationHost(
             )
         }
         composable(route = MpesaScreenDestination.route) {
-            MpesaScreen()
+            MpesaScreen(
+                onGoBack = {
+                    navHostController.popBackStack()
+                }
+            )
         }
     }
 }
