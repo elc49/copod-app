@@ -13,6 +13,7 @@ import com.lomolo.copodapp.retrofit.getRestApiClient
 import com.lomolo.copodapp.ui.viewmodels.LandViewModel
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
+import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
 import com.lomolo.copodapp.web3.getWeb3AuthImpl
 import com.squareup.moshi.Moshi
@@ -34,4 +35,5 @@ val appModule = module {
     viewModel { MarketViewModel(get()) }
     viewModel { RegisterLandViewModel(get()) }
     viewModel { LandViewModel(get()) }
+    viewModel { MpesaViewModel() }
 }
