@@ -26,6 +26,24 @@ type Land {
 
 type Mutation {
   createUploads(input: [UploadInput!]!): Boolean
+
+  chargeMpesa(input: PayWithMpesaInput!): String
+}
+
+input PayWithMpesaInput {
+  reason: PaymentReason!
+
+  phone: String!
+
+  amount: Int!
+
+  email: String!
+
+  currency: String!
+}
+
+enum PaymentReason {
+  LAND_REGISTRATION
 }
 
 type Query {
