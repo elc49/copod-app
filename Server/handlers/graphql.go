@@ -15,7 +15,6 @@ import (
 func GraphQL() *handler.Server {
 	h := handler.New(graph.NewExecutableSchema(graph.New()))
 	h.AddTransport(&transport.POST{})
-	// Setup websocket even though I don't need this now
 	h.AddTransport(&transport.Websocket{
 		KeepAlivePingInterval: 10 * time.Second,
 		Upgrader: websocket.Upgrader{

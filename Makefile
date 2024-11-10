@@ -2,7 +2,7 @@
 test-contracts:
 	cd SmartContract && npm run test
 # Run server/api tests
-test-server:
+test-api:
 	cd Server && go test ./test
 # Tidy server
 tidy:
