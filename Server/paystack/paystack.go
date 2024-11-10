@@ -41,6 +41,9 @@ func GetPaystackService() Paystack {
 }
 
 func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*MpesaChargeResponse, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
 	var chargeResponse *MpesaChargeResponse
 	chargeApi := config.C.Paystack.BaseApi + "/charge"
 	input.Provider.Provider = "mpesa"
