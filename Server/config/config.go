@@ -73,6 +73,7 @@ func databaseConfig() Database {
 	var config Database
 
 	config.Rdbms = postgres.PostgresConfig()
+	config.Redis = RedisConfig()
 
 	return config
 }
