@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.lomolo.copodapp.model.DeviceDetails
+import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.web3auth.core.types.ExtraLoginOptions
 import com.web3auth.core.types.LoginParams
@@ -21,15 +23,21 @@ import kotlinx.coroutines.launch
 import org.web3j.crypto.Credentials
 
 interface InitializeSdk {
-    data object Success: InitializeSdk
-    data object Loading: InitializeSdk
-    data class Error(val msg: String?): InitializeSdk
+    data object Success : InitializeSdk
+    data object Loading : InitializeSdk
+    data class Error(val msg: String?) : InitializeSdk
 }
 
 interface LoginSdk {
-    data object Success: LoginSdk
-    data object Loading: LoginSdk
-    data class Error(val msg: String?): LoginSdk
+    data object Success : LoginSdk
+    data object Loading : LoginSdk
+    data class Error(val msg: String?) : LoginSdk
+}
+
+interface GetDeviceDetails {
+    data object Success : GetDeviceDetails
+    data object Loading : GetDeviceDetails
+    data class Error(val msg: String?) : GetDeviceDetails
 }
 
 data class LoginInput(
@@ -37,22 +45,32 @@ data class LoginInput(
 )
 
 class MainViewModel(
-    private val web3Auth: IWeb3Auth
+    private val web3Auth: IWeb3Auth,
+    private val restApiService: IRestFul,
 ) : ViewModel() {
     var credentials: Credentials? by mutableStateOf(null)
         private set
+
     var userInfo: UserInfo? by mutableStateOf(null)
         private set
+
     private val _isLoggedIn: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn.asStateFlow()
 
     var initializeSdk: InitializeSdk by mutableStateOf(InitializeSdk.Success)
         private set
+
     var loginSdk: LoginSdk by mutableStateOf(LoginSdk.Success)
         private set
 
     private val _loginInput: MutableStateFlow<LoginInput> = MutableStateFlow(LoginInput())
     val loginInput: StateFlow<LoginInput> = _loginInput.asStateFlow()
+
+    private val _deviceDetails: MutableStateFlow<DeviceDetails> = MutableStateFlow(DeviceDetails())
+    val deviceDetails: StateFlow<DeviceDetails> = _deviceDetails.asStateFlow()
+
+    var gettingDeviceDetails: GetDeviceDetails by mutableStateOf(GetDeviceDetails.Success)
+        private set
 
     fun setEmail(email: String) {
         _loginInput.update {
@@ -144,15 +162,37 @@ class MainViewModel(
     fun initialize() {
         initializeSdk = InitializeSdk.Loading
         viewModelScope.launch {
-            try {
+            initializeSdk = try {
                 web3Auth.initialize().await()
                 isUserLoggedIn()
-                initializeSdk = InitializeSdk.Success
+                InitializeSdk.Success
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d(TAG, e.message ?: "Something went wrong")
-                initializeSdk = InitializeSdk.Error(e.message)
+                InitializeSdk.Error(e.message)
             }
         }
+    }
+
+    private fun getDeviceDetails() {
+        if (gettingDeviceDetails !is GetDeviceDetails.Loading) {
+            gettingDeviceDetails = GetDeviceDetails.Loading
+            viewModelScope.launch {
+                gettingDeviceDetails = try {
+                    val res = restApiService.getIpinfo()
+                    _deviceDetails.update {
+                        res
+                    }
+                    GetDeviceDetails.Success
+                } catch (e: Exception) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    GetDeviceDetails.Error(e.message)
+                }
+            }
+        }
+    }
+
+    init {
+        getDeviceDetails()
     }
 }

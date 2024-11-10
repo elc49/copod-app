@@ -26,6 +26,7 @@ import com.lomolo.copodapp.ui.screens.UploadLandTitle
 import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
+import com.lomolo.copodapp.ui.viewmodels.GetDeviceDetails
 import com.lomolo.copodapp.ui.viewmodels.InitializeSdk
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
@@ -50,12 +51,16 @@ fun NavigationHost(
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
-        InitializeSdk.Loading -> LoadingScreenDestination.route
+        InitializeSdk.Loading -> {
+            when(mainViewModel.gettingDeviceDetails) {
+                GetDeviceDetails.Loading -> LoadingScreenDestination.route
+            }
+            LoadingScreenDestination.route
+        }
         InitializeSdk.Success -> {
-            if (isLoggedIn) {
-                ExploreMarketsScreenDestination.route
-            } else {
-                HomeScreenDestination.route
+            when(isLoggedIn) {
+                true -> ExploreMarketsScreenDestination.route
+                false -> HomeScreenDestination.route
             }
         }
 

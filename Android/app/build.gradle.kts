@@ -7,6 +7,7 @@ plugins {
     id("com.apollographql.apollo") version "4.1.0"
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
+    //id("com.google.gms.google-services")
 }
 
 android {
@@ -77,6 +78,9 @@ dependencies {
     implementation(libs.converter.moshi)
     implementation(libs.retrofit)
     implementation(libs.apollo.normalized.cache)
+    implementation(libs.play.services.maps)
+    implementation(libs.libphonenumber)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
