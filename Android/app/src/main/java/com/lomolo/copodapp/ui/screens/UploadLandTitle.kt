@@ -48,7 +48,6 @@ fun UploadLandTitle(
             if (land.isNullOrEmpty()) {
                 R.drawable.upload
             } else {
-                println(land)
                 land
             }
         }
