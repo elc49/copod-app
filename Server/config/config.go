@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/elc49/copod/config/postgres"
+	"github.com/elc49/copod/config/redis"
 	"github.com/elc49/copod/logger"
 	"github.com/joho/godotenv"
 )
@@ -18,6 +19,7 @@ type config struct {
 	Server   Server
 	Database Database
 	Paystack Paystack
+	Ipinfo   Ipinfo
 }
 
 func env() {
@@ -34,6 +36,7 @@ func New() {
 	c.Tigris = tigrisConfig()
 	c.Database = databaseConfig()
 	c.Paystack = paystackConfig()
+	c.Ipinfo = ipinfoConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
@@ -73,7 +76,7 @@ func databaseConfig() Database {
 	var config Database
 
 	config.Rdbms = postgres.PostgresConfig()
-	config.Redis = RedisConfig()
+	config.Redis = redis.RedisConfig()
 
 	return config
 }
@@ -89,6 +92,14 @@ func paystackConfig() Paystack {
 	config.SecretKey = strings.TrimSpace(os.Getenv("PAYSTACK_SECRET_KEY"))
 	config.MobileTestAccount = strings.TrimSpace(os.Getenv("PAYSTACK_MOBILE_TEST_ACCOUNT"))
 	config.LandFees = strings.TrimSpace(os.Getenv("PAYSTACK_LAND_FEES"))
+
+	return config
+}
+
+func ipinfoConfig() Ipinfo {
+	var config Ipinfo
+
+	config.ApiKey = strings.TrimSpace(os.Getenv("IPINFO_API_KEY"))
 
 	return config
 }

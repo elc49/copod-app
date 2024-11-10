@@ -10,11 +10,13 @@ import (
 	"time"
 
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
 	"github.com/elc49/copod/handlers/webhook"
+	"github.com/elc49/copod/ip"
 	copodMiddleware "github.com/elc49/copod/middleware"
 	"github.com/elc49/copod/paystack"
 	db "github.com/elc49/copod/sql"
@@ -81,7 +83,12 @@ func (s *Server) MountRouter() *chi.Mux {
 	r.Handle("/graphql", handlers.GraphQL())
 	r.Route("/api", func(r chi.Router) {
 		r.Handle("/upload", handlers.UploadDoc())
-		r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
+		r.Group(func(r chi.Router) {
+			// Allow json content for below endpoints
+			r.Use(middleware.AllowContentType("application/json"))
+			r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
+			r.Handle("/ipinfo", handlers.Ipinfo())
+		})
 	})
 	return r
 }
@@ -106,4 +113,12 @@ func (s *Server) TigrisService() {
 
 func (s *Server) PaystackService() {
 	paystack.New(s.sql)
+}
+
+func (s *Server) CacheService() {
+	cache.New()
+}
+
+func (s *Server) IpinfoService() {
+	ip.New()
 }

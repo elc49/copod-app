@@ -10,6 +10,8 @@ func main() {
 	s.TigrisService()
 	s.Database(config.C.Database.Rdbms)
 	s.PaystackService()
+	s.CacheService()
+	s.IpinfoService()
 	s.MountController()
 	s.Start()
 }

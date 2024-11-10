@@ -25,3 +25,15 @@ func DecodeHttp(in io.ReadCloser, out interface{}) error {
 	}
 	return nil
 }
+
+func DecodeJson(in []byte, out interface{}) error {
+	if err := json.Unmarshal(in, out); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func EncodeJson(v interface{}) ([]byte, error) {
+	return json.Marshal(v)
+}

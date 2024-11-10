@@ -1,14 +1,15 @@
-package config
+package redis
 
 import (
 	"os"
+	"strconv"
 	"strings"
 )
 
 type Redis struct {
 	Host     string
 	Password string
-	Db       string
+	Db       int
 }
 
 func RedisConfig() Redis {
@@ -16,7 +17,11 @@ func RedisConfig() Redis {
 
 	config.Host = strings.TrimSpace(os.Getenv("REDIS_ENDPOINT"))
 	config.Password = strings.TrimSpace(os.Getenv("REDIS_PASSWORD"))
-	config.Db = strings.TrimSpace(os.Getenv("REDIS_DATABASE"))
+	db, err := strconv.Atoi(strings.TrimSpace(os.Getenv("REDIS_DATABASE")))
+	if err != nil {
+		panic(err)
+	}
+	config.Db = db
 
 	return config
 }
