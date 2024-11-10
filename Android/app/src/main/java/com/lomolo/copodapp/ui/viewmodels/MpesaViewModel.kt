@@ -7,9 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
+import com.lomolo.copodapp.model.DeviceDetails
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import com.lomolo.copodapp.type.PaymentReason
+import com.lomolo.copodapp.util.Phone
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,14 +41,25 @@ class MpesaViewModel(
         _mpesa.update { it.copy(phone = phone) }
     }
 
-    fun chargeMpesa(email: String) {
+    fun isValidPhone(uiState: Mpesa, deviceDetails: DeviceDetails): Boolean {
+        return with(uiState) {
+            Phone.isValid(
+                phone,
+                deviceDetails.countryCode,
+                deviceDetails.callingCode,
+            )
+        }
+    }
+
+    fun chargeMpesa(email: String, deviceDetails: DeviceDetails) {
         if (chargingMpesa !is ChargingMpesa.Loading) {
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
                 chargingMpesa = try {
+                    val phone = Phone.formatPhone(_mpesa.value.phone, deviceDetails.countryCode)
                     val input = PayWithMpesaInput(
                         reason = PaymentReason.LAND_REGISTRATION,
-                        phone = _mpesa.value.phone,
+                        phone = phone,
                         email = email,
                         currency = "KES",
                     )
