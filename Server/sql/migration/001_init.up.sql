@@ -14,11 +14,12 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_user_govt_id ON users(govt_id);
 
 CREATE TABLE IF NOT EXISTS lands(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  title TEXT NOT NULL,
+  title TEXT NOT NULL DEFAULT '',
   size FLOAT NOT NULL DEFAULT 0.0,
   symbol VARCHAR(5) NOT NULL DEFAULT '',
   verified TEXT NOT NULL DEFAULT 'ONBOARDING',
-  govt_id TEXT NOT NULL REFERENCES users(govt_id),
+  govt_id TEXT REFERENCES users(govt_id),
+  paid_for TEXT NOT NULL DEFAULT 'PAID',
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -29,8 +30,22 @@ CREATE TABLE IF NOT EXISTS uploads(
   type TEXT NOT NULL,
   uri TEXT NOT NULL,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
-  wallet_address TEXT NOT NULL REFERENCES users(wallet_address) ON DELETE CASCADE,
+  wallet_address TEXT NOT NULL REFERENCES users(wallet_address),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_upload_wallet ON uploads(wallet_address);
+
+CREATE TABLE IF NOT EXISTS payments(
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  email TEXT NOT NULL,
+  amount INTEGER NOT NULL,
+  currency TEXT NOT NULL,
+  reason TEXT NOT NULL,
+  status TEXT NOT NULL,
+  reference_id TEXT NOT NULL,
+  upload_id UUID REFERENCES uploads(id),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_reference_id ON payments(reference_id);

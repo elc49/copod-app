@@ -8,7 +8,7 @@ import (
 	sql "github.com/elc49/copod/sql/sqlc"
 )
 
-var PC *Upload
+var uploadController *Upload
 
 type UploadController interface {
 	CreateUpload(context.Context, sql.CreateUploadParams) (*model.Upload, error)
@@ -25,7 +25,11 @@ func (c *Upload) Init(sql *sql.Queries) {
 	r := &repository.Upload{}
 	r.Init(sql)
 	c.r = r
-	PC = c
+	uploadController = c
+}
+
+func GetUploadController() UploadController {
+	return uploadController
 }
 
 func (c *Upload) CreateUpload(ctx context.Context, args sql.CreateUploadParams) (*model.Upload, error) {

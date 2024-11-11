@@ -15,6 +15,12 @@ enum Verification {
   REJECTED
 }
 
+# Paid for
+enum PaidFor {
+  PAID
+  NOT_PAID
+}
+
 # PaymentReason
 enum PaymentReason {
   LAND_REGISTRATION

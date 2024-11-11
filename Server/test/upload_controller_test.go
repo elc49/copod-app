@@ -11,31 +11,15 @@ import (
 )
 
 func Test_Upload_Controller(t *testing.T) {
-	defer func() {
-		ctx := context.Background()
-		q.ClearTestUploads(ctx)
-		q.ClearTestUsers(ctx)
-	}()
-
 	t.Run("create_upload", func(t *testing.T) {
-		uc := controller.UC
-		u, _ := uc.CreateUser(context.Background(), sql.CreateUserParams{
-			Email:         RandomEmailAddress(),
-			WalletAddress: RandomWalletAddress(),
-			GovtID:        RandomGovtID(),
-		})
-
-		pc := controller.PC
-		p, err := pc.CreateUpload(context.Background(), sql.CreateUploadParams{
+		uc := controller.GetUploadController()
+		p, err := uc.CreateUpload(context.Background(), sql.CreateUploadParams{
 			Type:          model.DocLandTitle.String(),
 			Uri:           docUri,
-			WalletAddress: u.WalletAddress,
+			WalletAddress: superUserWallet,
 		})
 
 		assert.Equal(t, p.URI, docUri)
 		assert.Nil(t, err)
-	})
-
-	t.Run("get_upload", func(t *testing.T) {
 	})
 }

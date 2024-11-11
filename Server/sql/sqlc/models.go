@@ -5,20 +5,35 @@
 package sql
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
 
 type Land struct {
-	ID        uuid.UUID `json:"id"`
-	Title     string    `json:"title"`
-	Size      float64   `json:"size"`
-	Symbol    string    `json:"symbol"`
-	Verified  string    `json:"verified"`
-	GovtID    string    `json:"govt_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID        uuid.UUID      `json:"id"`
+	Title     string         `json:"title"`
+	Size      float64        `json:"size"`
+	Symbol    string         `json:"symbol"`
+	Verified  string         `json:"verified"`
+	GovtID    sql.NullString `json:"govt_id"`
+	PaidFor   string         `json:"paid_for"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+}
+
+type Payment struct {
+	ID          uuid.UUID     `json:"id"`
+	Email       string        `json:"email"`
+	Amount      int32         `json:"amount"`
+	Currency    string        `json:"currency"`
+	Reason      string        `json:"reason"`
+	Status      string        `json:"status"`
+	ReferenceID string        `json:"reference_id"`
+	UploadID    uuid.NullUUID `json:"upload_id"`
+	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
 }
 
 type Upload struct {

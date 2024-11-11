@@ -8,7 +8,7 @@ import (
 	sql "github.com/elc49/copod/sql/sqlc"
 )
 
-var UC *User
+var userController *User
 
 type UserController interface {
 	CreateUser(context.Context, sql.CreateUserParams) (*model.User, error)
@@ -25,7 +25,11 @@ func (c *User) Init(sql *sql.Queries) {
 	r := &repository.User{}
 	r.Init(sql)
 	c.r = r
-	UC = c
+	userController = c
+}
+
+func GetUserController() UserController {
+	return userController
 }
 
 func (c *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*model.User, error) {
