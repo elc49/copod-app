@@ -54,6 +54,13 @@ type User {
   updated_at: Time!
 }
 
+# Payment update
+type PaymentUpdate {
+  referenceId: String!
+  status: String!
+  walletAddress: String!
+}
+
 type Query {
   getLocalLands: [Land!]!
   getUserLands(walletAddress: String!): [Land!]!
@@ -76,4 +83,8 @@ input PayWithMpesaInput {
 type Mutation {
   createUploads(input: [UploadInput!]!): Boolean
   chargeMpesa(input: PayWithMpesaInput!): String
+}
+
+type Subscription {
+  paymentUpdate(walletAddress: String!): PaymentUpdate!
 }

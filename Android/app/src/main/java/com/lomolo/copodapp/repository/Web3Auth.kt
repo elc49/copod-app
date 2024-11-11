@@ -5,6 +5,7 @@ import com.web3auth.core.Web3Auth
 import com.web3auth.core.types.LoginParams
 import com.web3auth.core.types.UserInfo
 import com.web3auth.core.types.Web3AuthResponse
+import org.web3j.crypto.Credentials
 import java.util.concurrent.CompletableFuture
 
 interface IWeb3Auth {
@@ -15,6 +16,7 @@ interface IWeb3Auth {
     suspend fun initialize(): CompletableFuture<Void>
     suspend fun setResultUri(uri: Uri?)
     suspend fun isAuthenticated(): Boolean
+    fun getCredentials(privateKey: String): Credentials
 }
 
 class Web3Auth(
@@ -34,4 +36,5 @@ class Web3Auth(
     override suspend fun initialize() = web3Auth.initialize()
     override suspend fun setResultUri(uri: Uri?) = web3Auth.setResultUrl(uri)
     override suspend fun isAuthenticated() = web3Auth.getPrivkey().isNotEmpty()
+    override fun getCredentials(privateKey: String) = Credentials.create(privateKey)
 }

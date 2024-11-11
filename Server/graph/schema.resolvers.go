@@ -9,6 +9,12 @@ import (
 
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
+	"github.com/elc49/copod/util"
+	"github.com/sirupsen/logrus"
+)
+
+const (
+	PAYMENT_UPDATE_CHANNEL = "payment_updated"
 )
 
 // CreateUploads is the resolver for the createUploads field.
@@ -27,6 +33,7 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 
 	res, err := r.paystack.ChargeMpesa(ctx, charge)
 	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"charge": charge}).Errorf("graph resolvers: ChargeMpesa")
 		return nil, err
 	}
 
@@ -48,11 +55,37 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 	return false, nil
 }
 
+// PaymentUpdate is the resolver for the paymentUpdate field.
+func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error) {
+	ch := make(chan *model.PaymentUpdate)
+	pubsub := r.redis.Subscribe(context.Background(), PAYMENT_UPDATE_CHANNEL)
+
+	go func() {
+		for msg := range pubsub.Channel() {
+			var result *model.PaymentUpdate
+			if err := util.DecodeJson([]byte(msg.Payload), &result); err != nil {
+				r.log.WithError(err).WithFields(logrus.Fields{"payload": msg.Payload}).Errorf("resolvers: DecodeJson msg.Payload")
+				return
+			}
+
+			if result.WalletAddress == walletAddress {
+				ch <- result
+			}
+		}
+	}()
+
+	return ch, nil
+}
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
+// Subscription returns SubscriptionResolver implementation.
+func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type subscriptionResolver struct{ *Resolver }

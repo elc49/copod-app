@@ -56,7 +56,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*M
 	case model.PaymentReasonLandRegistration.String():
 		i, err := strconv.Atoi(config.C.Paystack.LandFees)
 		if err != nil {
-			p.log.WithError(err).WithFields(logrus.Fields{"int": config.C.Paystack.LandFees}).Errorf("paystack: strconv.Atoi")
+			p.log.WithError(err).WithFields(logrus.Fields{"int": config.C.Paystack.LandFees}).Errorf("paystack: strconv.Atoi fees")
 			return nil, err
 		}
 		fees = i

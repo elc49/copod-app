@@ -16,6 +16,7 @@ var c *cacheClient
 type Cache interface {
 	Get(ctx context.Context, key string, returnValue interface{}) (interface{}, error)
 	Set(ctx context.Context, key string, value interface{}, expires time.Duration) error
+	Redis() *redis.Client
 }
 
 type cacheClient struct {
@@ -42,6 +43,10 @@ func New() {
 
 func GetCache() Cache {
 	return c
+}
+
+func (c *cacheClient) Redis() *redis.Client {
+	return c.rdb
 }
 
 func (c *cacheClient) Get(ctx context.Context, key string, returnValue interface{}) (interface{}, error) {

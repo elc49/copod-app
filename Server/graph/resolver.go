@@ -1,6 +1,12 @@
 package graph
 
-import "github.com/elc49/copod/paystack"
+import (
+	"github.com/elc49/copod/cache"
+	"github.com/elc49/copod/logger"
+	"github.com/elc49/copod/paystack"
+	"github.com/redis/go-redis/v9"
+	"github.com/sirupsen/logrus"
+)
 
 //go:generate go run github.com/99designs/gqlgen generate --verbose
 
@@ -10,11 +16,15 @@ import "github.com/elc49/copod/paystack"
 
 type Resolver struct {
 	paystack paystack.Paystack
+	redis    *redis.Client
+	log      *logrus.Logger
 }
 
 func New() Config {
 	r := &Resolver{
 		paystack.GetPaystackService(),
+		cache.GetCache().Redis(),
+		logger.GetLogger(),
 	}
 	return Config{Resolvers: r}
 }
