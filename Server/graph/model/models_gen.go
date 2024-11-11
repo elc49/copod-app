@@ -33,7 +33,16 @@ type PayWithMpesaInput struct {
 	Currency string        `json:"currency"`
 }
 
+type PaymentUpdate struct {
+	ReferenceID   string `json:"referenceId"`
+	Status        string `json:"status"`
+	WalletAddress string `json:"walletAddress"`
+}
+
 type Query struct {
+}
+
+type Subscription struct {
 }
 
 type Upload struct {

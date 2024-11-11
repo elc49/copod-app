@@ -44,12 +44,24 @@ enum PaymentReason {
   LAND_REGISTRATION
 }
 
+type PaymentUpdate {
+  referenceId: String!
+
+  status: String!
+
+  walletAddress: String!
+}
+
 type Query {
   getLocalLands: [Land!]!
 
   getUserLands(walletAddress: String!): [Land!]!
 
   hasPendingLandRecords(walletAddress: String!): Boolean!
+}
+
+type Subscription {
+  paymentUpdate(walletAddress: String!): PaymentUpdate!
 }
 
 scalar Time
@@ -270,4 +282,5 @@ directive @specifiedBy (url: String!) on SCALAR
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }

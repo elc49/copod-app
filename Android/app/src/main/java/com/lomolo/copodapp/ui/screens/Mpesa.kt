@@ -84,7 +84,7 @@ fun MpesaScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
                     .padding(8.dp),
-                verticalArrangement = Arrangement.SpaceBetween,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 OutlinedTextField(
                     isError = mpesa.phone.isNotEmpty() && !isPhoneValid,
@@ -136,6 +136,11 @@ fun MpesaScreen(
                         ChargingMpesa.Success -> Text(
                             stringResource(R.string.pay),
                             style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        ChargingMpesa.Paying -> CircularProgressIndicator(
+                            Modifier.size(20.dp),
+                            MaterialTheme.colorScheme.onPrimary,
                         )
 
                         ChargingMpesa.Loading -> CircularProgressIndicator(

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.model.DeviceDetails
 import com.lomolo.copodapp.network.IGraphQL
+import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import com.lomolo.copodapp.type.PaymentReason
 import com.lomolo.copodapp.util.Phone
@@ -21,6 +22,8 @@ import kotlinx.coroutines.launch
 interface ChargingMpesa {
     data object Loading: ChargingMpesa
     data object Success: ChargingMpesa
+    data object Paying: ChargingMpesa
+    data object Paid: ChargingMpesa
     data class Error(val msg: String?): ChargingMpesa
 }
 
@@ -30,6 +33,7 @@ data class Mpesa(
 
 class MpesaViewModel(
     private val graphqlApiService: IGraphQL,
+    private val web3Auth: IWeb3Auth,
 ): ViewModel() {
     private val _mpesa: MutableStateFlow<Mpesa> = MutableStateFlow(Mpesa())
     val mpesa: StateFlow<Mpesa> = _mpesa.asStateFlow()
@@ -52,7 +56,7 @@ class MpesaViewModel(
     }
 
     fun chargeMpesa(email: String, deviceDetails: DeviceDetails) {
-        if (chargingMpesa !is ChargingMpesa.Loading) {
+        if (chargingMpesa !is ChargingMpesa.Loading && chargingMpesa !is ChargingMpesa.Paying) {
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
                 chargingMpesa = try {
@@ -64,7 +68,7 @@ class MpesaViewModel(
                         currency = "KES",
                     )
                     graphqlApiService.chargeMpesa(input)
-                    ChargingMpesa.Success
+                    ChargingMpesa.Paying
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     ChargingMpesa.Error(e.message)
@@ -75,5 +79,28 @@ class MpesaViewModel(
 
     companion object {
         private const val TAG = "MpesaViewModel"
+    }
+
+    init {
+        viewModelScope.launch {
+            val credentials = web3Auth.getCredentials(web3Auth.getPrivateKey())
+            try {
+                graphqlApiService.paymentUpdate(credentials.address).collect {
+                    Log.d(TAG, it.data?.paymentUpdate.toString())
+                    val data = it.data?.paymentUpdate
+                    chargingMpesa = when(data?.status) {
+                        "success" -> {
+                            ChargingMpesa.Paid
+                        }
+
+                        else -> {
+                            ChargingMpesa.Success
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d(TAG, e.message ?: "Something went wrong")
+            }
+        }
     }
 }

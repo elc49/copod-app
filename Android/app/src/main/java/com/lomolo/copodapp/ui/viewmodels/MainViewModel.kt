@@ -79,7 +79,7 @@ class MainViewModel(
     }
 
     private fun prepareCredentials() {
-        credentials = Credentials.create(privateKey())
+        credentials = web3Auth.getCredentials(privateKey())
     }
 
     private fun prepareUserInfo() {

@@ -1,0 +1,6 @@
+subscription PaymentUpdate($walletAddress: String!) {
+    paymentUpdate(walletAddress: $walletAddress) {
+        referenceId
+        status
+    }
+}
