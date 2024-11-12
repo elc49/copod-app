@@ -25,7 +25,7 @@ type Land {
 }
 
 type Mutation {
-  createUploads(input: [UploadInput!]!): Boolean
+  createUpload(input: UploadInput!): Upload!
 
   chargeMpesa(input: PayWithMpesaInput!): String
 }
@@ -79,7 +79,9 @@ scalar UUID
 type Upload {
   id: UUID!
 
-  uri: String!
+  titleDoc: String
+
+  govtId: String
 
   type: Doc!
 
@@ -93,9 +95,11 @@ type Upload {
 input UploadInput {
   type: Doc!
 
-  uri: String!
+  titleDoc: String!
 
-  wallet_address: String!
+  govtId: String!
+
+  email: String!
 }
 
 type User {

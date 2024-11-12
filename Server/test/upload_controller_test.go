@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	db "database/sql"
 	"testing"
 
 	"github.com/elc49/copod/controller"
@@ -12,28 +13,15 @@ import (
 
 func Test_Upload_Controller(t *testing.T) {
 	t.Run("create_upload", func(t *testing.T) {
-		uc := controller.GetUploadController()
-		uploads := []sql.CreateUploadParams{
-			{
-				Type:          model.DocLandTitle.String(),
-				Uri:           docUri,
-				WalletAddress: superUserWallet,
-			},
-			{
-				Type:          model.DocLandTitle.String(),
-				Uri:           docUri,
-				WalletAddress: superUserWallet,
-			},
-		}
-		for _, i := range uploads {
-			p, err := uc.CreateUpload(context.Background(), sql.CreateUploadParams{
-				Type:          i.Type,
-				Uri:           i.Uri,
-				WalletAddress: i.WalletAddress,
-			})
+		pc := controller.GetUploadController()
+		p, err := pc.CreateUpload(context.Background(), sql.CreateUploadParams{
+			Type:     model.DocLandTitle.String(),
+			TitleDoc: db.NullString{String: docUri, Valid: true},
+			GovtID:   db.NullString{String: docUri, Valid: true},
+			Email:    superUserEmail,
+		})
 
-			assert.Equal(t, p.URI, i.Uri)
-			assert.Nil(t, err)
-		}
+		assert.Equal(t, *p.TitleDoc, docUri)
+		assert.Nil(t, err)
 	})
 }

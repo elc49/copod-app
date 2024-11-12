@@ -2,6 +2,7 @@ package test
 
 import (
 	"context"
+	db "database/sql"
 	"testing"
 
 	"github.com/elc49/copod/controller"
@@ -18,9 +19,10 @@ func Test_Payment_Controller(t *testing.T) {
 	t.Run("create_payment", func(t *testing.T) {
 		uc := controller.GetUploadController()
 		p, err := uc.CreateUpload(context.Background(), sql.CreateUploadParams{
-			Type:          model.DocLandTitle.String(),
-			Uri:           docUri,
-			WalletAddress: superUserWallet,
+			Type:     model.DocLandTitle.String(),
+			TitleDoc: db.NullString{String: docUri, Valid: true},
+			GovtID:   db.NullString{String: docUri, Valid: true},
+			Email:    superUserEmail,
 		})
 		assert.Nil(t, err)
 

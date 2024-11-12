@@ -48,13 +48,15 @@ import org.koin.androidx.compose.koinViewModel
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
     override val route = "mpesa"
+    const val UPLOAD_ID_ARG = "uploadId"
+    val routeWithArgs = "$route/{$UPLOAD_ID_ARG}"
 }
 
 @Composable
 fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    viewModel: MpesaViewModel = koinViewModel<MpesaViewModel>(),
+    viewModel: MpesaViewModel = koinViewModel(),
     mainViewModel: MainViewModel,
 ) {
     val mpesa by viewModel.mpesa.collectAsState()

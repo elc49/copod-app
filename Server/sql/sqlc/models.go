@@ -37,13 +37,14 @@ type Payment struct {
 }
 
 type Upload struct {
-	ID            uuid.UUID `json:"id"`
-	Type          string    `json:"type"`
-	Uri           string    `json:"uri"`
-	Verification  string    `json:"verification"`
-	WalletAddress string    `json:"wallet_address"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID           uuid.UUID      `json:"id"`
+	Type         string         `json:"type"`
+	TitleDoc     sql.NullString `json:"title_doc"`
+	GovtID       sql.NullString `json:"govt_id"`
+	Verification string         `json:"verification"`
+	Email        string         `json:"email"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
 }
 
 type User struct {

@@ -48,7 +48,8 @@ type Subscription struct {
 
 type Upload struct {
 	ID        uuid.UUID    `json:"id"`
-	URI       string       `json:"uri"`
+	TitleDoc  *string      `json:"titleDoc,omitempty"`
+	GovtID    *string      `json:"govtId,omitempty"`
 	Type      Doc          `json:"type"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -56,9 +57,10 @@ type Upload struct {
 }
 
 type UploadInput struct {
-	Type          Doc    `json:"type"`
-	URI           string `json:"uri"`
-	WalletAddress string `json:"wallet_address"`
+	Type     Doc    `json:"type"`
+	TitleDoc string `json:"titleDoc"`
+	GovtID   string `json:"govtId"`
+	Email    string `json:"email"`
 }
 
 type User struct {

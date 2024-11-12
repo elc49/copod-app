@@ -6,18 +6,26 @@ package graph
 
 import (
 	"context"
+	db "database/sql"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
 	"github.com/sirupsen/logrus"
 )
 
-// CreateUploads is the resolver for the createUploads field.
-func (r *mutationResolver) CreateUploads(ctx context.Context, input []*model.UploadInput) (*bool, error) {
-	b := false
-	return &b, nil
+// CreateUpload is the resolver for the createUpload field.
+func (r *mutationResolver) CreateUpload(ctx context.Context, input model.UploadInput) (*model.Upload, error) {
+	args := sql.CreateUploadParams{
+		Type:     string(input.Type),
+		TitleDoc: db.NullString{String: input.TitleDoc, Valid: true},
+		GovtID:   db.NullString{String: input.GovtID, Valid: true},
+		Email:    input.Email,
+	}
+
+	return r.uploadController.CreateUpload(ctx, args)
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.

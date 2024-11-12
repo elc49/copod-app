@@ -42,7 +42,8 @@ type Land {
 # Upload
 type Upload {
   id: UUID!
-  uri: String!
+  titleDoc: String
+  govtId: String
   type: Doc!
   verified: Verification!
   created_at: Time!
@@ -75,8 +76,9 @@ type Query {
 
 input UploadInput {
   type: Doc!
-  uri: String!
-  wallet_address: String!
+  titleDoc: String!
+  govtId: String!
+  email: String!
 }
 
 input PayWithMpesaInput {
@@ -88,7 +90,7 @@ input PayWithMpesaInput {
 }
 
 type Mutation {
-  createUploads(input: [UploadInput!]!): Boolean
+  createUpload(input: UploadInput!): Upload!
   chargeMpesa(input: PayWithMpesaInput!): String
 }
 

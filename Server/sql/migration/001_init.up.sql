@@ -28,13 +28,14 @@ CREATE INDEX IF NOT EXISTS idx_lands_govt_id ON lands(govt_id);
 CREATE TABLE IF NOT EXISTS uploads(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   type TEXT NOT NULL,
-  uri TEXT NOT NULL,
+  title_doc TEXT,
+  govt_id TEXT,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
-  wallet_address TEXT NOT NULL REFERENCES users(wallet_address),
+  email TEXT NOT NULL REFERENCES users(email),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX IF NOT EXISTS idx_upload_wallet ON uploads(wallet_address);
+CREATE INDEX IF NOT EXISTS idx_upload_email ON uploads(email);
 
 CREATE TABLE IF NOT EXISTS payments(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
