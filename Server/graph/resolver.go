@@ -2,7 +2,6 @@ package graph
 
 import (
 	"github.com/elc49/copod/cache"
-	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/paystack"
 	"github.com/redis/go-redis/v9"
@@ -16,10 +15,9 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	paystack         paystack.Paystack
-	redis            *redis.Client
-	log              *logrus.Logger
-	uploadController controller.UploadController
+	paystack paystack.Paystack
+	redis    *redis.Client
+	log      *logrus.Logger
 }
 
 func New() Config {
@@ -27,7 +25,6 @@ func New() Config {
 		paystack.GetPaystackService(),
 		cache.GetCache().Redis(),
 		logger.GetLogger(),
-		controller.GetUploadController(),
 	}
 	return Config{Resolvers: r}
 }

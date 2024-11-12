@@ -49,9 +49,6 @@ func init() {
 		logrus.WithError(err).Fatalln("test: init: CreateUser")
 	}
 	superUser = user
-	// Upload
-	p := controller.Upload{}
-	p.Init(q)
 	// Payment
 	pm := controller.Payment{}
 	pm.Init(q)

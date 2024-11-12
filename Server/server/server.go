@@ -97,9 +97,6 @@ func (s *Server) MountController() {
 	// User
 	u := controller.User{}
 	u.Init(s.sql)
-	// Upload
-	p := controller.Upload{}
-	p.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {

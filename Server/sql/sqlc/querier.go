@@ -10,10 +10,8 @@ import (
 
 type Querier interface {
 	ClearTestPayments(ctx context.Context) error
-	ClearTestUploads(ctx context.Context) error
 	ClearTestUsers(ctx context.Context) error
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
-	CreateUpload(ctx context.Context, arg CreateUploadParams) (Upload, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetUser(ctx context.Context, walletAddress string) (User, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)

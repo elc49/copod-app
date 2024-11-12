@@ -22,10 +22,10 @@ func (q *Queries) ClearTestPayments(ctx context.Context) error {
 
 const createPayment = `-- name: CreatePayment :one
 INSERT INTO payments (
-  email, amount, currency, reason, status, reference_id, upload_id
+  email, amount, currency, reason, status, reference_id, title_id
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7
-) RETURNING id, email, amount, currency, reason, status, reference_id, upload_id, created_at, updated_at
+) RETURNING id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at
 `
 
 type CreatePaymentParams struct {
@@ -35,7 +35,7 @@ type CreatePaymentParams struct {
 	Reason      string        `json:"reason"`
 	Status      string        `json:"status"`
 	ReferenceID string        `json:"reference_id"`
-	UploadID    uuid.NullUUID `json:"upload_id"`
+	TitleID     uuid.NullUUID `json:"title_id"`
 }
 
 func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error) {
@@ -46,7 +46,7 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		arg.Reason,
 		arg.Status,
 		arg.ReferenceID,
-		arg.UploadID,
+		arg.TitleID,
 	)
 	var i Payment
 	err := row.Scan(
@@ -57,7 +57,7 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		&i.Reason,
 		&i.Status,
 		&i.ReferenceID,
-		&i.UploadID,
+		&i.TitleID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

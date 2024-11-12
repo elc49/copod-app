@@ -5,23 +5,10 @@
 package sql
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
 )
-
-type Land struct {
-	ID        uuid.UUID      `json:"id"`
-	Title     string         `json:"title"`
-	Size      float64        `json:"size"`
-	Symbol    string         `json:"symbol"`
-	Verified  string         `json:"verified"`
-	GovtID    sql.NullString `json:"govt_id"`
-	PaidFor   string         `json:"paid_for"`
-	CreatedAt time.Time      `json:"created_at"`
-	UpdatedAt time.Time      `json:"updated_at"`
-}
 
 type Payment struct {
 	ID          uuid.UUID     `json:"id"`
@@ -31,20 +18,29 @@ type Payment struct {
 	Reason      string        `json:"reason"`
 	Status      string        `json:"status"`
 	ReferenceID string        `json:"reference_id"`
-	UploadID    uuid.NullUUID `json:"upload_id"`
+	TitleID     uuid.NullUUID `json:"title_id"`
 	CreatedAt   time.Time     `json:"created_at"`
 	UpdatedAt   time.Time     `json:"updated_at"`
 }
 
-type Upload struct {
-	ID           uuid.UUID      `json:"id"`
-	Type         string         `json:"type"`
-	TitleDoc     sql.NullString `json:"title_doc"`
-	GovtID       sql.NullString `json:"govt_id"`
-	Verification string         `json:"verification"`
-	Email        string         `json:"email"`
-	CreatedAt    time.Time      `json:"created_at"`
-	UpdatedAt    time.Time      `json:"updated_at"`
+type SupportDoc struct {
+	ID            uuid.UUID `json:"id"`
+	GovtID        string    `json:"govt_id"`
+	Verification  string    `json:"verification"`
+	Email         string    `json:"email"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+type Title struct {
+	ID            uuid.UUID `json:"id"`
+	Title         string    `json:"title"`
+	Verification  string    `json:"verification"`
+	Email         string    `json:"email"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type User struct {
