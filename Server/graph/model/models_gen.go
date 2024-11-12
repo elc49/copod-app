@@ -46,21 +46,27 @@ type Query struct {
 type Subscription struct {
 }
 
-type Upload struct {
+type SupportingDoc struct {
 	ID        uuid.UUID    `json:"id"`
-	TitleDoc  *string      `json:"titleDoc,omitempty"`
-	GovtID    *string      `json:"govtId,omitempty"`
-	Type      Doc          `json:"type"`
+	GovtID    string       `json:"govt_id"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
-type UploadInput struct {
-	Type     Doc    `json:"type"`
-	TitleDoc string `json:"titleDoc"`
-	GovtID   string `json:"govtId"`
-	Email    string `json:"email"`
+type Title struct {
+	ID        uuid.UUID    `json:"id"`
+	Title     *string      `json:"title,omitempty"`
+	Verified  Verification `json:"verified"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
+}
+
+type TitleInput struct {
+	Type          Doc    `json:"type"`
+	Title         string `json:"title"`
+	Email         string `json:"email"`
+	WalletAddress string `json:"walletAddress"`
 }
 
 type User struct {

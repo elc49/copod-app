@@ -39,12 +39,19 @@ type Land {
   updated_at: Time!
 }
 
-# Upload
-type Upload {
+# Title
+type Title {
   id: UUID!
-  titleDoc: String
-  govtId: String
-  type: Doc!
+  title: String
+  verified: Verification!
+  created_at: Time!
+  updated_at: Time!
+}
+
+# SupportingDoc
+type SupportingDoc {
+  id: UUID!
+  govt_id: String!
   verified: Verification!
   created_at: Time!
   updated_at: Time!
@@ -74,11 +81,11 @@ type Query {
   hasPendingLandRecords(walletAddress: String!): Boolean!
 }
 
-input UploadInput {
+input TitleInput {
   type: Doc!
-  titleDoc: String!
-  govtId: String!
+  title: String!
   email: String!
+  walletAddress: String!
 }
 
 input PayWithMpesaInput {
@@ -90,7 +97,7 @@ input PayWithMpesaInput {
 }
 
 type Mutation {
-  createUpload(input: UploadInput!): Upload!
+  createTitle(input: TitleInput!): Title!
   chargeMpesa(input: PayWithMpesaInput!): String
 }
 
