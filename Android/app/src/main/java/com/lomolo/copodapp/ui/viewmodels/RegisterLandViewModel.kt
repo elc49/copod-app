@@ -9,10 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
-import com.lomolo.copodapp.repository.IWeb3Auth
-import com.lomolo.copodapp.type.Doc
-import com.lomolo.copodapp.type.UploadInput
-import com.web3auth.core.types.UserInfo
+import com.lomolo.copodapp.type.DocUploadInput
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +17,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.toImmutableMap
 import java.io.InputStream
 import java.lang.Exception
 
@@ -30,23 +26,21 @@ interface UploadingDoc {
     data class Error(val msg: String?) : UploadingDoc
 }
 
-interface SaveUploads {
-    data object Success: SaveUploads
-    data object Loading: SaveUploads
-    data class Error(val msg: String?): SaveUploads
+interface SaveUpload {
+    data object Success : SaveUpload
+    data object Loading : SaveUpload
+    data class Error(val msg: String?) : SaveUpload
 }
-
-data class UploadDocState(
-    val images: Map<String, String> = mapOf(),
-)
 
 class RegisterLandViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
-    web3Auth: IWeb3Auth,
 ) : ViewModel() {
-    private val _images: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
-    val images: StateFlow<UploadDocState> = _images.asStateFlow()
+    private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
+    val landTitle: StateFlow<String> = _landTitle.asStateFlow()
+
+    private val _supportingDoc: MutableStateFlow<String> = MutableStateFlow("")
+    val supportingDoc: StateFlow<String> = _supportingDoc.asStateFlow()
 
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
@@ -54,10 +48,13 @@ class RegisterLandViewModel(
     var uploadingGovtId: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
-    var savingUploads: SaveUploads by mutableStateOf(SaveUploads.Success)
+    var savingLandTitle: SaveUpload by mutableStateOf(SaveUpload.Success)
         private set
 
-    private val userInfo: UserInfo = web3Auth.getUserInfo()
+    var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
+        private set
+
+    private var titleId: String = ""
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
         if (uploadingLandDoc !is UploadingDoc.Loading) {
@@ -71,11 +68,7 @@ class RegisterLandViewModel(
             viewModelScope.launch {
                 uploadingLandDoc = try {
                     val res = restApiService.uploadDoc(filePart)
-                    _images.update {
-                        val m = it.images.toMutableMap()
-                        m[Doc.LAND_TITLE.toString()] = res.imageUri
-                        it.copy(images = m.toImmutableMap())
-                    }
+                    _landTitle.update { res.imageUri }
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -97,11 +90,7 @@ class RegisterLandViewModel(
             viewModelScope.launch {
                 uploadingGovtId = try {
                     val res = restApiService.uploadDoc(filePart)
-                    _images.update {
-                        val m = it.images.toMutableMap()
-                        m[Doc.GOVT_ID.toString()] = res.imageUri
-                        it.copy(images = m.toImmutableMap())
-                    }
+                    _supportingDoc.update { res.imageUri }
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -111,26 +100,36 @@ class RegisterLandViewModel(
         }
     }
 
-    fun saveUploads(cb: (String) -> Unit) {
-        if (savingUploads !is SaveUploads.Loading) {
-           savingUploads = SaveUploads.Loading
+    fun saveLandTitle(email: String, address: String, cb: () -> Unit) {
+        if (savingLandTitle !is SaveUpload.Loading) {
+            savingLandTitle = SaveUpload.Loading
             viewModelScope.launch {
-                savingUploads = try {
-                    val images = _images.value
-                    val res = graphqlApiService.createUpload(
-                        UploadInput(
-                            type = Doc.LAND_TITLE,
-                            images.images[Doc.LAND_TITLE.toString()]!!,
-                            images.images[Doc.GOVT_ID.toString()]!!,
-                            userInfo.email,
-                        )
+                savingLandTitle = try {
+                    val res = graphqlApiService.uploadLandTitle(
+                        DocUploadInput(landTitle.value, email, address)
                     ).dataOrThrow()
-                    SaveUploads.Success.also {
-                        cb(res.createUpload.id.toString())
-                    }
+                    titleId = res.uploadLandTitle.id.toString()
+                    SaveUpload.Success.also { cb() }
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
-                    SaveUploads.Error(e.message)
+                    SaveUpload.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun saveSupportingDoc(email: String, address: String, cb: (String) -> Unit) {
+        if (savingSupportingDoc !is SaveUpload.Loading) {
+            savingSupportingDoc = SaveUpload.Loading
+            viewModelScope.launch {
+                savingSupportingDoc = try {
+                    graphqlApiService.uploadSupportingDoc(
+                        DocUploadInput(supportingDoc.value, email, address)
+                    ).dataOrThrow()
+                    SaveUpload.Success.also { cb(titleId) }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    SaveUpload.Error(e.message)
                 }
             }
         }

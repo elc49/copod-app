@@ -48,6 +48,7 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
+    registerLandViewModel: RegisterLandViewModel = koinNavViewModel(),
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
@@ -113,8 +114,6 @@ fun NavigationHost(
             })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
-            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
-
             UploadLandTitle(
                 onGoBack = {
                     navHostController.popBackStack()
@@ -122,16 +121,18 @@ fun NavigationHost(
                 onNavigateTo = {
                     navHostController.navigate(it)
                 },
+                userEmail = mainViewModel.userInfo!!.email,
+                userWallet = mainViewModel.credentials!!.address,
                 viewModel = registerLandViewModel,
             )
         }
         composable(route = UploadGovtIssuedIdScreenDestination.route) {
-            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
-
             UploadGovtIssuedId(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
+                userEmail = mainViewModel.userInfo!!.email,
+                userWallet = mainViewModel.credentials!!.address,
                 viewModel = registerLandViewModel,
                 onNext = { uploadId ->
                     navHostController.navigate("${MpesaScreenDestination.route}/${uploadId}")

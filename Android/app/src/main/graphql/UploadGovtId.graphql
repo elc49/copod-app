@@ -1,0 +1,5 @@
+mutation UploadSupportingDoc($input: DocUploadInput!) {
+    uploadSupportingDoc(input: $input) {
+        id
+    }
+}

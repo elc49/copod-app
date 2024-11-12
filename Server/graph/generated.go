@@ -65,8 +65,8 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		ChargeMpesa         func(childComplexity int, input model.PayWithMpesaInput) int
-		CreateSupportingDoc func(childComplexity int, input model.DocUploadInput) int
-		CreateTitle         func(childComplexity int, input model.DocUploadInput) int
+		UploadLandTitle     func(childComplexity int, input model.DocUploadInput) int
+		UploadSupportingDoc func(childComplexity int, input model.DocUploadInput) int
 	}
 
 	PaymentUpdate struct {
@@ -113,8 +113,8 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error)
-	CreateSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
+	UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error)
+	UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
 }
 type QueryResolver interface {
@@ -220,29 +220,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChargeMpesa(childComplexity, args["input"].(model.PayWithMpesaInput)), true
 
-	case "Mutation.createSupportingDoc":
-		if e.complexity.Mutation.CreateSupportingDoc == nil {
+	case "Mutation.uploadLandTitle":
+		if e.complexity.Mutation.UploadLandTitle == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createSupportingDoc_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadLandTitle_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateSupportingDoc(childComplexity, args["input"].(model.DocUploadInput)), true
+		return e.complexity.Mutation.UploadLandTitle(childComplexity, args["input"].(model.DocUploadInput)), true
 
-	case "Mutation.createTitle":
-		if e.complexity.Mutation.CreateTitle == nil {
+	case "Mutation.uploadSupportingDoc":
+		if e.complexity.Mutation.UploadSupportingDoc == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_createTitle_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_uploadSupportingDoc_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTitle(childComplexity, args["input"].(model.DocUploadInput)), true
+		return e.complexity.Mutation.UploadSupportingDoc(childComplexity, args["input"].(model.DocUploadInput)), true
 
 	case "PaymentUpdate.referenceId":
 		if e.complexity.PaymentUpdate.ReferenceID == nil {
@@ -593,17 +593,17 @@ func (ec *executionContext) field_Mutation_chargeMpesa_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createSupportingDoc_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_uploadLandTitle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_createSupportingDoc_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_uploadLandTitle_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createSupportingDoc_argsInput(
+func (ec *executionContext) field_Mutation_uploadLandTitle_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (model.DocUploadInput, error) {
@@ -616,17 +616,17 @@ func (ec *executionContext) field_Mutation_createSupportingDoc_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createTitle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_uploadSupportingDoc_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_createTitle_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_uploadSupportingDoc_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_createTitle_argsInput(
+func (ec *executionContext) field_Mutation_uploadSupportingDoc_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (model.DocUploadInput, error) {
@@ -1178,8 +1178,8 @@ func (ec *executionContext) fieldContext_Land_updated_at(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createTitle(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createTitle(ctx, field)
+func (ec *executionContext) _Mutation_uploadLandTitle(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_uploadLandTitle(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1192,7 +1192,7 @@ func (ec *executionContext) _Mutation_createTitle(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTitle(rctx, fc.Args["input"].(model.DocUploadInput))
+		return ec.resolvers.Mutation().UploadLandTitle(rctx, fc.Args["input"].(model.DocUploadInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1209,7 +1209,7 @@ func (ec *executionContext) _Mutation_createTitle(ctx context.Context, field gra
 	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createTitle(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_uploadLandTitle(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -1238,15 +1238,15 @@ func (ec *executionContext) fieldContext_Mutation_createTitle(ctx context.Contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createTitle_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_uploadLandTitle_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createSupportingDoc(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createSupportingDoc(ctx, field)
+func (ec *executionContext) _Mutation_uploadSupportingDoc(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_uploadSupportingDoc(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1259,7 +1259,7 @@ func (ec *executionContext) _Mutation_createSupportingDoc(ctx context.Context, f
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateSupportingDoc(rctx, fc.Args["input"].(model.DocUploadInput))
+		return ec.resolvers.Mutation().UploadSupportingDoc(rctx, fc.Args["input"].(model.DocUploadInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1276,7 +1276,7 @@ func (ec *executionContext) _Mutation_createSupportingDoc(ctx context.Context, f
 	return ec.marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_createSupportingDoc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_uploadSupportingDoc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -1305,7 +1305,7 @@ func (ec *executionContext) fieldContext_Mutation_createSupportingDoc(ctx contex
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createSupportingDoc_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_uploadSupportingDoc_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4607,16 +4607,16 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
-		case "createTitle":
+		case "uploadLandTitle":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createTitle(ctx, field)
+				return ec._Mutation_uploadLandTitle(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "createSupportingDoc":
+		case "uploadSupportingDoc":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createSupportingDoc(ctx, field)
+				return ec._Mutation_uploadSupportingDoc(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

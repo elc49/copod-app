@@ -1,5 +1,0 @@
-mutation CreateUpload($input: UploadInput!) {
-    createUpload(input: $input) {
-        id
-    }
-}

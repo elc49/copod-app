@@ -33,7 +33,7 @@ val appModule = module {
 
     viewModel { MainViewModel(get(), get()) }
     viewModel { MarketViewModel(get()) }
-    viewModel { RegisterLandViewModel(get(), get(), get()) }
+    viewModel { RegisterLandViewModel(get(), get()) }
     viewModel { LandViewModel(get()) }
     viewModel { MpesaViewModel(get(), get(), get()) }
 }

@@ -69,7 +69,7 @@ class MpesaViewModel(
                 chargingMpesa = try {
                     val phone = Phone.formatPhone(_mpesa.value.phone, deviceDetails.countryCode)
                     val input = PayWithMpesaInput(
-                        reason = PaymentReason.LAND_REGISTRATION,
+                        reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
                         email = email,
                         currency = "KES",

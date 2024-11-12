@@ -62,7 +62,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 
 	fees := 0
 	switch input.Reason {
-	case model.PaymentReasonLandRegistration.String():
+	case model.PaymentReasonLandRegistry.String():
 		i, err := strconv.Atoi(config.C.Paystack.LandFees)
 		if err != nil {
 			p.log.WithError(err).WithFields(logrus.Fields{"int": config.C.Paystack.LandFees}).Errorf("paystack: strconv.Atoi fees")
@@ -106,7 +106,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 			Reason:      input.Reason,
 			Amount:      int32(input.Amount),
 			Currency:    input.Currency,
-			UploadID:    uuid.NullUUID{UUID: paymentFor, Valid: true},
+			TitleID:     uuid.NullUUID{UUID: paymentFor, Valid: true},
 		}
 		_, err := controller.GetPaymentController().CreatePayment(ctx, args)
 		if err != nil {

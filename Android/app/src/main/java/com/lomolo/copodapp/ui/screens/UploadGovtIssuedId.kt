@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.type.Doc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
@@ -34,21 +33,22 @@ object UploadGovtIssuedIdScreenDestination : Navigation {
 fun UploadGovtIssuedId(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    userEmail: String,
+    userWallet: String,
     onNext: (String) -> Unit,
     viewModel: RegisterLandViewModel,
 ) {
-    val images by viewModel.images.collectAsState()
-    val govtId = images.images[Doc.GOVT_ID.toString()]
+    val image by viewModel.supportingDoc.collectAsState()
     val idDoc = when (viewModel.uploadingGovtId) {
         UploadingDoc.Loading -> {
             R.drawable.loading_img
         }
 
         UploadingDoc.Success -> {
-            if (govtId.isNullOrEmpty()) {
+            if (image.isEmpty()) {
                 R.drawable.upload
             } else {
-                govtId
+                image
             }
         }
 
@@ -91,8 +91,8 @@ fun UploadGovtIssuedId(
         },
         image = idDoc,
         onNext = {
-            if (!govtId.isNullOrEmpty()) {
-                viewModel.saveUploads {
+            if (image.isNotEmpty()) {
+                viewModel.saveSupportingDoc(userEmail, userWallet) {
                     onNext(it)
                 }
             }

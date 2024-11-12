@@ -1,0 +1,5 @@
+mutation UploadLandTitle($input: DocUploadInput!) {
+    uploadLandTitle(input: $input) {
+        id
+    }
+}
