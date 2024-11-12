@@ -3,11 +3,6 @@
 scalar UUID
 scalar Time
 
-enum Doc {
-  GOVT_ID
-  LAND_TITLE
-}
-
 # Verification status
 enum Verification {
   ONBOARDING
@@ -23,7 +18,7 @@ enum PaidFor {
 
 # PaymentReason
 enum PaymentReason {
-  LAND_REGISTRATION
+  LAND_REGISTRY
 }
 
 # Land
@@ -75,15 +70,8 @@ type PaymentUpdate {
   walletAddress: String!
 }
 
-type Query {
-  getLocalLands: [Land!]!
-  getUserLands(walletAddress: String!): [Land!]!
-  hasPendingLandRecords(walletAddress: String!): Boolean!
-}
-
-input TitleInput {
-  type: Doc!
-  title: String!
+input DocUploadInput {
+  url: String!
   email: String!
   walletAddress: String!
 }
@@ -96,8 +84,15 @@ input PayWithMpesaInput {
   paymentFor: UUID!
 }
 
+type Query {
+  getLocalLands: [Land!]!
+  getUserLands(walletAddress: String!): [Land!]!
+  hasPendingLandRecords(walletAddress: String!): Boolean!
+}
+
 type Mutation {
-  createTitle(input: TitleInput!): Title!
+  createTitle(input: DocUploadInput!): Title!
+  createSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
 }
 

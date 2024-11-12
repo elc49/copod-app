@@ -11,6 +11,12 @@ import (
 	"github.com/google/uuid"
 )
 
+type DocUploadInput struct {
+	URL           string `json:"url"`
+	Email         string `json:"email"`
+	WalletAddress string `json:"walletAddress"`
+}
+
 type Land struct {
 	ID            uuid.UUID    `json:"id"`
 	Title         string       `json:"title"`
@@ -62,13 +68,6 @@ type Title struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
-type TitleInput struct {
-	Type          Doc    `json:"type"`
-	Title         string `json:"title"`
-	Email         string `json:"email"`
-	WalletAddress string `json:"walletAddress"`
-}
-
 type User struct {
 	ID            uuid.UUID `json:"id"`
 	Firstname     *string   `json:"firstname,omitempty"`
@@ -77,47 +76,6 @@ type User struct {
 	WalletAddress string    `json:"wallet_address"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
-}
-
-type Doc string
-
-const (
-	DocGovtID    Doc = "GOVT_ID"
-	DocLandTitle Doc = "LAND_TITLE"
-)
-
-var AllDoc = []Doc{
-	DocGovtID,
-	DocLandTitle,
-}
-
-func (e Doc) IsValid() bool {
-	switch e {
-	case DocGovtID, DocLandTitle:
-		return true
-	}
-	return false
-}
-
-func (e Doc) String() string {
-	return string(e)
-}
-
-func (e *Doc) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = Doc(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Doc", str)
-	}
-	return nil
-}
-
-func (e Doc) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type PaidFor string
@@ -164,16 +122,16 @@ func (e PaidFor) MarshalGQL(w io.Writer) {
 type PaymentReason string
 
 const (
-	PaymentReasonLandRegistration PaymentReason = "LAND_REGISTRATION"
+	PaymentReasonLandRegistry PaymentReason = "LAND_REGISTRY"
 )
 
 var AllPaymentReason = []PaymentReason{
-	PaymentReasonLandRegistration,
+	PaymentReasonLandRegistry,
 }
 
 func (e PaymentReason) IsValid() bool {
 	switch e {
-	case PaymentReasonLandRegistration:
+	case PaymentReasonLandRegistry:
 		return true
 	}
 	return false

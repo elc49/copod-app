@@ -20,7 +20,7 @@ func Test_Payment_Controller(t *testing.T) {
 			Email:       superUserEmail,
 			ReferenceID: RandomStringByLength(10),
 			Status:      "success",
-			Reason:      model.PaymentReasonLandRegistration.String(),
+			Reason:      model.PaymentReasonLandRegistry.String(),
 			Amount:      1500,
 			Currency:    "KES",
 			TitleID:     uuid.NullUUID{},

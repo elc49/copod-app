@@ -64,8 +64,9 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChargeMpesa func(childComplexity int, input model.PayWithMpesaInput) int
-		CreateTitle func(childComplexity int, input model.TitleInput) int
+		ChargeMpesa         func(childComplexity int, input model.PayWithMpesaInput) int
+		CreateSupportingDoc func(childComplexity int, input model.DocUploadInput) int
+		CreateTitle         func(childComplexity int, input model.DocUploadInput) int
 	}
 
 	PaymentUpdate struct {
@@ -112,7 +113,8 @@ type ComplexityRoot struct {
 }
 
 type MutationResolver interface {
-	CreateTitle(ctx context.Context, input model.TitleInput) (*model.Title, error)
+	CreateTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error)
+	CreateSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
 }
 type QueryResolver interface {
@@ -218,6 +220,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChargeMpesa(childComplexity, args["input"].(model.PayWithMpesaInput)), true
 
+	case "Mutation.createSupportingDoc":
+		if e.complexity.Mutation.CreateSupportingDoc == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSupportingDoc_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSupportingDoc(childComplexity, args["input"].(model.DocUploadInput)), true
+
 	case "Mutation.createTitle":
 		if e.complexity.Mutation.CreateTitle == nil {
 			break
@@ -228,7 +242,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateTitle(childComplexity, args["input"].(model.TitleInput)), true
+		return e.complexity.Mutation.CreateTitle(childComplexity, args["input"].(model.DocUploadInput)), true
 
 	case "PaymentUpdate.referenceId":
 		if e.complexity.PaymentUpdate.ReferenceID == nil {
@@ -421,8 +435,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputDocUploadInput,
 		ec.unmarshalInputPayWithMpesaInput,
-		ec.unmarshalInputTitleInput,
 	)
 	first := true
 
@@ -579,6 +593,29 @@ func (ec *executionContext) field_Mutation_chargeMpesa_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createSupportingDoc_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_createSupportingDoc_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createSupportingDoc_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.DocUploadInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNDocUploadInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDocUploadInput(ctx, tmp)
+	}
+
+	var zeroVal model.DocUploadInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_createTitle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -592,13 +629,13 @@ func (ec *executionContext) field_Mutation_createTitle_args(ctx context.Context,
 func (ec *executionContext) field_Mutation_createTitle_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (model.TitleInput, error) {
+) (model.DocUploadInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNTitleInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitleInput(ctx, tmp)
+		return ec.unmarshalNDocUploadInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDocUploadInput(ctx, tmp)
 	}
 
-	var zeroVal model.TitleInput
+	var zeroVal model.DocUploadInput
 	return zeroVal, nil
 }
 
@@ -1155,7 +1192,7 @@ func (ec *executionContext) _Mutation_createTitle(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateTitle(rctx, fc.Args["input"].(model.TitleInput))
+		return ec.resolvers.Mutation().CreateTitle(rctx, fc.Args["input"].(model.DocUploadInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1202,6 +1239,73 @@ func (ec *executionContext) fieldContext_Mutation_createTitle(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createTitle_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createSupportingDoc(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSupportingDoc(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSupportingDoc(rctx, fc.Args["input"].(model.DocUploadInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SupportingDoc)
+	fc.Result = res
+	return ec.marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createSupportingDoc(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SupportingDoc_id(ctx, field)
+			case "govt_id":
+				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "verified":
+				return ec.fieldContext_SupportingDoc_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createSupportingDoc_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -4304,6 +4408,47 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, obj interface{}) (model.DocUploadInput, error) {
+	var it model.DocUploadInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"url", "email", "walletAddress"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "url":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.URL = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "walletAddress":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WalletAddress = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context, obj interface{}) (model.PayWithMpesaInput, error) {
 	var it model.PayWithMpesaInput
 	asMap := map[string]interface{}{}
@@ -4353,54 +4498,6 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 				return it, err
 			}
 			it.PaymentFor = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputTitleInput(ctx context.Context, obj interface{}) (model.TitleInput, error) {
-	var it model.TitleInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"type", "title", "email", "walletAddress"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "type":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			data, err := ec.unmarshalNDoc2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDoc(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Type = data
-		case "title":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("title"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Title = data
-		case "email":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Email = data
-		case "walletAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.WalletAddress = data
 		}
 	}
 
@@ -4513,6 +4610,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createTitle":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createTitle(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createSupportingDoc":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createSupportingDoc(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5248,14 +5352,9 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
-func (ec *executionContext) unmarshalNDoc2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDoc(ctx context.Context, v interface{}) (model.Doc, error) {
-	var res model.Doc
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNDocUploadInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDocUploadInput(ctx context.Context, v interface{}) (model.DocUploadInput, error) {
+	res, err := ec.unmarshalInputDocUploadInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNDoc2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDoc(ctx context.Context, sel ast.SelectionSet, v model.Doc) graphql.Marshaler {
-	return v
 }
 
 func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
@@ -5371,6 +5470,20 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
+func (ec *executionContext) marshalNSupportingDoc2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v model.SupportingDoc) graphql.Marshaler {
+	return ec._SupportingDoc(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v *model.SupportingDoc) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._SupportingDoc(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNTime2timeᚐTime(ctx context.Context, v interface{}) (time.Time, error) {
 	res, err := graphql.UnmarshalTime(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -5398,11 +5511,6 @@ func (ec *executionContext) marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgrap
 		return graphql.Null
 	}
 	return ec._Title(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNTitleInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitleInput(ctx context.Context, v interface{}) (model.TitleInput, error) {
-	res, err := ec.unmarshalInputTitleInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx context.Context, v interface{}) (uuid.UUID, error) {

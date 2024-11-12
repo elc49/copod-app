@@ -16,8 +16,13 @@ import (
 )
 
 // CreateTitle is the resolver for the createTitle field.
-func (r *mutationResolver) CreateTitle(ctx context.Context, input model.TitleInput) (*model.Title, error) {
+func (r *mutationResolver) CreateTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
 	panic(fmt.Errorf("not implemented: CreateTitle - createTitle"))
+}
+
+// CreateSupportingDoc is the resolver for the createSupportingDoc field.
+func (r *mutationResolver) CreateSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
+	panic(fmt.Errorf("not implemented: CreateSupportingDoc - createSupportingDoc"))
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
@@ -86,22 +91,3 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *mutationResolver) CreateUpload(ctx context.Context, input model.UploadInput) (*model.Upload, error) {
-	args := sql.CreateUploadParams{
-		Type:     string(input.Type),
-		TitleDoc: db.NullString{String: input.TitleDoc, Valid: true},
-		GovtID:   db.NullString{String: input.GovtID, Valid: true},
-		Email:    input.Email,
-	}
-
-	return r.uploadController.CreateUpload(ctx, args)
-}
-*/
