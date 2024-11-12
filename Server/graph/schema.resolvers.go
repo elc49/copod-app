@@ -7,14 +7,11 @@ package graph
 import (
 	"context"
 
+	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
 	"github.com/elc49/copod/util"
 	"github.com/sirupsen/logrus"
-)
-
-const (
-	PAYMENT_UPDATE_CHANNEL = "payment_updated"
 )
 
 // CreateUploads is the resolver for the createUploads field.
@@ -31,7 +28,7 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 		Currency: input.Currency,
 	}
 
-	res, err := r.paystack.ChargeMpesa(ctx, charge)
+	res, err := r.paystack.ChargeMpesa(ctx, input.PaymentFor, charge)
 	if err != nil {
 		r.log.WithError(err).WithFields(logrus.Fields{"charge": charge}).Errorf("graph resolvers: ChargeMpesa")
 		return nil, err
@@ -58,7 +55,7 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)
-	pubsub := r.redis.Subscribe(context.Background(), PAYMENT_UPDATE_CHANNEL)
+	pubsub := r.redis.Subscribe(context.Background(), cache.PAYMENT_UPDATED_CHANNEL)
 
 	go func() {
 		for msg := range pubsub.Channel() {

@@ -9,38 +9,47 @@ import (
 	"sync"
 
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
 var p *paystackClient
 
 type Paystack interface {
-	ChargeMpesa(context.Context, MpesaCharge) (*MpesaChargeResponse, error)
+	ChargeMpesa(context.Context, uuid.UUID, MpesaCharge) (*MpesaChargeResponse, error)
 }
 
 var _ Paystack = (*paystackClient)(nil)
 
 type paystackClient struct {
-	log      *logrus.Logger
-	sqlStore *sql.Queries
-	mu       sync.Mutex
-	http     *http.Client
+	log               *logrus.Logger
+	sqlStore          *sql.Queries
+	mu                sync.Mutex
+	http              *http.Client
+	paymentController controller.PaymentController
 }
 
 func New(sqlStore *sql.Queries) {
 	log := logger.GetLogger()
-	p = &paystackClient{log, sqlStore, sync.Mutex{}, &http.Client{}}
+	p = &paystackClient{
+		log,
+		sqlStore,
+		sync.Mutex{},
+		&http.Client{},
+		controller.GetPaymentController(),
+	}
 }
 
 func GetPaystackService() Paystack {
 	return p
 }
 
-func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*MpesaChargeResponse, error) {
+func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, input MpesaCharge) (*MpesaChargeResponse, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -87,6 +96,24 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, input MpesaCharge) (*M
 		p.log.WithError(err).Errorf("paystack: decode")
 		return nil, err
 	}
+
+	go func() {
+		ctx := context.Background()
+		args := sql.CreatePaymentParams{
+			Email:       input.Email,
+			ReferenceID: chargeResponse.Data.Reference,
+			Status:      chargeResponse.Data.Status,
+			Reason:      input.Reason,
+			Amount:      int32(input.Amount),
+			Currency:    input.Currency,
+			UploadID:    uuid.NullUUID{UUID: paymentFor, Valid: true},
+		}
+		_, err := controller.GetPaymentController().CreatePayment(ctx, args)
+		if err != nil {
+			p.log.WithError(err).Errorf("paystack: CreatePayment async")
+			return
+		}
+	}()
 
 	return chargeResponse, nil
 }

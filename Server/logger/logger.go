@@ -5,6 +5,6 @@ import "github.com/sirupsen/logrus"
 var log = logrus.New()
 
 func GetLogger() *logrus.Logger {
-	// TODO attach sentry hook - only in prod
+	// TODO attach sentry hook - only in prod/staging
 	return log
 }

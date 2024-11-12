@@ -27,10 +27,11 @@ type Mutation struct {
 }
 
 type PayWithMpesaInput struct {
-	Reason   PaymentReason `json:"reason"`
-	Phone    string        `json:"phone"`
-	Email    string        `json:"email"`
-	Currency string        `json:"currency"`
+	Reason     PaymentReason `json:"reason"`
+	Phone      string        `json:"phone"`
+	Email      string        `json:"email"`
+	Currency   string        `json:"currency"`
+	PaymentFor uuid.UUID     `json:"paymentFor"`
 }
 
 type PaymentUpdate struct {
@@ -108,6 +109,47 @@ func (e *Doc) UnmarshalGQL(v interface{}) error {
 }
 
 func (e Doc) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PaidFor string
+
+const (
+	PaidForPaid    PaidFor = "PAID"
+	PaidForNotPaid PaidFor = "NOT_PAID"
+)
+
+var AllPaidFor = []PaidFor{
+	PaidForPaid,
+	PaidForNotPaid,
+}
+
+func (e PaidFor) IsValid() bool {
+	switch e {
+	case PaidForPaid, PaidForNotPaid:
+		return true
+	}
+	return false
+}
+
+func (e PaidFor) String() string {
+	return string(e)
+}
+
+func (e *PaidFor) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PaidFor(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PaidFor", str)
+	}
+	return nil
+}
+
+func (e PaidFor) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

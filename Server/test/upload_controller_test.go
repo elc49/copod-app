@@ -13,13 +13,27 @@ import (
 func Test_Upload_Controller(t *testing.T) {
 	t.Run("create_upload", func(t *testing.T) {
 		uc := controller.GetUploadController()
-		p, err := uc.CreateUpload(context.Background(), sql.CreateUploadParams{
-			Type:          model.DocLandTitle.String(),
-			Uri:           docUri,
-			WalletAddress: superUserWallet,
-		})
+		uploads := []sql.CreateUploadParams{
+			{
+				Type:          model.DocLandTitle.String(),
+				Uri:           docUri,
+				WalletAddress: superUserWallet,
+			},
+			{
+				Type:          model.DocLandTitle.String(),
+				Uri:           docUri,
+				WalletAddress: superUserWallet,
+			},
+		}
+		for _, i := range uploads {
+			p, err := uc.CreateUpload(context.Background(), sql.CreateUploadParams{
+				Type:          i.Type,
+				Uri:           i.Uri,
+				WalletAddress: i.WalletAddress,
+			})
 
-		assert.Equal(t, p.URI, docUri)
-		assert.Nil(t, err)
+			assert.Equal(t, p.URI, i.Uri)
+			assert.Nil(t, err)
+		}
 	})
 }

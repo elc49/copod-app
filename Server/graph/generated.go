@@ -4088,7 +4088,7 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"reason", "phone", "email", "currency"}
+	fieldsInOrder := [...]string{"reason", "phone", "email", "currency", "paymentFor"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -4123,6 +4123,13 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 				return it, err
 			}
 			it.Currency = data
+		case "paymentFor":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentFor"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PaymentFor = data
 		}
 	}
 

@@ -30,6 +30,12 @@ type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
 }
 
+enum PaidFor {
+  PAID
+
+  NOT_PAID
+}
+
 input PayWithMpesaInput {
   reason: PaymentReason!
 
@@ -38,6 +44,8 @@ input PayWithMpesaInput {
   email: String!
 
   currency: String!
+
+  paymentFor: UUID!
 }
 
 enum PaymentReason {

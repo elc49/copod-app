@@ -84,6 +84,7 @@ input PayWithMpesaInput {
   phone: String!
   email: String!
   currency: String!
+  paymentFor: UUID!
 }
 
 type Mutation {
