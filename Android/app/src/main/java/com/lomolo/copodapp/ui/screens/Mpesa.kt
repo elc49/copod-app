@@ -43,18 +43,19 @@ import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
-import org.koin.androidx.compose.koinViewModel
 
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
     override val route = "mpesa"
+    const val LAND_TITLE_ID_ARG = "uploadId"
+    val routeWithArgs = "$route/{$LAND_TITLE_ID_ARG}"
 }
 
 @Composable
 fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    viewModel: MpesaViewModel = koinViewModel<MpesaViewModel>(),
+    viewModel: MpesaViewModel,
     mainViewModel: MainViewModel,
 ) {
     val mpesa by viewModel.mpesa.collectAsState()

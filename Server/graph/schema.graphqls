@@ -3,11 +3,6 @@
 scalar UUID
 scalar Time
 
-enum Doc {
-  GOVT_ID
-  LAND_TITLE
-}
-
 # Verification status
 enum Verification {
   ONBOARDING
@@ -15,9 +10,15 @@ enum Verification {
   REJECTED
 }
 
+# Paid for
+enum PaidFor {
+  PAID
+  NOT_PAID
+}
+
 # PaymentReason
 enum PaymentReason {
-  LAND_REGISTRATION
+  LAND_REGISTRY
 }
 
 # Land
@@ -33,11 +34,19 @@ type Land {
   updated_at: Time!
 }
 
-# Upload
-type Upload {
+# Title
+type Title {
   id: UUID!
-  uri: String!
-  type: Doc!
+  title: String!
+  verified: Verification!
+  created_at: Time!
+  updated_at: Time!
+}
+
+# SupportingDoc
+type SupportingDoc {
+  id: UUID!
+  govt_id: String!
   verified: Verification!
   created_at: Time!
   updated_at: Time!
@@ -61,16 +70,10 @@ type PaymentUpdate {
   walletAddress: String!
 }
 
-type Query {
-  getLocalLands: [Land!]!
-  getUserLands(walletAddress: String!): [Land!]!
-  hasPendingLandRecords(walletAddress: String!): Boolean!
-}
-
-input UploadInput {
-  type: Doc!
-  uri: String!
-  wallet_address: String!
+input DocUploadInput {
+  url: String!
+  email: String!
+  walletAddress: String!
 }
 
 input PayWithMpesaInput {
@@ -78,10 +81,18 @@ input PayWithMpesaInput {
   phone: String!
   email: String!
   currency: String!
+  paymentFor: UUID!
+}
+
+type Query {
+  getLocalLands: [Land!]!
+  getUserLands(walletAddress: String!): [Land!]!
+  hasPendingLandRecords(walletAddress: String!): Boolean!
 }
 
 type Mutation {
-  createUploads(input: [UploadInput!]!): Boolean
+  uploadLandTitle(input: DocUploadInput!): Title!
+  uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
 }
 

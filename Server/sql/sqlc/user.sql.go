@@ -9,15 +9,6 @@ import (
 	"context"
 )
 
-const clearTestUsers = `-- name: ClearTestUsers :exec
-DELETE FROM users
-`
-
-func (q *Queries) ClearTestUsers(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, clearTestUsers)
-	return err
-}
-
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   email, wallet_address, govt_id

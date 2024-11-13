@@ -9,12 +9,13 @@ import (
 )
 
 type Querier interface {
-	ClearTestUploads(ctx context.Context) error
-	ClearTestUsers(ctx context.Context) error
-	CreateUpload(ctx context.Context, arg CreateUploadParams) (Upload, error)
+	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
+	CreateSupportDoc(ctx context.Context, arg CreateSupportDocParams) (SupportDoc, error)
+	CreateTitle(ctx context.Context, arg CreateTitleParams) (Title, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
-	GetUpload(ctx context.Context, arg GetUploadParams) (Upload, error)
+	GetEmailSupportDoc(ctx context.Context, email string) (SupportDoc, error)
 	GetUser(ctx context.Context, walletAddress string) (User, error)
+	UpdateEmailSupportDoc(ctx context.Context, arg UpdateEmailSupportDocParams) (SupportDoc, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

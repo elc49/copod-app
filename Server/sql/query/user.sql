@@ -13,6 +13,3 @@ WHERE wallet_address = $1;
 UPDATE users SET firstname = $1, lastname = $2
 WHERE email = $3
 RETURNING  *;
-
--- name: ClearTestUsers :exec
-DELETE FROM users;

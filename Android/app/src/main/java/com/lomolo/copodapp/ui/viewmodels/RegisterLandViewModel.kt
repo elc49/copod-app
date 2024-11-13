@@ -4,10 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo.exception.ApolloException
+import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
-import com.lomolo.copodapp.type.Doc
+import com.lomolo.copodapp.type.DocUploadInput
+import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +19,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.internal.toImmutableMap
 import java.io.InputStream
 import java.lang.Exception
 
@@ -25,20 +28,36 @@ interface UploadingDoc {
     data class Error(val msg: String?) : UploadingDoc
 }
 
-data class UploadDocState(
-    val images: Map<String, String> = mapOf(),
-)
+interface SaveUpload {
+    data object Success : SaveUpload
+    data object Loading : SaveUpload
+    data class Error(val msg: String?) : SaveUpload
+}
 
 class RegisterLandViewModel(
-    private val iRestFul: IRestFul,
+    private val restApiService: IRestFul,
+    private val graphqlApiService: IGraphQL,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
-    private val _images: MutableStateFlow<UploadDocState> = MutableStateFlow(UploadDocState())
-    val images: StateFlow<UploadDocState> = _images.asStateFlow()
+    private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
+    val landTitle: StateFlow<String> = _landTitle.asStateFlow()
+
+    private val _supportingDoc: MutableStateFlow<String> = MutableStateFlow("")
+    val supportingDoc: StateFlow<String> = _supportingDoc.asStateFlow()
 
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
+
     var uploadingGovtId: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
+
+    var savingLandTitle: SaveUpload by mutableStateOf(SaveUpload.Success)
+        private set
+
+    var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
+        private set
+
+    private val titleId: String? = savedStateHandle[UploadGovtIssuedIdScreenDestination.LAND_TITLE_ID_ARG]
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
         if (uploadingLandDoc !is UploadingDoc.Loading) {
@@ -51,12 +70,8 @@ class RegisterLandViewModel(
             )
             viewModelScope.launch {
                 uploadingLandDoc = try {
-                    val res = iRestFul.uploadDoc(filePart)
-                    _images.update {
-                        val m = it.images.toMutableMap()
-                        m[Doc.LAND_TITLE.toString()] = res.imageUri
-                        it.copy(images = m.toImmutableMap())
-                    }
+                    val res = restApiService.uploadDoc(filePart)
+                    _landTitle.update { res.imageUri }
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -77,16 +92,46 @@ class RegisterLandViewModel(
             )
             viewModelScope.launch {
                 uploadingGovtId = try {
-                    val res = iRestFul.uploadDoc(filePart)
-                    _images.update {
-                        val m = it.images.toMutableMap()
-                        m[Doc.GOVT_ID.toString()] = res.imageUri
-                        it.copy(images = m.toImmutableMap())
-                    }
+                    val res = restApiService.uploadDoc(filePart)
+                    _supportingDoc.update { res.imageUri }
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     UploadingDoc.Error(e.message ?: "Something went wrong")
+                }
+            }
+        }
+    }
+
+    fun saveLandTitle(email: String, address: String, cb: (String) -> Unit) {
+        if (savingLandTitle !is SaveUpload.Loading) {
+            savingLandTitle = SaveUpload.Loading
+            viewModelScope.launch {
+                savingLandTitle = try {
+                    val res = graphqlApiService.uploadLandTitle(
+                        DocUploadInput(landTitle.value, email, address)
+                    ).dataOrThrow()
+                    SaveUpload.Success.also { cb(res.uploadLandTitle.id.toString()) }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    SaveUpload.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun saveSupportingDoc(email: String, address: String, cb: (String?) -> Unit) {
+        if (savingSupportingDoc !is SaveUpload.Loading) {
+            savingSupportingDoc = SaveUpload.Loading
+            viewModelScope.launch {
+                savingSupportingDoc = try {
+                    graphqlApiService.uploadSupportingDoc(
+                        DocUploadInput(supportingDoc.value, email, address)
+                    ).dataOrThrow()
+                    SaveUpload.Success.also { cb(titleId) }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    SaveUpload.Error(e.message)
                 }
             }
         }

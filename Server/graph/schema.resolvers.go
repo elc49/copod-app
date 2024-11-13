@@ -7,20 +7,34 @@ package graph
 import (
 	"context"
 
+	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	PAYMENT_UPDATE_CHANNEL = "payment_updated"
-)
+// UploadLandTitle is the resolver for the uploadLandTitle field.
+func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
+	args := sql.CreateTitleParams{
+		Email:         input.Email,
+		Title:         input.URL,
+		WalletAddress: input.WalletAddress,
+	}
 
-// CreateUploads is the resolver for the createUploads field.
-func (r *mutationResolver) CreateUploads(ctx context.Context, input []*model.UploadInput) (*bool, error) {
-	b := false
-	return &b, nil
+	return r.titleController.CreateTitle(ctx, args)
+}
+
+// UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
+func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
+	args := sql.CreateSupportDocParams{
+		Email:         input.Email,
+		GovtID:        input.URL,
+		WalletAddress: input.WalletAddress,
+	}
+
+	return r.supportDocController.CreateSupportingDoc(ctx, args)
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
@@ -31,7 +45,7 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 		Currency: input.Currency,
 	}
 
-	res, err := r.paystack.ChargeMpesa(ctx, charge)
+	res, err := r.paystack.ChargeMpesa(ctx, input.PaymentFor, charge)
 	if err != nil {
 		r.log.WithError(err).WithFields(logrus.Fields{"charge": charge}).Errorf("graph resolvers: ChargeMpesa")
 		return nil, err
@@ -58,7 +72,7 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)
-	pubsub := r.redis.Subscribe(context.Background(), PAYMENT_UPDATE_CHANNEL)
+	pubsub := r.redis.Subscribe(context.Background(), cache.PAYMENT_UPDATED_CHANNEL)
 
 	go func() {
 		for msg := range pubsub.Channel() {

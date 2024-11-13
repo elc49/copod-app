@@ -60,8 +60,10 @@ func runMigration(opt postgres.Postgres, conn *db.DB, log *logrus.Logger) error 
 	}
 
 	if opt.DbMigrate {
-		conn.Exec(fmt.Sprintf("DROP DATABASE IF EXISTS %s;", opt.DbName))
-		conn.Exec(fmt.Sprintf("CREATE DATABASE %s;", opt.DbName))
+		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+			return err
+		}
+
 		if config.C != nil {
 			if err := tigris.T.DeleteObjects(context.Background()); err != nil {
 				log.WithError(err).Fatalln("sql: DeleteObjects")

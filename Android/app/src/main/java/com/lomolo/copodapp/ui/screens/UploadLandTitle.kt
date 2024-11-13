@@ -18,10 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.type.Doc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import com.lomolo.copodapp.ui.viewmodels.SaveUpload
 import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
@@ -35,20 +35,21 @@ fun UploadLandTitle(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     onNavigateTo: (String) -> Unit,
+    userEmail: String,
+    userWallet: String,
     viewModel: RegisterLandViewModel,
 ) {
-    val images by viewModel.images.collectAsState()
-    val land = images.images[Doc.LAND_TITLE.toString()]
+    val image by viewModel.landTitle.collectAsState()
     val landTitle = when (viewModel.uploadingLandDoc) {
         UploadingDoc.Loading -> {
             R.drawable.loading_img
         }
 
         UploadingDoc.Success -> {
-            if (land.isNullOrEmpty()) {
+            if (image.isEmpty()) {
                 R.drawable.upload
             } else {
-                land
+                image
             }
         }
 
@@ -79,44 +80,38 @@ fun UploadLandTitle(
         }
     }
 
-    UploadDocument(
-        modifier = modifier,
-        title = @Composable {
-            Column {
-                Text(stringResource(R.string.land_title_document))
-                Text(
-                    stringResource(R.string.govt_issued_title),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        },
-        image = landTitle,
-        onNext = {
-            if (!land.isNullOrEmpty()) {
-                onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
-            }
-        },
-        onGoBack = onGoBack,
-        onSelectImage = {
-            if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
-                scope.launch {
-                    pickLandTitleMedia.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly,
-                        )
-                    )
-                }
-            }
-        },
-        buttonText = @Composable {
+    UploadDocument(modifier = modifier, title = @Composable {
+        Column {
+            Text(stringResource(R.string.land_title_document))
             Text(
-                stringResource(R.string.proceed),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowForward,
-                contentDescription = stringResource(R.string.proceed),
+                stringResource(R.string.govt_issued_title),
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
-    )
+    }, image = landTitle, savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
+        if (image.isNotEmpty()) {
+            viewModel.saveLandTitle(userEmail, userWallet) {
+                onNavigateTo("${UploadGovtIssuedIdScreenDestination.route}/${it}")
+            }
+        }
+    }, onGoBack = onGoBack, onSelectImage = {
+        if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
+            scope.launch {
+                pickLandTitleMedia.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly,
+                    )
+                )
+            }
+        }
+    }, buttonText = @Composable {
+        Text(
+            stringResource(R.string.proceed),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Icon(
+            Icons.AutoMirrored.TwoTone.ArrowForward,
+            contentDescription = stringResource(R.string.proceed),
+        )
+    })
 }

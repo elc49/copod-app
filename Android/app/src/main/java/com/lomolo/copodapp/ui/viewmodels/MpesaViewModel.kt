@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
@@ -12,6 +13,7 @@ import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import com.lomolo.copodapp.type.PaymentReason
+import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
 import com.lomolo.copodapp.util.Phone
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -34,12 +36,17 @@ data class Mpesa(
 class MpesaViewModel(
     private val graphqlApiService: IGraphQL,
     private val web3Auth: IWeb3Auth,
+    savedStateHandle: SavedStateHandle,
 ): ViewModel() {
     private val _mpesa: MutableStateFlow<Mpesa> = MutableStateFlow(Mpesa())
     val mpesa: StateFlow<Mpesa> = _mpesa.asStateFlow()
 
     var chargingMpesa: ChargingMpesa by mutableStateOf(ChargingMpesa.Success)
         private set
+
+    private val uploadId: String = checkNotNull(
+        savedStateHandle[MpesaScreenDestination.LAND_TITLE_ID_ARG]
+    )
 
     fun setPhone(phone: String) {
         _mpesa.update { it.copy(phone = phone) }
@@ -62,10 +69,11 @@ class MpesaViewModel(
                 chargingMpesa = try {
                     val phone = Phone.formatPhone(_mpesa.value.phone, deviceDetails.countryCode)
                     val input = PayWithMpesaInput(
-                        reason = PaymentReason.LAND_REGISTRATION,
+                        reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
                         email = email,
-                        currency = "KES",
+                        currency = deviceDetails.currency,
+                        paymentFor = uploadId,
                     )
                     graphqlApiService.chargeMpesa(input)
                     ChargingMpesa.Paying

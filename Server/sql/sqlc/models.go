@@ -10,22 +10,34 @@ import (
 	"github.com/google/uuid"
 )
 
-type Land struct {
-	ID        uuid.UUID `json:"id"`
-	Title     string    `json:"title"`
-	Size      float64   `json:"size"`
-	Symbol    string    `json:"symbol"`
-	Verified  string    `json:"verified"`
-	GovtID    string    `json:"govt_id"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+type Payment struct {
+	ID          uuid.UUID     `json:"id"`
+	Email       string        `json:"email"`
+	Amount      int32         `json:"amount"`
+	Currency    string        `json:"currency"`
+	Reason      string        `json:"reason"`
+	Status      string        `json:"status"`
+	ReferenceID string        `json:"reference_id"`
+	TitleID     uuid.NullUUID `json:"title_id"`
+	CreatedAt   time.Time     `json:"created_at"`
+	UpdatedAt   time.Time     `json:"updated_at"`
 }
 
-type Upload struct {
+type SupportDoc struct {
 	ID            uuid.UUID `json:"id"`
-	Type          string    `json:"type"`
-	Uri           string    `json:"uri"`
+	GovtID        string    `json:"govt_id"`
 	Verification  string    `json:"verification"`
+	Email         string    `json:"email"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
+}
+
+type Title struct {
+	ID            uuid.UUID `json:"id"`
+	Title         string    `json:"title"`
+	Verification  string    `json:"verification"`
+	Email         string    `json:"email"`
 	WalletAddress string    `json:"wallet_address"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`

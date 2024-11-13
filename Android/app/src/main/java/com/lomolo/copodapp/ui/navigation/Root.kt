@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
@@ -26,9 +28,9 @@ import com.lomolo.copodapp.ui.screens.UploadLandTitle
 import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
-import com.lomolo.copodapp.ui.viewmodels.GetDeviceDetails
 import com.lomolo.copodapp.ui.viewmodels.InitializeSdk
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
 import org.koin.androidx.compose.navigation.koinNavViewModel
 
@@ -47,18 +49,15 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
-    registerLandViewModel: RegisterLandViewModel = koinNavViewModel(),
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
         InitializeSdk.Loading -> {
-            when(mainViewModel.gettingDeviceDetails) {
-                GetDeviceDetails.Loading -> LoadingScreenDestination.route
-            }
             LoadingScreenDestination.route
         }
+
         InitializeSdk.Success -> {
-            when(isLoggedIn) {
+            when (isLoggedIn) {
                 true -> ExploreMarketsScreenDestination.route
                 false -> HomeScreenDestination.route
             }
@@ -114,28 +113,6 @@ fun NavigationHost(
                 navHostController.navigate(LoginScreenDestination.route)
             })
         }
-        composable(route = UploadLandTitleScreenDestination.route) {
-            UploadLandTitle(
-                onGoBack = {
-                    navHostController.popBackStack()
-                },
-                onNavigateTo = {
-                    navHostController.navigate(it)
-                },
-                viewModel = registerLandViewModel,
-            )
-        }
-        composable(route = UploadGovtIssuedIdScreenDestination.route) {
-            UploadGovtIssuedId(
-                onGoBack = {
-                    navHostController.popBackStack()
-                },
-                viewModel = registerLandViewModel,
-                onNext = {
-                    navHostController.navigate(MpesaScreenDestination.route)
-                }
-            )
-        }
         composable(route = LandScreenDestination.route) {
             LandScreen(
                 onNavigateTo = onNavigateTo,
@@ -147,11 +124,51 @@ fun NavigationHost(
                 }
             )
         }
-        composable(route = MpesaScreenDestination.route) {
+        composable(route = UploadLandTitleScreenDestination.route) {
+            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
+            UploadLandTitle(
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                onNavigateTo = {
+                    navHostController.navigate(it)
+                },
+                userEmail = mainViewModel.userInfo!!.email,
+                userWallet = mainViewModel.credentials!!.address,
+                viewModel = registerLandViewModel,
+            )
+        }
+        composable(
+            route = UploadGovtIssuedIdScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(UploadGovtIssuedIdScreenDestination.LAND_TITLE_ID_ARG) {
+                type = NavType.StringType
+            })
+        ) {
+            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
+            UploadGovtIssuedId(
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                userEmail = mainViewModel.userInfo!!.email,
+                userWallet = mainViewModel.credentials!!.address,
+                viewModel = registerLandViewModel,
+                onNext = { uploadId ->
+                    navHostController.navigate("${MpesaScreenDestination.route}/${uploadId}")
+                },
+            )
+        }
+        composable(
+            route = MpesaScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(MpesaScreenDestination.LAND_TITLE_ID_ARG) {
+                type = NavType.StringType
+            })
+        ) {
+            val mpesaViewModel: MpesaViewModel = koinNavViewModel()
             MpesaScreen(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
+                viewModel = mpesaViewModel,
                 mainViewModel = mainViewModel,
             )
         }

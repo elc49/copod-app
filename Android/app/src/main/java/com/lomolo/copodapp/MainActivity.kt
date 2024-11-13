@@ -5,13 +5,22 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.lomolo.copodapp.di.appModule
 import com.lomolo.copodapp.ui.theme.CopodAppTheme
+import com.lomolo.copodapp.ui.viewmodels.GetDeviceDetails
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -30,11 +39,25 @@ class MainActivity : ComponentActivity() {
         setContent {
             CopodAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    CopodApplication(
-                        Modifier.padding(innerPadding),
-                        rememberNavController(),
-                        mainViewModel = mainViewModel,
-                    )
+                    when (mainViewModel.gettingDeviceDetails) {
+                        GetDeviceDetails.Success -> CopodApplication(
+                            Modifier.padding(innerPadding),
+                            rememberNavController(),
+                            mainViewModel = mainViewModel,
+                        )
+
+                        GetDeviceDetails.Loading -> Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            CircularProgressIndicator(
+                                Modifier.size(20.dp),
+                            )
+                        }
+
+                        else -> Text(stringResource(R.string.something_wrong))
+                    }
                 }
             }
             mainViewModel.initialize()

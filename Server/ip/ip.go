@@ -47,7 +47,7 @@ func (c *ipClient) GetIpinfo(ctx context.Context, ip string) (*Ipinfo, error) {
 
 	cValue, err := c.cache.Get(ctx, copodCache.IpCacheKey(ip), ipinfo)
 	if err != nil {
-		c.log.WithError(err).Errorf("ip: reach ipinfo from cache")
+		c.log.WithError(err).Errorf("ip: read ipinfo from cache")
 		return nil, err
 	} else if cValue != nil {
 		return (cValue).(*Ipinfo), nil

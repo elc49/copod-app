@@ -94,7 +94,6 @@ class MainViewModel(
         viewModelScope.launch {
             try {
                 val isLoggedIn = web3Auth.isAuthenticated()
-                Log.d(TAG, isLoggedIn.toString())
                 if (isLoggedIn) {
                     prepareCredentials()
                     prepareUserInfo()

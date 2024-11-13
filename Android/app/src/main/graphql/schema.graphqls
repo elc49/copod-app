@@ -1,7 +1,9 @@
-enum Doc {
-  GOVT_ID
+input DocUploadInput {
+  url: String!
 
-  LAND_TITLE
+  email: String!
+
+  walletAddress: String!
 }
 
 type Land {
@@ -25,9 +27,17 @@ type Land {
 }
 
 type Mutation {
-  createUploads(input: [UploadInput!]!): Boolean
+  uploadLandTitle(input: DocUploadInput!): Title!
+
+  uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
 
   chargeMpesa(input: PayWithMpesaInput!): String
+}
+
+enum PaidFor {
+  PAID
+
+  NOT_PAID
 }
 
 input PayWithMpesaInput {
@@ -38,10 +48,12 @@ input PayWithMpesaInput {
   email: String!
 
   currency: String!
+
+  paymentFor: UUID!
 }
 
 enum PaymentReason {
-  LAND_REGISTRATION
+  LAND_REGISTRY
 }
 
 type PaymentUpdate {
@@ -64,16 +76,10 @@ type Subscription {
   paymentUpdate(walletAddress: String!): PaymentUpdate!
 }
 
-scalar Time
-
-scalar UUID
-
-type Upload {
+type SupportingDoc {
   id: UUID!
 
-  uri: String!
-
-  type: Doc!
+  govt_id: String!
 
   verified: Verification!
 
@@ -82,13 +88,21 @@ type Upload {
   updated_at: Time!
 }
 
-input UploadInput {
-  type: Doc!
+scalar Time
 
-  uri: String!
+type Title {
+  id: UUID!
 
-  wallet_address: String!
+  title: String
+
+  verified: Verification!
+
+  created_at: Time!
+
+  updated_at: Time!
 }
+
+scalar UUID
 
 type User {
   id: UUID!
