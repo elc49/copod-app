@@ -95,8 +95,14 @@ func (s *Server) MountRouter() *chi.Mux {
 
 func (s *Server) MountController() {
 	// User
-	u := controller.User{}
-	u.Init(s.sql)
+	uc := controller.User{}
+	uc.Init(s.sql)
+	// Title
+	tc := controller.Title{}
+	tc.Init(s.sql)
+	// Support doc
+	sc := controller.SupportingDoc{}
+	sc.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {

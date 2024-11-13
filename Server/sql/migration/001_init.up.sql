@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS titles(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
-  email TEXT NOT NULL REFERENCES users(email),
-  wallet_address TEXT NOT NULL REFERENCES users(wallet_address),
+  email TEXT NOT NULL,
+  wallet_address TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -27,8 +27,8 @@ CREATE TABLE IF NOT EXISTS support_docs(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   govt_id TEXT NOT NULL,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
-  email TEXT NOT NULL REFERENCES users(email),
-  wallet_address TEXT NOT NULL REFERENCES users(wallet_address),
+  email TEXT NOT NULL,
+  wallet_address TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
