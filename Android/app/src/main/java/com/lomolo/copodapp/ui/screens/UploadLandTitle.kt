@@ -21,6 +21,7 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import com.lomolo.copodapp.ui.viewmodels.SaveUpload
 import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
@@ -87,10 +88,10 @@ fun UploadLandTitle(
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
-    }, image = landTitle, onNext = {
+    }, image = landTitle, savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
         if (image.isNotEmpty()) {
             viewModel.saveLandTitle(userEmail, userWallet) {
-                onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
+                onNavigateTo("${UploadGovtIssuedIdScreenDestination.route}/${it}")
             }
         }
     }, onGoBack = onGoBack, onSelectImage = {

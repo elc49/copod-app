@@ -4,12 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.type.DocUploadInput
+import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,6 +37,7 @@ interface SaveUpload {
 class RegisterLandViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
+    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
     val landTitle: StateFlow<String> = _landTitle.asStateFlow()
@@ -54,7 +57,7 @@ class RegisterLandViewModel(
     var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
         private set
 
-    private var titleId: String = ""
+    private val titleId: String? = savedStateHandle[UploadGovtIssuedIdScreenDestination.LAND_TITLE_ID_ARG]
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
         if (uploadingLandDoc !is UploadingDoc.Loading) {
@@ -100,7 +103,7 @@ class RegisterLandViewModel(
         }
     }
 
-    fun saveLandTitle(email: String, address: String, cb: () -> Unit) {
+    fun saveLandTitle(email: String, address: String, cb: (String) -> Unit) {
         if (savingLandTitle !is SaveUpload.Loading) {
             savingLandTitle = SaveUpload.Loading
             viewModelScope.launch {
@@ -108,8 +111,7 @@ class RegisterLandViewModel(
                     val res = graphqlApiService.uploadLandTitle(
                         DocUploadInput(landTitle.value, email, address)
                     ).dataOrThrow()
-                    titleId = res.uploadLandTitle.id.toString()
-                    SaveUpload.Success.also { cb() }
+                    SaveUpload.Success.also { cb(res.uploadLandTitle.id.toString()) }
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     SaveUpload.Error(e.message)
@@ -118,7 +120,7 @@ class RegisterLandViewModel(
         }
     }
 
-    fun saveSupportingDoc(email: String, address: String, cb: (String) -> Unit) {
+    fun saveSupportingDoc(email: String, address: String, cb: (String?) -> Unit) {
         if (savingSupportingDoc !is SaveUpload.Loading) {
             savingSupportingDoc = SaveUpload.Loading
             viewModelScope.launch {

@@ -21,12 +21,15 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import com.lomolo.copodapp.ui.viewmodels.SaveUpload
 import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
 object UploadGovtIssuedIdScreenDestination : Navigation {
     override val title = null
     override val route = "register-govt-id"
+    const val LAND_TITLE_ID_ARG = "titleId"
+    val routeWithArgs = "$route/{$LAND_TITLE_ID_ARG}"
 }
 
 @Composable
@@ -93,7 +96,7 @@ fun UploadGovtIssuedId(
         onNext = {
             if (image.isNotEmpty()) {
                 viewModel.saveSupportingDoc(userEmail, userWallet) {
-                    onNext(it)
+                    if (it != null) onNext(it)
                 }
             }
         },
@@ -109,6 +112,7 @@ fun UploadGovtIssuedId(
                 }
             }
         },
+        savingDoc = viewModel.savingSupportingDoc is SaveUpload.Loading,
         buttonText = @Composable {
             Text(
                 stringResource(R.string.proceed),

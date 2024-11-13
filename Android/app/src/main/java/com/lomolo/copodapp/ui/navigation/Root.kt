@@ -48,7 +48,6 @@ fun NavigationHost(
     modifier: Modifier,
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
-    registerLandViewModel: RegisterLandViewModel = koinNavViewModel(),
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
@@ -114,6 +113,7 @@ fun NavigationHost(
             })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
+            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
             UploadLandTitle(
                 onGoBack = {
                     navHostController.popBackStack()
@@ -126,7 +126,13 @@ fun NavigationHost(
                 viewModel = registerLandViewModel,
             )
         }
-        composable(route = UploadGovtIssuedIdScreenDestination.route) {
+        composable(
+            route = UploadGovtIssuedIdScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(UploadGovtIssuedIdScreenDestination.LAND_TITLE_ID_ARG) {
+                type = NavType.StringType
+            })
+        ) {
+            val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
             UploadGovtIssuedId(
                 onGoBack = {
                     navHostController.popBackStack()

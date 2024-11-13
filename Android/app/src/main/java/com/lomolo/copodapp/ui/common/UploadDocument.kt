@@ -7,9 +7,11 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -37,6 +39,7 @@ fun UploadDocument(
     title: @Composable () -> Unit,
     onGoBack: () -> Unit,
     onSelectImage: () -> Unit,
+    savingDoc: Boolean,
     image: Any,
     buttonText: @Composable (RowScope.() -> Unit),
 ) {
@@ -76,14 +79,20 @@ fun UploadDocument(
                 )
             }
             Button(
-                onClick = onNext,
+                onClick = { if (!savingDoc) onNext() },
                 shape = MaterialTheme.shapes.extraSmall,
                 contentPadding = PaddingValues(16.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
             ) {
-                buttonText()
+                when(savingDoc) {
+                    true -> CircularProgressIndicator(
+                        Modifier.size(20.dp),
+                        MaterialTheme.colorScheme.onPrimary,
+                    )
+                    false -> buttonText()
+                }
             }
         }
     }
