@@ -43,7 +43,6 @@ import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
-import org.koin.androidx.compose.koinViewModel
 
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
@@ -56,7 +55,7 @@ object MpesaScreenDestination : Navigation {
 fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    viewModel: MpesaViewModel = koinViewModel(),
+    viewModel: MpesaViewModel,
     mainViewModel: MainViewModel,
 ) {
     val mpesa by viewModel.mpesa.collectAsState()

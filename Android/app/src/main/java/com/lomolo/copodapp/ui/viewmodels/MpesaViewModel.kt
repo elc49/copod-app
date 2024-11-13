@@ -72,7 +72,7 @@ class MpesaViewModel(
                         reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
                         email = email,
-                        currency = "KES",
+                        currency = deviceDetails.currency,
                         paymentFor = uploadId,
                     )
                     graphqlApiService.chargeMpesa(input)

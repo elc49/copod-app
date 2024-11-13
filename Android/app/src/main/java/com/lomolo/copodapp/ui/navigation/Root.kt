@@ -30,6 +30,7 @@ import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
 import com.lomolo.copodapp.ui.viewmodels.InitializeSdk
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
 import org.koin.androidx.compose.navigation.koinNavViewModel
 
@@ -162,10 +163,12 @@ fun NavigationHost(
                 type = NavType.StringType
             })
         ) {
+            val mpesaViewModel: MpesaViewModel = koinNavViewModel()
             MpesaScreen(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
+                viewModel = mpesaViewModel,
                 mainViewModel = mainViewModel,
             )
         }
