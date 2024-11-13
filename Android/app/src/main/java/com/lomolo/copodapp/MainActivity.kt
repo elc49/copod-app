@@ -10,12 +10,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.lomolo.copodapp.di.appModule
@@ -56,7 +59,27 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        else -> Text(stringResource(R.string.something_wrong))
+                        else -> Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                stringResource(R.string.something_wrong),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = MaterialTheme.colorScheme.error,
+                                textAlign = TextAlign.Center,
+                            )
+                            Button(
+                                onClick = { mainViewModel.getDeviceDetails() },
+                                shape = MaterialTheme.shapes.extraSmall,
+                            ) {
+                                Text(
+                                    stringResource(R.string.retry),
+                                    style = MaterialTheme.typography.titleMedium,
+                                )
+                            }
+                        }
                     }
                 }
             }

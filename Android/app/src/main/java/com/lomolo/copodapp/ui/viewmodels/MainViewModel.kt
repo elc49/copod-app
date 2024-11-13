@@ -173,7 +173,7 @@ class MainViewModel(
         }
     }
 
-    private fun getDeviceDetails() {
+    fun getDeviceDetails() {
         if (gettingDeviceDetails !is GetDeviceDetails.Loading) {
             gettingDeviceDetails = GetDeviceDetails.Loading
             viewModelScope.launch {
