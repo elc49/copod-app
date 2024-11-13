@@ -11,15 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const clearTestPayments = `-- name: ClearTestPayments :exec
-DELETE FROM payments
-`
-
-func (q *Queries) ClearTestPayments(ctx context.Context) error {
-	_, err := q.db.ExecContext(ctx, clearTestPayments)
-	return err
-}
-
 const createPayment = `-- name: CreatePayment :one
 INSERT INTO payments (
   email, amount, currency, reason, status, reference_id, title_id

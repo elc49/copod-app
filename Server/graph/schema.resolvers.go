@@ -6,23 +6,35 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
 	"github.com/sirupsen/logrus"
 )
 
 // UploadLandTitle is the resolver for the uploadLandTitle field.
 func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
-	panic(fmt.Errorf("not implemented: UploadLandTitle - uploadLandTitle"))
+	args := sql.CreateTitleParams{
+		Email:         input.Email,
+		Title:         input.URL,
+		WalletAddress: input.WalletAddress,
+	}
+
+	return r.titleController.CreateTitle(ctx, args)
 }
 
 // UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
 func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
-	panic(fmt.Errorf("not implemented: UploadSupportingDoc - uploadSupportingDoc"))
+	args := sql.CreateSupportDocParams{
+		Email:         input.Email,
+		GovtID:        input.URL,
+		WalletAddress: input.WalletAddress,
+	}
+
+	return r.supportDocController.CreateSupportingDoc(ctx, args)
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
@@ -91,18 +103,3 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *mutationResolver) CreateTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
-	panic(fmt.Errorf("not implemented: CreateTitle - createTitle"))
-}
-func (r *mutationResolver) CreateSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
-	panic(fmt.Errorf("not implemented: CreateSupportingDoc - createSupportingDoc"))
-}
-*/

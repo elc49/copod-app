@@ -62,7 +62,7 @@ type SupportingDoc struct {
 
 type Title struct {
 	ID        uuid.UUID    `json:"id"`
-	Title     *string      `json:"title,omitempty"`
+	Title     string       `json:"title"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`

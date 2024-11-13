@@ -37,7 +37,7 @@ type Land {
 # Title
 type Title {
   id: UUID!
-  title: String
+  title: String!
   verified: Verification!
   created_at: Time!
   updated_at: Time!

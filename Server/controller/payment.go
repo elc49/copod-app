@@ -13,14 +13,12 @@ type PaymentController interface {
 	CreatePayment(context.Context, sql.CreatePaymentParams) (*bool, error)
 }
 
-var _ PaymentController = (*Payment)(nil)
+type Payment struct {
+	r *repository.Payment
+}
 
 func GetPaymentController() PaymentController {
 	return paymentController
-}
-
-type Payment struct {
-	r *repository.Payment
 }
 
 func (c *Payment) Init(sql *sql.Queries) {

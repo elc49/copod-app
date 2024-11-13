@@ -50,6 +50,12 @@ func init() {
 	}
 	superUser = user
 	// Payment
-	pm := controller.Payment{}
-	pm.Init(q)
+	pc := controller.Payment{}
+	pc.Init(q)
+	// Title
+	tc := controller.Title{}
+	tc.Init(q)
+	// SupportingDoc
+	sc := controller.SupportingDoc{}
+	sc.Init(q)
 }

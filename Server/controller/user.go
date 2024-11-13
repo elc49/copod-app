@@ -15,8 +15,6 @@ type UserController interface {
 	GetUser(context.Context, string) (*model.User, error)
 }
 
-var _ UserController = (*User)(nil)
-
 type User struct {
 	r *repository.User
 }

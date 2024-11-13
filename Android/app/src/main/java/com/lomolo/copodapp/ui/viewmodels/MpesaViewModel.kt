@@ -45,7 +45,7 @@ class MpesaViewModel(
         private set
 
     private val uploadId: String = checkNotNull(
-        savedStateHandle[MpesaScreenDestination.UPLOAD_ID_ARG]
+        savedStateHandle[MpesaScreenDestination.LAND_TITLE_ID_ARG]
     )
 
     fun setPhone(phone: String) {

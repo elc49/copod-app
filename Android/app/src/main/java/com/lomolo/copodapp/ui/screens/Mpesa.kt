@@ -48,8 +48,8 @@ import org.koin.androidx.compose.koinViewModel
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
     override val route = "mpesa"
-    const val UPLOAD_ID_ARG = "uploadId"
-    val routeWithArgs = "$route/{$UPLOAD_ID_ARG}"
+    const val LAND_TITLE_ID_ARG = "uploadId"
+    val routeWithArgs = "$route/{$LAND_TITLE_ID_ARG}"
 }
 
 @Composable

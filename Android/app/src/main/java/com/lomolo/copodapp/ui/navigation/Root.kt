@@ -112,6 +112,17 @@ fun NavigationHost(
                 navHostController.navigate(LoginScreenDestination.route)
             })
         }
+        composable(route = LandScreenDestination.route) {
+            LandScreen(
+                onNavigateTo = onNavigateTo,
+                currentDestination = it.destination,
+                userInfo = mainViewModel.userInfo,
+                mainViewModel = mainViewModel,
+                onClickAddLand = {
+                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                }
+            )
+        }
         composable(route = UploadLandTitleScreenDestination.route) {
             val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
             UploadLandTitle(
@@ -145,20 +156,9 @@ fun NavigationHost(
                 },
             )
         }
-        composable(route = LandScreenDestination.route) {
-            LandScreen(
-                onNavigateTo = onNavigateTo,
-                currentDestination = it.destination,
-                userInfo = mainViewModel.userInfo,
-                mainViewModel = mainViewModel,
-                onClickAddLand = {
-                    navHostController.navigate(UploadLandTitleScreenDestination.route)
-                }
-            )
-        }
         composable(
             route = MpesaScreenDestination.routeWithArgs,
-            arguments = listOf(navArgument(MpesaScreenDestination.UPLOAD_ID_ARG) {
+            arguments = listOf(navArgument(MpesaScreenDestination.LAND_TITLE_ID_ARG) {
                 type = NavType.StringType
             })
         ) {
