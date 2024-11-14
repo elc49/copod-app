@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -55,12 +56,19 @@ object MpesaScreenDestination : Navigation {
 fun MpesaScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    onSuccess: () -> Unit,
     viewModel: MpesaViewModel,
     mainViewModel: MainViewModel,
 ) {
+    LaunchedEffect(key1 = viewModel.chargingMpesa) {
+        if (viewModel.chargingMpesa is ChargingMpesa.Paid) {
+            onSuccess()
+        }
+    }
     val mpesa by viewModel.mpesa.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val userInfo = mainViewModel.userInfo
+    val credentials = mainViewModel.credentials
     val deviceDetails by mainViewModel.deviceDetails.collectAsState()
     val isPhoneValid = viewModel.isValidPhone(mpesa, deviceDetails)
     val context = LocalContext.current
@@ -102,7 +110,7 @@ fun MpesaScreen(
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide()
-                        viewModel.chargeMpesa(userInfo?.email!!, deviceDetails)
+                        viewModel.chargeMpesa(userInfo?.email!!, credentials!!.address, deviceDetails)
                     }),
                     leadingIcon = {
                         Row(
@@ -128,13 +136,18 @@ fun MpesaScreen(
                     },
                 )
                 Button(
-                    onClick = { viewModel.chargeMpesa(userInfo?.email!!, deviceDetails) },
+                    onClick = { viewModel.chargeMpesa(userInfo?.email!!, credentials!!.address, deviceDetails) },
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraSmall,
                 ) {
                     when (viewModel.chargingMpesa) {
                         ChargingMpesa.Success -> Text(
+                            stringResource(R.string.pay),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+
+                        ChargingMpesa.Paid -> Text(
                             stringResource(R.string.pay),
                             style = MaterialTheme.typography.titleMedium,
                         )

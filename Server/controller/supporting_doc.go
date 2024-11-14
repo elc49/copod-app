@@ -35,7 +35,7 @@ func (c *SupportingDoc) CreateSupportingDoc(ctx context.Context, args sql.Create
 	case s != nil && err == nil:
 		switch s.Verified {
 		case model.VerificationRejected:
-			// TODO update don't recreate
+			// update don't recreate
 			return c.r.UpdateEmailSupportDoc(ctx, sql.UpdateEmailSupportDocParams{
 				Email:        args.Email,
 				GovtID:       args.GovtID,

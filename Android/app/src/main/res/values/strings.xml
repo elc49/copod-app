@@ -30,4 +30,5 @@
     <string name="phone_number">Phone number</string>
     <string name="pay">Pay</string>
     <string name="retry">Retry</string>
+    <string name="ok">OK</string>
 </resources>

@@ -14,8 +14,12 @@ type Querier interface {
 	CreateTitle(ctx context.Context, arg CreateTitleParams) (Title, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetEmailSupportDoc(ctx context.Context, email string) (SupportDoc, error)
+	GetEmailTitle(ctx context.Context, email string) (Title, error)
+	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
 	GetUser(ctx context.Context, walletAddress string) (User, error)
 	UpdateEmailSupportDoc(ctx context.Context, arg UpdateEmailSupportDocParams) (SupportDoc, error)
+	UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error)
+	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

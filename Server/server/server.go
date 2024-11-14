@@ -103,6 +103,9 @@ func (s *Server) MountController() {
 	// Support doc
 	sc := controller.SupportingDoc{}
 	sc.Init(s.sql)
+	// Payment
+	pc := controller.Payment{}
+	pc.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {

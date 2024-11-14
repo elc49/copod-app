@@ -62,7 +62,7 @@ class MpesaViewModel(
         }
     }
 
-    fun chargeMpesa(email: String, deviceDetails: DeviceDetails) {
+    fun chargeMpesa(email: String, wallet: String, deviceDetails: DeviceDetails) {
         if (chargingMpesa !is ChargingMpesa.Loading && chargingMpesa !is ChargingMpesa.Paying) {
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
@@ -72,6 +72,7 @@ class MpesaViewModel(
                         reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
                         email = email,
+                        walletAddress = wallet,
                         currency = deviceDetails.currency,
                         paymentFor = uploadId,
                     )
@@ -91,8 +92,8 @@ class MpesaViewModel(
 
     init {
         viewModelScope.launch {
-            val credentials = web3Auth.getCredentials(web3Auth.getPrivateKey())
             try {
+                val credentials = web3Auth.getCredentials(web3Auth.getPrivateKey())
                 graphqlApiService.paymentUpdate(credentials.address).collect {
                     Log.d(TAG, it.data?.paymentUpdate.toString())
                     val data = it.data?.paymentUpdate

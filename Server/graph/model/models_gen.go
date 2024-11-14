@@ -33,11 +33,21 @@ type Mutation struct {
 }
 
 type PayWithMpesaInput struct {
-	Reason     PaymentReason `json:"reason"`
-	Phone      string        `json:"phone"`
-	Email      string        `json:"email"`
-	Currency   string        `json:"currency"`
-	PaymentFor uuid.UUID     `json:"paymentFor"`
+	Reason        PaymentReason `json:"reason"`
+	Phone         string        `json:"phone"`
+	Email         string        `json:"email"`
+	WalletAddress string        `json:"walletAddress"`
+	Currency      string        `json:"currency"`
+	PaymentFor    uuid.UUID     `json:"paymentFor"`
+}
+
+type Payment struct {
+	ID            uuid.UUID `json:"id"`
+	ReferenceID   string    `json:"reference_id"`
+	Status        string    `json:"status"`
+	WalletAddress string    `json:"wallet_address"`
+	CreatedAt     time.Time `json:"created_at"`
+	UpdatedAt     time.Time `json:"updated_at"`
 }
 
 type PaymentUpdate struct {

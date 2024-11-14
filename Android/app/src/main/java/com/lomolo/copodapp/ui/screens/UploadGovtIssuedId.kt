@@ -102,7 +102,7 @@ fun UploadGovtIssuedId(
         },
         onGoBack = onGoBack,
         onSelectImage = {
-            if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
+            if (viewModel.uploadingGovtId !is UploadingDoc.Loading) {
                 scope.launch {
                     pickGovtIdMedia.launch(
                         PickVisualMediaRequest(

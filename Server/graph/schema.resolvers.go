@@ -40,9 +40,10 @@ func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.
 // ChargeMpesa is the resolver for the chargeMpesa field.
 func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
 	charge := paystack.MpesaCharge{
-		Email:    input.Email,
-		Reason:   input.Reason.String(),
-		Currency: input.Currency,
+		Email:         input.Email,
+		Reason:        input.Reason.String(),
+		Currency:      input.Currency,
+		WalletAddress: input.WalletAddress,
 	}
 
 	res, err := r.paystack.ChargeMpesa(ctx, input.PaymentFor, charge)
