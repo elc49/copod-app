@@ -37,3 +37,50 @@ func (q *Queries) CreateTitle(ctx context.Context, arg CreateTitleParams) (Title
 	)
 	return i, err
 }
+
+const getEmailTitle = `-- name: GetEmailTitle :one
+SELECT id, title, verification, email, wallet_address, created_at, updated_at FROM titles
+WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetEmailTitle(ctx context.Context, email string) (Title, error) {
+	row := q.db.QueryRowContext(ctx, getEmailTitle, email)
+	var i Title
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Verification,
+		&i.Email,
+		&i.WalletAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateEmailTitle = `-- name: UpdateEmailTitle :one
+UPDATE titles SET title = $1, verification = $2
+WHERE email = $3
+RETURNING id, title, verification, email, wallet_address, created_at, updated_at
+`
+
+type UpdateEmailTitleParams struct {
+	Title        string `json:"title"`
+	Verification string `json:"verification"`
+	Email        string `json:"email"`
+}
+
+func (q *Queries) UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error) {
+	row := q.db.QueryRowContext(ctx, updateEmailTitle, arg.Title, arg.Verification, arg.Email)
+	var i Title
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Verification,
+		&i.Email,
+		&i.WalletAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

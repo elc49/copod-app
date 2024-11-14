@@ -20,9 +20,15 @@ func WriteHttp(w http.ResponseWriter, v interface{}, code int) error {
 }
 
 func DecodeHttp(in io.ReadCloser, out interface{}) error {
-	if err := json.NewDecoder(in).Decode(out); err != nil {
+	body, err := io.ReadAll(in)
+	if err != nil {
 		return err
 	}
+
+	if err := DecodeJson([]byte(body), out); err != nil {
+		return err
+	}
+
 	return nil
 }
 

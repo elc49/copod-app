@@ -42,9 +42,11 @@ CREATE TABLE IF NOT EXISTS payments(
   reason TEXT NOT NULL,
   status TEXT NOT NULL,
   reference_id TEXT NOT NULL,
+  wallet_address TEXT NOT NULL,
   title_id UUID REFERENCES titles(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_reference_id ON payments(reference_id);
 CREATE INDEX IF NOT EXISTS idx_title_id ON payments(title_id);
+CREATE INDEX IF NOT EXISTS idx_payment_wallet ON payments(wallet_address);

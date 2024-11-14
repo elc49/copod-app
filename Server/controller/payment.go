@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 
+	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
 )
@@ -10,7 +11,9 @@ import (
 var paymentController *Payment
 
 type PaymentController interface {
-	CreatePayment(context.Context, sql.CreatePaymentParams) (*bool, error)
+	CreatePayment(context.Context, sql.CreatePaymentParams) (*model.Payment, error)
+	GetPaymentByReferenceID(context.Context, string) (*model.Payment, error)
+	UpdatePaymentStatus(context.Context, sql.UpdatePaymentStatusParams) (*model.Payment, error)
 }
 
 type Payment struct {
@@ -28,6 +31,14 @@ func (c *Payment) Init(sql *sql.Queries) {
 	paymentController = c
 }
 
-func (c *Payment) CreatePayment(ctx context.Context, args sql.CreatePaymentParams) (*bool, error) {
+func (c *Payment) CreatePayment(ctx context.Context, args sql.CreatePaymentParams) (*model.Payment, error) {
 	return c.r.CreatePayment(ctx, args)
+}
+
+func (c *Payment) GetPaymentByReferenceID(ctx context.Context, referenceID string) (*model.Payment, error) {
+	return c.r.GetPaymentByReferenceID(ctx, referenceID)
+}
+
+func (c *Payment) UpdatePaymentStatus(ctx context.Context, args sql.UpdatePaymentStatusParams) (*model.Payment, error) {
+	return c.r.UpdatePaymentStatus(ctx, args)
 }

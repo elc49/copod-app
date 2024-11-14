@@ -47,9 +47,25 @@ input PayWithMpesaInput {
 
   email: String!
 
+  walletAddress: String!
+
   currency: String!
 
   paymentFor: UUID!
+}
+
+type Payment {
+  id: UUID!
+
+  reference_id: String!
+
+  status: String!
+
+  wallet_address: String!
+
+  created_at: Time!
+
+  updated_at: Time!
 }
 
 enum PaymentReason {
@@ -93,7 +109,7 @@ scalar Time
 type Title {
   id: UUID!
 
-  title: String
+  title: String!
 
   verified: Verification!
 

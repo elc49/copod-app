@@ -19,6 +19,7 @@ type MpesaCharge struct {
 		Phone    string `json:"phone"`
 		Provider string `json:"provider"`
 	} `json:"mobile_money"`
+	WalletAddress string `json:"wallet_addrress"`
 }
 
 type PaystackWebhook struct {

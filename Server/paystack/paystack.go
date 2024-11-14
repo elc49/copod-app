@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"sync"
 
+	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/graph/model"
@@ -15,6 +16,7 @@ import (
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
 	"github.com/google/uuid"
+	"github.com/redis/go-redis/v9"
 	"github.com/sirupsen/logrus"
 )
 
@@ -22,6 +24,7 @@ var p *paystackClient
 
 type Paystack interface {
 	ChargeMpesa(context.Context, uuid.UUID, MpesaCharge) (*MpesaChargeResponse, error)
+	HappyPaystack(context.Context, *PaystackWebhook) error
 }
 
 var _ Paystack = (*paystackClient)(nil)
@@ -32,6 +35,7 @@ type paystackClient struct {
 	mu                sync.Mutex
 	http              *http.Client
 	paymentController controller.PaymentController
+	redis             *redis.Client
 }
 
 func New(sqlStore *sql.Queries) {
@@ -42,6 +46,7 @@ func New(sqlStore *sql.Queries) {
 		sync.Mutex{},
 		&http.Client{},
 		controller.GetPaymentController(),
+		cache.GetCache().Redis(),
 	}
 }
 
@@ -92,7 +97,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 		return nil, err
 	}
 
-	if err := util.DecodeHttp(res.Body, chargeResponse); err != nil {
+	if err := util.DecodeHttp(res.Body, &chargeResponse); err != nil {
 		p.log.WithError(err).Errorf("paystack: decode")
 		return nil, err
 	}
@@ -100,13 +105,14 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 	go func() {
 		ctx := context.Background()
 		args := sql.CreatePaymentParams{
-			Email:       input.Email,
-			ReferenceID: chargeResponse.Data.Reference,
-			Status:      chargeResponse.Data.Status,
-			Reason:      input.Reason,
-			Amount:      int32(input.Amount),
-			Currency:    input.Currency,
-			TitleID:     uuid.NullUUID{UUID: paymentFor, Valid: true},
+			Email:         input.Email,
+			ReferenceID:   chargeResponse.Data.Reference,
+			Status:        chargeResponse.Data.Status,
+			Reason:        input.Reason,
+			WalletAddress: input.WalletAddress,
+			Amount:        int32(input.Amount),
+			Currency:      input.Currency,
+			TitleID:       uuid.NullUUID{UUID: paymentFor, Valid: true},
 		}
 		_, err := controller.GetPaymentController().CreatePayment(ctx, args)
 		if err != nil {
@@ -116,4 +122,47 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 	}()
 
 	return chargeResponse, nil
+}
+
+func (p *paystackClient) HappyPaystack(ctx context.Context, input *PaystackWebhook) error {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+
+	payment, err := p.sqlStore.GetPaymentByReferenceID(ctx, input.Data.Reference)
+	if err != nil {
+		p.log.WithError(err).WithFields(logrus.Fields{"reference_id": input.Data.Reference}).Errorf("paystack: GetPaymentByReferenceID")
+		return err
+	}
+
+	payload := model.PaymentUpdate{
+		ReferenceID:   input.Data.Reference,
+		Status:        input.Data.Status,
+		WalletAddress: payment.WalletAddress,
+	}
+	b, err := util.EncodeJson(payload)
+	if err != nil {
+		p.log.WithError(err).WithFields(logrus.Fields{"payload": payload}).Errorf("paystack: EncodeJson webhook payload")
+		return err
+	}
+
+	// update payment status in db
+	go func() {
+		ctx := context.Background()
+		args := sql.UpdatePaymentStatusParams{
+			ReferenceID: input.Data.Reference,
+			Status:      input.Data.Status,
+		}
+		_, err := p.sqlStore.UpdatePaymentStatus(ctx, args)
+		if err != nil {
+			p.log.WithError(err).Errorf("paystack: UpdatePaymentStatus async")
+			return
+		}
+	}()
+
+	if err := p.redis.Publish(ctx, cache.PAYMENT_UPDATED_CHANNEL, b).Err(); err != nil {
+		p.log.WithError(err).WithFields(logrus.Fields{"payload": payload}).Errorf("paystack: redis.Publish payment update")
+		return err
+	}
+
+	return nil
 }

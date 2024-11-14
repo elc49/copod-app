@@ -22,6 +22,8 @@ import com.lomolo.copodapp.ui.screens.LoginScreen
 import com.lomolo.copodapp.ui.screens.LoginScreenDestination
 import com.lomolo.copodapp.ui.screens.MpesaScreen
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
+import com.lomolo.copodapp.ui.screens.SuccessScreen
+import com.lomolo.copodapp.ui.screens.SuccessScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedId
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadLandTitle
@@ -114,15 +116,13 @@ fun NavigationHost(
             })
         }
         composable(route = LandScreenDestination.route) {
-            LandScreen(
-                onNavigateTo = onNavigateTo,
+            LandScreen(onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
                 mainViewModel = mainViewModel,
                 onClickAddLand = {
                     navHostController.navigate(UploadLandTitleScreenDestination.route)
-                }
-            )
+                })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
             val registerLandViewModel: RegisterLandViewModel = koinNavViewModel()
@@ -168,8 +168,16 @@ fun NavigationHost(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
+                onSuccess = {
+                    navHostController.navigate(SuccessScreenDestination.route)
+                },
                 viewModel = mpesaViewModel,
                 mainViewModel = mainViewModel,
+            )
+        }
+        composable(route = SuccessScreenDestination.route) {
+            SuccessScreen(
+                onNavigateTo = onNavigateTo,
             )
         }
     }

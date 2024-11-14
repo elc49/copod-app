@@ -63,6 +63,16 @@ type User {
   updated_at: Time!
 }
 
+# Payment
+type Payment {
+  id: UUID!
+  reference_id: String!
+  status: String!
+  wallet_address: String!
+  created_at: Time!
+  updated_at: Time!
+}
+
 # Payment update
 type PaymentUpdate {
   referenceId: String!
@@ -80,6 +90,7 @@ input PayWithMpesaInput {
   reason: PaymentReason!
   phone: String!
   email: String!
+  walletAddress: String!
   currency: String!
   paymentFor: UUID!
 }
