@@ -44,6 +44,7 @@ import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
 import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
+import com.lomolo.copodapp.util.Util
 
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
@@ -143,12 +144,20 @@ fun MpesaScreen(
                 ) {
                     when (viewModel.chargingMpesa) {
                         ChargingMpesa.Success -> Text(
-                            stringResource(R.string.pay),
+                            stringResource(
+                                R.string.pay,
+                                deviceDetails.currency,
+                                Util.formatCurrency(deviceDetails.currency, deviceDetails.landRegistryFees)
+                            ),
                             style = MaterialTheme.typography.titleMedium,
                         )
 
                         ChargingMpesa.Paid -> Text(
-                            stringResource(R.string.pay),
+                            stringResource(
+                                R.string.pay,
+                                deviceDetails.currency,
+                                deviceDetails.landRegistryFees
+                            ),
                             style = MaterialTheme.typography.titleMedium,
                         )
 
