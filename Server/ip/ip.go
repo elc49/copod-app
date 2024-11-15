@@ -89,7 +89,6 @@ func (c *ipClient) GetIpinfo(ctx context.Context, ip string) (*Ipinfo, error) {
 			return
 		}
 	}()
-	c.log.Infoln(ipinfo)
 
 	return ipinfo, nil
 }
