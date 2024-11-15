@@ -16,3 +16,6 @@ graphql:
 # Make postgres
 sqlc:
 	cd Server && sqlc generate
+# Web
+web:
+	cd copod-web && npm run dev
