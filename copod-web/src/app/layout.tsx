@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { roboto_mono, roboto } from "./fonts/fonts"
+import { Providers } from "@/providers/providers";
 
 export const metadata: Metadata = {
   title: "Copod",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${roboto_mono.className} ${roboto.className} antialiased`}>
       <body>
-        {children}
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
