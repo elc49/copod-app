@@ -9,6 +9,8 @@ import (
 
 	copodCache "github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/fees"
+	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/util"
 	"github.com/ipinfo/go/v2/ipinfo"
@@ -71,6 +73,7 @@ func (c *ipClient) GetIpinfo(ctx context.Context, ip string) (*Ipinfo, error) {
 		c.log.WithError(err).Errorf("ip: DecodeHttp")
 		return nil, err
 	}
+	ipinfo.LandRegistryFees = fees.ServiceFeesByCountry(model.PaymentReasonLandRegistry.String(), ipinfo.CountryCode)
 
 	secondaryIpinfo, err := c.c.GetIPInfo(net.ParseIP(ip))
 	if err != nil {

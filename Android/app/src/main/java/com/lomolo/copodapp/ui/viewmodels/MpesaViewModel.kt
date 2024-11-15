@@ -1,8 +1,8 @@
 package com.lomolo.copodapp.ui.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,7 +14,7 @@ import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import com.lomolo.copodapp.type.PaymentReason
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
-import com.lomolo.copodapp.util.Phone
+import com.lomolo.copodapp.util.Util
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,7 +54,7 @@ class MpesaViewModel(
 
     fun isValidPhone(uiState: Mpesa, deviceDetails: DeviceDetails): Boolean {
         return with(uiState) {
-            Phone.isValid(
+            Util.Phone.isValid(
                 phone,
                 deviceDetails.countryCode,
                 deviceDetails.callingCode,
@@ -67,7 +67,7 @@ class MpesaViewModel(
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
                 chargingMpesa = try {
-                    val phone = Phone.formatPhone(_mpesa.value.phone, deviceDetails.countryCode)
+                    val phone = Util.Phone.formatPhone(_mpesa.value.phone, deviceDetails.countryCode)
                     val input = PayWithMpesaInput(
                         reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
