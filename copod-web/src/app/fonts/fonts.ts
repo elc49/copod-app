@@ -1,16 +1,16 @@
-import { Roboto, Roboto_Mono } from "next/font/google"
+import { Roboto_Mono, Roboto } from "next/font/google"
 
-const roboto_mono = Roboto_Mono({
+const roboto = Roboto({
   weight: "300",
-  variable: "--font-roboto-mono",
-  style: "normal",
+  variable: "--font-roboto",
   subsets: ["latin"],
   display: "swap",
 })
 
-const roboto = Roboto({
+const roboto_mono = Roboto_Mono({
   weight: "400",
-  variable: "--font-roboto",
+  variable: "--font-roboto-mono",
+  style: "normal",
   subsets: ["latin"],
   display: "swap",
 })

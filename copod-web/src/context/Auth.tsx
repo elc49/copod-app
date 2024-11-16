@@ -3,8 +3,9 @@
 import { createContext, Dispatch, PropsWithChildren, SetStateAction, useEffect, useState } from "react"
 import { IAdapter, IProvider, UserInfo } from "@web3auth/base"
 import { Web3Auth } from "@web3auth/modal";
-import { getWeb3AuthOptions } from "@/web3/Web3";
+import { getWeb3AuthOptions } from "@/web3/web3";
 import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
+import { Center, Spinner } from "@chakra-ui/react";
 
 interface AuthContext {
   isLoggedIn: boolean
@@ -60,9 +61,9 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, [])
 
   if (loading) return (
-    <div className="grid bg-green-600 w-full place-content-center">
-      Loading...
-    </div>
+    <Center>
+        <Spinner color="green.600" animationDuration="0.8s" borderWidth="4px" size="md" />
+    </Center>
   )
 
   return (
