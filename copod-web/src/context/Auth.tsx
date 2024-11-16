@@ -7,33 +7,34 @@ import { getWeb3AuthOptions } from "@/web3/Web3";
 import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 
 interface AuthContext {
-  loading: boolean
   isLoggedIn: boolean
+  setIsLoggedIn: Dispatch<SetStateAction<boolean>>
   provider: IProvider | null | undefined
   web3auth: Web3Auth | undefined
   user: Partial<UserInfo> | undefined
+  setUser: Dispatch<SetStateAction<Partial<UserInfo> | undefined>>
   setProvider: Dispatch<SetStateAction<IProvider | null | undefined>>
 }
 
 const AuthContext = createContext<AuthContext>({
-  loading: false,
   isLoggedIn: false,
+  setIsLoggedIn: () => {},
   provider: null,
   web3auth: undefined,
   user: undefined,
+  setUser: () => {},
   setProvider: () => {},
 })
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [provider, setProvider] = useState<IProvider | null | undefined>(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [web3auth, setWeb3auth] = useState<Web3Auth | undefined>()
-  const [userInfo, setUserinfo] = useState<Partial<UserInfo> | undefined>()
+  const [user, setUser] = useState<Partial<UserInfo> | undefined>()
 
   useEffect(() => {
     const init = async() => {
-      setLoading(true)
       const options = getWeb3AuthOptions()
       const web3auth = new Web3Auth(options)
 
@@ -46,28 +47,33 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         setWeb3auth(web3auth)
         setProvider(web3auth.provider)
 
-        if (web3auth.connected) {
-          const user = await web3auth.getUserInfo()
-          setUserinfo(user)
-          setIsLoggedIn(true)
+        if (web3auth.status === "ready") {
           setLoading(false)
         }
       } catch (error) {
         console.error(error)
+        setLoading(false)
       }
     }
 
     init()
   }, [])
 
+  if (loading) return (
+    <div className="grid bg-green-600 w-full place-content-center">
+      Loading...
+    </div>
+  )
+
   return (
     <AuthContext.Provider
       value={{
-        loading,
         isLoggedIn,
+        setIsLoggedIn,
         provider,
         web3auth,
-        user: userInfo,
+        user,
+        setUser,
         setProvider,
       }}
     >
