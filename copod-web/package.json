@@ -11,10 +11,12 @@
   "dependencies": {
     "@chakra-ui/react": "^3.1.2",
     "@emotion/react": "^11.13.3",
+    "@web3auth/auth-adapter": "^9.4.0",
     "@web3auth/base": "^9.4.0",
     "@web3auth/default-evm-adapter": "^9.4.0",
     "@web3auth/ethereum-provider": "^9.4.0",
     "@web3auth/modal": "^9.4.0",
+    "ethers": "^6.13.4",
     "next": "15.0.3",
     "next-themes": "^0.4.3",
     "react": "19.0.0-rc-66855b96-20241106",
