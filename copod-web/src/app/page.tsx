@@ -6,18 +6,22 @@ import { Button } from "@/components/ui/button"
 import { AuthContext } from "@/context/Auth";
 import withAuth from "@/hoc/withAuth";
 
-export default withAuth(Home, "all")
+export default withAuth(Home)
 function Home() {
-  const { web3auth, setProvider, setIsLoggedIn } = useContext(AuthContext);
+  const { web3auth, loading, setLoading, setProvider, setIsLoggedIn } = useContext(AuthContext);
   
   const login = async () => {
-    try {const web3authProvider = await web3auth?.connect()
+    setLoading(true)
+    try {
+      const web3authProvider = await web3auth?.connect()
       setProvider(web3authProvider)
       if (web3auth?.connected) {
         setIsLoggedIn(true)
       }
     } catch (error) {
       console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -27,6 +31,7 @@ function Home() {
         colorPalette="green"
         p={4}
         onClick={login}
+        loading={loading}
       >
         Sign in
       </Button>

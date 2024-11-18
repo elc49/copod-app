@@ -3,6 +3,7 @@ import { roboto, roboto_mono } from "./fonts/fonts"
 import "./globals.css";
 import { Provider } from "@/components/ui/provider"
 import { AuthProvider } from "@/context/Auth";
+import Header from "@/components/ui/header";
 
 export const metadata: Metadata = {
   title: "Copod",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className={`${roboto_mono.className} ${roboto.variable}`}>
         <Provider>
           <AuthProvider>
+            <Header />
             {children}
           </AuthProvider>
         </Provider>

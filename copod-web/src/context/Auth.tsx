@@ -18,6 +18,8 @@ interface IAuthContext {
   setUser: Dispatch<SetStateAction<Partial<UserInfo> | undefined>>
   setProvider: Dispatch<SetStateAction<IProvider | null | undefined>>
   isAdmin: boolean
+  loading: boolean
+  setLoading: Dispatch<SetStateAction<boolean>>
 }
 
 export const AuthContext = createContext<IAuthContext>({
@@ -29,6 +31,8 @@ export const AuthContext = createContext<IAuthContext>({
   setUser: () => {},
   setProvider: () => {},
   isAdmin: false,
+  loading: false,
+  setLoading: () => {},
 })
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
@@ -58,7 +62,11 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
           },
         })
         web3auth.configureAdapter(passwordlessAdapter)
-        await web3auth.initModal()
+        try {
+          await web3auth.initModal()
+        } catch (error) {
+          console.error(error)
+        }
         setWeb3auth(web3auth)
         setProvider(web3auth.provider)
 
@@ -67,7 +75,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         } else if (web3auth.connected) {
           if (provider != null) {
             const account = await getAccounts(provider)
-            if (ADMINS.indexOf(account) != -1) {
+            if (ADMINS.indexOf(account) > 0) {
               setIsAdmin(true)
             }
           }
@@ -100,6 +108,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         setUser,
         setProvider,
         isAdmin,
+        loading,
+        setLoading,
       }}
     >
       {children}
