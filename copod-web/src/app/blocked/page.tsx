@@ -7,7 +7,7 @@ export default withAuth(Page)
 function Page() {
   return (
     <AbsoluteCenter axis="both">
-      <Heading>Blocked!</Heading>
+      <Heading>You are not an admin!</Heading>
     </AbsoluteCenter>
   )
 }

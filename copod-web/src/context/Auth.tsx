@@ -3,7 +3,7 @@
 import { createContext, Dispatch, PropsWithChildren, SetStateAction, useEffect, useState } from "react"
 import { IProvider, UserInfo } from "@web3auth/base"
 import { Web3Auth } from "@web3auth/modal";
-import { getAccounts, getWeb3AuthOptions } from "@/web3/web3";
+import { getAccounts, getWeb3AuthOptions } from "@/web3/Web3";
 import { AbsoluteCenter, Spinner } from "@chakra-ui/react";
 import { AuthAdapter } from "@web3auth/auth-adapter";
 
@@ -70,20 +70,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         setWeb3auth(web3auth)
         setProvider(web3auth.provider)
 
-        if (web3auth.status === "ready") {
-          setLoading(false)
-        } else if (web3auth.connected) {
-          if (provider != null) {
-            const account = await getAccounts(provider)
-            if (ADMINS.indexOf(account) > 0) {
-              setIsAdmin(true)
-            }
+        if (web3auth.connected) {
+          const account = await getAccounts(web3auth.provider!)
+          if (ADMINS.indexOf(account) > 0) {
+            setIsAdmin(true)
           }
           setIsLoggedIn(true)
-          setLoading(false)
         }
       } catch (error) {
         console.error(error)
+      } finally {
         setLoading(false)
       }
     }

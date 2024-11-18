@@ -85,6 +85,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetLands              func(childComplexity int) int
 		GetLocalLands         func(childComplexity int) int
 		GetUserLands          func(childComplexity int, walletAddress string) int
 		HasPendingLandRecords func(childComplexity int, walletAddress string) int
@@ -130,6 +131,7 @@ type QueryResolver interface {
 	GetLocalLands(ctx context.Context) ([]*model.Land, error)
 	GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error)
 	HasPendingLandRecords(ctx context.Context, walletAddress string) (bool, error)
+	GetLands(ctx context.Context) ([]*model.Land, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error)
@@ -315,6 +317,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PaymentUpdate.WalletAddress(childComplexity), true
+
+	case "Query.getLands":
+		if e.complexity.Query.GetLands == nil {
+			break
+		}
+
+		return e.complexity.Query.GetLands(childComplexity), true
 
 	case "Query.getLocalLands":
 		if e.complexity.Query.GetLocalLands == nil {
@@ -2001,6 +2010,70 @@ func (ec *executionContext) fieldContext_Query_hasPendingLandRecords(ctx context
 	if fc.Args, err = ec.field_Query_hasPendingLandRecords_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getLands(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getLands(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetLands(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Land)
+	fc.Result = res
+	return ec.marshalNLand2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLandᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getLands(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Land_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Land_title(ctx, field)
+			case "size":
+				return ec.fieldContext_Land_size(ctx, field)
+			case "symbol":
+				return ec.fieldContext_Land_symbol(ctx, field)
+			case "town":
+				return ec.fieldContext_Land_town(ctx, field)
+			case "titleDocument":
+				return ec.fieldContext_Land_titleDocument(ctx, field)
+			case "verified":
+				return ec.fieldContext_Land_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Land_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Land_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Land", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -5159,6 +5232,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_hasPendingLandRecords(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getLands":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getLands(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}

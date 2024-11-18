@@ -99,6 +99,7 @@ type Query {
   getLocalLands: [Land!]!
   getUserLands(walletAddress: String!): [Land!]!
   hasPendingLandRecords(walletAddress: String!): Boolean!
+  getLands: [Land!]!
 }
 
 type Mutation {
