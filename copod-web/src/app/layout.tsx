@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { roboto, roboto_mono } from "./fonts/fonts"
 import "./globals.css";
-import { roboto_mono, roboto } from "./fonts/fonts"
+import { Provider } from "@/components/ui/provider"
+import { AuthProvider } from "@/context/Auth";
+import Header from "@/components/ui/header";
 
 export const metadata: Metadata = {
   title: "Copod",
-  description: "Register land. Search land. Buy land space.",
+  description: "Register land. Search land. Buy land space",
 };
 
 export default function RootLayout({
@@ -13,9 +16,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto_mono.className} ${roboto.className} antialiased`}>
-      <body>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${roboto_mono.className} ${roboto.variable}`}>
+        <Provider>
+          <AuthProvider>
+            <Header />
+            {children}
+          </AuthProvider>
+        </Provider>
       </body>
     </html>
   );
