@@ -3,6 +3,7 @@ import { roboto, roboto_mono } from "./fonts/fonts"
 import "./globals.css";
 import { Provider } from "@/components/ui/provider"
 import { AuthProvider } from "@/context/Auth";
+import ApolloProvider from "@/context/apollo";
 import Header from "@/components/ui/header";
 
 export const metadata: Metadata = {
@@ -20,8 +21,10 @@ export default function RootLayout({
       <body className={`${roboto_mono.className} ${roboto.variable}`}>
         <Provider>
           <AuthProvider>
-            <Header />
-            {children}
+            <ApolloProvider>
+              <Header />
+              {children}
+            </ApolloProvider>
           </AuthProvider>
         </Provider>
       </body>

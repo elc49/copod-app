@@ -70,6 +70,11 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 	return false, nil
 }
 
+// GetLands is the resolver for the getLands field.
+func (r *queryResolver) GetLands(ctx context.Context) ([]*model.Land, error) {
+	return make([]*model.Land, 0), nil
+}
+
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)

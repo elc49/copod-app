@@ -24,6 +24,7 @@ import (
 	"github.com/elc49/copod/tigris"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/cors"
 )
 
 type Server struct {
@@ -72,6 +73,7 @@ func (s *Server) Start() {
 func (s *Server) MountRouter() *chi.Mux {
 	r := chi.NewRouter()
 
+	r.Use(cors.AllowAll().Handler)
 	r.Use(middleware.Heartbeat("/ping"))
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.RealIP)
