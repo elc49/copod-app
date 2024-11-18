@@ -45,6 +45,8 @@ type Payment struct {
 	ID            uuid.UUID `json:"id"`
 	ReferenceID   string    `json:"reference_id"`
 	Status        string    `json:"status"`
+	Title         *Title    `json:"title,omitempty"`
+	TitleID       uuid.UUID `json:"title_id"`
 	WalletAddress string    `json:"wallet_address"`
 	CreatedAt     time.Time `json:"created_at"`
 	UpdatedAt     time.Time `json:"updated_at"`
@@ -165,6 +167,51 @@ func (e *PaymentReason) UnmarshalGQL(v interface{}) error {
 }
 
 func (e PaymentReason) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type PaymentStatus string
+
+const (
+	PaymentStatusSuccess PaymentStatus = "success"
+	PaymentStatusFailed  PaymentStatus = "failed"
+	PaymentStatusPending PaymentStatus = "pending"
+	PaymentStatusTimeout PaymentStatus = "timeout"
+)
+
+var AllPaymentStatus = []PaymentStatus{
+	PaymentStatusSuccess,
+	PaymentStatusFailed,
+	PaymentStatusPending,
+	PaymentStatusTimeout,
+}
+
+func (e PaymentStatus) IsValid() bool {
+	switch e {
+	case PaymentStatusSuccess, PaymentStatusFailed, PaymentStatusPending, PaymentStatusTimeout:
+		return true
+	}
+	return false
+}
+
+func (e PaymentStatus) String() string {
+	return string(e)
+}
+
+func (e *PaymentStatus) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = PaymentStatus(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid PaymentStatus", str)
+	}
+	return nil
+}
+
+func (e PaymentStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

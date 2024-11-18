@@ -6,6 +6,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 )
 
 var paymentController *Payment
@@ -14,6 +15,8 @@ type PaymentController interface {
 	CreatePayment(context.Context, sql.CreatePaymentParams) (*model.Payment, error)
 	GetPaymentByReferenceID(context.Context, string) (*model.Payment, error)
 	UpdatePaymentStatus(context.Context, sql.UpdatePaymentStatusParams) (*model.Payment, error)
+	GetPaymentTitleByID(context.Context, uuid.UUID) (*model.Title, error)
+	GetPaymentsByStatus(context.Context, string) ([]*model.Payment, error)
 }
 
 type Payment struct {
@@ -41,4 +44,12 @@ func (c *Payment) GetPaymentByReferenceID(ctx context.Context, referenceID strin
 
 func (c *Payment) UpdatePaymentStatus(ctx context.Context, args sql.UpdatePaymentStatusParams) (*model.Payment, error) {
 	return c.r.UpdatePaymentStatus(ctx, args)
+}
+
+func (c *Payment) GetPaymentTitleByID(ctx context.Context, titleID uuid.UUID) (*model.Title, error) {
+	return c.r.GetPaymentTitleByID(ctx, titleID)
+}
+
+func (c *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*model.Payment, error) {
+	return c.r.GetPaymentsByStatus(ctx, status)
 }

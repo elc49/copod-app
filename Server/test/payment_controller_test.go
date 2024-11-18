@@ -19,6 +19,13 @@ func Test_Payment_Controller(t *testing.T) {
 	var err error
 
 	t.Run("create_payment", func(t *testing.T) {
+		tc := controller.GetTitleController()
+		args := sql.CreateTitleParams{
+			Title:         docUri,
+			Email:         superUserEmail,
+			WalletAddress: superUserWallet,
+		}
+		title, err := tc.CreateTitle(ctx, args)
 		p, err = pc.CreatePayment(ctx, sql.CreatePaymentParams{
 			Email:         superUserEmail,
 			ReferenceID:   refId,
@@ -27,7 +34,7 @@ func Test_Payment_Controller(t *testing.T) {
 			Amount:        1500,
 			Currency:      "KES",
 			WalletAddress: superUserWallet,
-			TitleID:       uuid.NullUUID{},
+			TitleID:       uuid.NullUUID{UUID: title.ID, Valid: true},
 		})
 
 		assert.Nil(t, err)
@@ -50,5 +57,20 @@ func Test_Payment_Controller(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, p.Status, "success")
+	})
+
+	t.Run("get_payment_title", func(t *testing.T) {
+		title, err := pc.GetPaymentTitleByID(ctx, p.TitleID)
+
+		assert.Nil(t, err)
+		assert.NotNil(t, title)
+		assert.Equal(t, title.ID, p.TitleID)
+	})
+
+	t.Run("get_payment_by_status", func(t *testing.T) {
+		payments, err := pc.GetPaymentsByStatus(ctx, model.PaymentStatusSuccess.String())
+
+		assert.Nil(t, err)
+		assert.True(t, len(payments) > 0)
 	})
 }
