@@ -98,3 +98,8 @@ models:
   UUID:
     model:
       - github.com/99designs/gqlgen/graphql.UUID
+
+  Payment:
+    fields:
+      title:
+        resolver: true

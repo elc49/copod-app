@@ -16,6 +16,14 @@ enum PaidFor {
   NOT_PAID
 }
 
+# Payment status
+enum PaymentStatus {
+  success
+  failed
+  pending
+  timeout
+}
+
 # PaymentReason
 enum PaymentReason {
   LAND_REGISTRY
@@ -68,6 +76,8 @@ type Payment {
   id: UUID!
   reference_id: String!
   status: String!
+  title: Title
+  title_id: UUID!
   wallet_address: String!
   created_at: Time!
   updated_at: Time!
@@ -99,7 +109,7 @@ type Query {
   getLocalLands: [Land!]!
   getUserLands(walletAddress: String!): [Land!]!
   hasPendingLandRecords(walletAddress: String!): Boolean!
-  getLands: [Land!]!
+  getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
 }
 
 type Mutation {

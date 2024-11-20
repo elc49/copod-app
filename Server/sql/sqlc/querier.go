@@ -6,6 +6,8 @@ package sql
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 type Querier interface {
@@ -16,6 +18,8 @@ type Querier interface {
 	GetEmailSupportDoc(ctx context.Context, email string) (SupportDoc, error)
 	GetEmailTitle(ctx context.Context, email string) (Title, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
+	GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (Title, error)
+	GetPaymentsByStatus(ctx context.Context, status string) ([]Payment, error)
 	GetUser(ctx context.Context, walletAddress string) (User, error)
 	UpdateEmailSupportDoc(ctx context.Context, arg UpdateEmailSupportDocParams) (SupportDoc, error)
 	UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error)

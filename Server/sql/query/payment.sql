@@ -14,3 +14,11 @@ LIMIT 1;
 UPDATE payments SET status = $1
 WHERE reference_id = $2
 RETURNING *;
+
+-- name: GetPaymentTitleByID :one
+SELECT * FROM titles
+WHERE id = $1;
+
+-- name: GetPaymentsByStatus :many
+SELECT * FROM payments
+WHERE status = $1;

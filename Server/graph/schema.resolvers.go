@@ -55,6 +55,11 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 	return &res.Data.Reference, nil
 }
 
+// Title is the resolver for the title field.
+func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
+	return r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
+}
+
 // GetLocalLands is the resolver for the getLocalLands field.
 func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error) {
 	return make([]*model.Land, 0), nil
@@ -70,9 +75,9 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 	return false, nil
 }
 
-// GetLands is the resolver for the getLands field.
-func (r *queryResolver) GetLands(ctx context.Context) ([]*model.Land, error) {
-	return make([]*model.Land, 0), nil
+// GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.
+func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error) {
+	return r.paymentController.GetPaymentsByStatus(ctx, status.String())
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
@@ -100,6 +105,9 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Payment returns PaymentResolver implementation.
+func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
@@ -107,5 +115,18 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type paymentResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *queryResolver) GetLands(ctx context.Context) ([]*model.Land, error) {
+	return make([]*model.Land, 0), nil
+}
+*/

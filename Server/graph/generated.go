@@ -43,6 +43,7 @@ type Config struct {
 
 type ResolverRoot interface {
 	Mutation() MutationResolver
+	Payment() PaymentResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
 }
@@ -74,6 +75,8 @@ type ComplexityRoot struct {
 		ID            func(childComplexity int) int
 		ReferenceID   func(childComplexity int) int
 		Status        func(childComplexity int) int
+		Title         func(childComplexity int) int
+		TitleID       func(childComplexity int) int
 		UpdatedAt     func(childComplexity int) int
 		WalletAddress func(childComplexity int) int
 	}
@@ -85,8 +88,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetLands              func(childComplexity int) int
 		GetLocalLands         func(childComplexity int) int
+		GetPaymentsByStatus   func(childComplexity int, status model.PaymentStatus) int
 		GetUserLands          func(childComplexity int, walletAddress string) int
 		HasPendingLandRecords func(childComplexity int, walletAddress string) int
 	}
@@ -127,11 +130,14 @@ type MutationResolver interface {
 	UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
 }
+type PaymentResolver interface {
+	Title(ctx context.Context, obj *model.Payment) (*model.Title, error)
+}
 type QueryResolver interface {
 	GetLocalLands(ctx context.Context) ([]*model.Land, error)
 	GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error)
 	HasPendingLandRecords(ctx context.Context, walletAddress string) (bool, error)
-	GetLands(ctx context.Context) ([]*model.Land, error)
+	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error)
@@ -283,6 +289,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.Status(childComplexity), true
 
+	case "Payment.title":
+		if e.complexity.Payment.Title == nil {
+			break
+		}
+
+		return e.complexity.Payment.Title(childComplexity), true
+
+	case "Payment.title_id":
+		if e.complexity.Payment.TitleID == nil {
+			break
+		}
+
+		return e.complexity.Payment.TitleID(childComplexity), true
+
 	case "Payment.updated_at":
 		if e.complexity.Payment.UpdatedAt == nil {
 			break
@@ -318,19 +338,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PaymentUpdate.WalletAddress(childComplexity), true
 
-	case "Query.getLands":
-		if e.complexity.Query.GetLands == nil {
-			break
-		}
-
-		return e.complexity.Query.GetLands(childComplexity), true
-
 	case "Query.getLocalLands":
 		if e.complexity.Query.GetLocalLands == nil {
 			break
 		}
 
 		return e.complexity.Query.GetLocalLands(childComplexity), true
+
+	case "Query.getPaymentsByStatus":
+		if e.complexity.Query.GetPaymentsByStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPaymentsByStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPaymentsByStatus(childComplexity, args["status"].(model.PaymentStatus)), true
 
 	case "Query.getUserLands":
 		if e.complexity.Query.GetUserLands == nil {
@@ -719,6 +744,29 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getPaymentsByStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getPaymentsByStatus_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getPaymentsByStatus_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.PaymentStatus, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalNPaymentStatus2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentStatus(ctx, tmp)
+	}
+
+	var zeroVal model.PaymentStatus
 	return zeroVal, nil
 }
 
@@ -1556,6 +1604,103 @@ func (ec *executionContext) fieldContext_Payment_status(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Payment_title(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Payment().Title(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.Title)
+	fc.Result = res
+	return ec.marshalOTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Title_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Title_title(ctx, field)
+			case "verified":
+				return ec.fieldContext_Title_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Title_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Title_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Payment_title_id(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_title_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TitleID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_title_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Payment_wallet_address(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_wallet_address(ctx, field)
 	if err != nil {
@@ -2014,8 +2159,8 @@ func (ec *executionContext) fieldContext_Query_hasPendingLandRecords(ctx context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getLands(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getLands(ctx, field)
+func (ec *executionContext) _Query_getPaymentsByStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getPaymentsByStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2028,7 +2173,7 @@ func (ec *executionContext) _Query_getLands(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetLands(rctx)
+		return ec.resolvers.Query().GetPaymentsByStatus(rctx, fc.Args["status"].(model.PaymentStatus))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2040,12 +2185,12 @@ func (ec *executionContext) _Query_getLands(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Land)
+	res := resTmp.([]*model.Payment)
 	fc.Result = res
-	return ec.marshalNLand2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLandᚄ(ctx, field.Selections, res)
+	return ec.marshalNPayment2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getLands(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getPaymentsByStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2054,26 +2199,35 @@ func (ec *executionContext) fieldContext_Query_getLands(_ context.Context, field
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Land_id(ctx, field)
+				return ec.fieldContext_Payment_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_Payment_reference_id(ctx, field)
+			case "status":
+				return ec.fieldContext_Payment_status(ctx, field)
 			case "title":
-				return ec.fieldContext_Land_title(ctx, field)
-			case "size":
-				return ec.fieldContext_Land_size(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Land_symbol(ctx, field)
-			case "town":
-				return ec.fieldContext_Land_town(ctx, field)
-			case "titleDocument":
-				return ec.fieldContext_Land_titleDocument(ctx, field)
-			case "verified":
-				return ec.fieldContext_Land_verified(ctx, field)
+				return ec.fieldContext_Payment_title(ctx, field)
+			case "title_id":
+				return ec.fieldContext_Payment_title_id(ctx, field)
+			case "wallet_address":
+				return ec.fieldContext_Payment_wallet_address(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Land_created_at(ctx, field)
+				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_Land_updated_at(ctx, field)
+				return ec.fieldContext_Payment_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Land", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getPaymentsByStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
 	}
 	return fc, nil
 }
@@ -5060,32 +5214,70 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._Payment_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "reference_id":
 			out.Values[i] = ec._Payment_reference_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "status":
 			out.Values[i] = ec._Payment_status(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "title":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Payment_title(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "title_id":
+			out.Values[i] = ec._Payment_title_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "wallet_address":
 			out.Values[i] = ec._Payment_wallet_address(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "created_at":
 			out.Values[i] = ec._Payment_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updated_at":
 			out.Values[i] = ec._Payment_updated_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -5244,7 +5436,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getLands":
+		case "getPaymentsByStatus":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -5253,7 +5445,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getLands(ctx, field)
+				res = ec._Query_getPaymentsByStatus(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -5918,6 +6110,60 @@ func (ec *executionContext) unmarshalNPayWithMpesaInput2githubᚗcomᚋelc49ᚋc
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPayment2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Payment) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPayment2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayment(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNPayment2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayment(ctx context.Context, sel ast.SelectionSet, v *model.Payment) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Payment(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNPaymentReason2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentReason(ctx context.Context, v interface{}) (model.PaymentReason, error) {
 	var res model.PaymentReason
 	err := res.UnmarshalGQL(v)
@@ -5925,6 +6171,16 @@ func (ec *executionContext) unmarshalNPaymentReason2githubᚗcomᚋelc49ᚋcopod
 }
 
 func (ec *executionContext) marshalNPaymentReason2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentReason(ctx context.Context, sel ast.SelectionSet, v model.PaymentReason) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNPaymentStatus2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentStatus(ctx context.Context, v interface{}) (model.PaymentStatus, error) {
+	var res model.PaymentStatus
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPaymentStatus2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentStatus(ctx context.Context, sel ast.SelectionSet, v model.PaymentStatus) graphql.Marshaler {
 	return v
 }
 
@@ -6318,6 +6574,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v *model.Title) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Title(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

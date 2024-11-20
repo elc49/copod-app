@@ -21,6 +21,7 @@ type Resolver struct {
 	log                  *logrus.Logger
 	titleController      controller.TitleController
 	supportDocController controller.SupportingDocController
+	paymentController    controller.PaymentController
 }
 
 func New() Config {
@@ -30,6 +31,7 @@ func New() Config {
 		logger.GetLogger(),
 		controller.GetTitleController(),
 		controller.GetSupportingDocController(),
+		controller.GetPaymentController(),
 	}
 	return Config{Resolvers: r}
 }
