@@ -17,5 +17,5 @@ graphql:
 sqlc:
 	cd Server && sqlc generate
 # Web
-web:
-	cd copod-web && npm run dev
+web-app:
+	cd web && npm run dev
