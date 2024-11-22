@@ -9,19 +9,19 @@ const infuraAPIKey = process.env.NEXT_PUBLIC_INFURA_API_KEY
 
 interface IWalletContext {
   account: Address | undefined
-  connected: boolean
   chain: Chain | undefined
-  connectWallet: () => void
-  walletClient: WalletClient | undefined
+  connect: () => void
+  disconnect: () => void
+  wallet: WalletClient | undefined
   connecting: boolean
 }
 
 const WalletContext = createContext<IWalletContext>({
   account: undefined,
-  connected: false,
   chain: undefined,
-  connectWallet: () => {},
-  walletClient: undefined,
+  connect: () => {},
+  disconnect: () => {},
+  wallet: undefined,
   connecting: false,
 })
 
@@ -29,25 +29,32 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
   const [sdk, setSdk] = useState<MetaMaskSDK>()
   const [provider, setProvider] = useState<SDKProvider>()
   const [account, setAccount] = useState<Address>()
-  const [connected, setConnected] = useState<boolean>(false)
   const [chain, setChain] = useState<Chain>()
-  const [walletClient, setWalletClient] = useState<WalletClient>()
+  const [wallet, setWallet] = useState<WalletClient>()
   const [connecting, setConnecting] = useState<boolean>(false)
 
   useEffect(() => {
     const doAsync = async () => {
-      const clientSDK = new MetaMaskSDK({
-        dappMetadata: {
-          name: "Copod",
-          url: "http://localhost:3000",
-          iconUrl: "http://localhost:3000/favicon.ico",
-        },
-        infuraAPIKey,
-        checkInstallationImmediately: true,
-      })
-      await clientSDK.init()
-      setSdk(clientSDK)
-      setProvider(clientSDK.getProvider())
+      try {
+        setConnecting(true)
+        const clientSDK = new MetaMaskSDK({
+          dappMetadata: {
+            name: "Copod",
+            url: "http://localhost:3000",
+            iconUrl: "http://localhost:3000/favicon.ico",
+          },
+          infuraAPIKey,
+          checkInstallationImmediately: true,
+        })
+        await clientSDK.init()
+        setSdk(clientSDK)
+        setProvider(clientSDK.getProvider())
+        setChain(await clientSDK.getProvider().request({ method: "eth_chainId" }))
+      } catch (e) {
+        console.error(e)
+      } finally {
+        setConnecting(false)
+      }
     }
     doAsync()
   }, [])
@@ -57,13 +64,24 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       return;
     }
 
-    console.log("Setting active provider object")
-    if (provider.getSelectedAddress()) {
-      console.log("Setting account from provider")
-      setAccount(provider.getSelectedAddress() ?? "")
-      setConnected(true);
-    } else {
-      setConnected(false)
+    console.log("Setting account from active provider")
+    try {
+      setConnecting(true)
+      setWallet(
+        createWalletClient({
+          chain: chain,
+          transport: custom(provider),
+        })
+      )
+      wallet?.requestAddresses()
+      .then((accounts) => {
+        setAccount(accounts?.[0])
+      })
+      .catch((e) => console.error(e))
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setConnecting(false)
     }
 
     const onChainChanged = (chain: unknown) => {
@@ -71,51 +89,29 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       setChain(chain as Chain)
     }
 
-    const onInitialized = () => {
-      console.log("Initialized")
-      setConnected(true)
-      if (provider.getSelectedAddress()) {
-        setAccount(provider.getSelectedAddress() ?? "")
-      }
-
-      if (provider.chainId()) {
-        setChain(provider.chainId())
-      }
-    }
-
     const onAccountChanged = (accounts: unknown) => {
       console.log("Account changed")
       setAccount((accounts as Address[])?.[0])
-      setConnected(true)
-    }
-
-    const onConnect = (_connectInfo: any) => {
-      console.log("Connecting/\n", _connectInfo)
-      setConnected(true)
-      setChain(_connectInfo.chainId as Chain)
     }
 
     const onDisconnect = (error: unknown) => {
       console.log("Disconnecting\n", error)
-      setConnected(false)
+      setAccount(undefined)
+      setProvider(null)
       setChain(undefined)
     }
 
     provider.on("accountsChanged", onAccountChanged)
     provider.on("chainChanged", onChainChanged)
-    provider.on("_initialized", onInitialized)
-    provider.on("connect", onConnect)
     provider.on("disconnect", onDisconnect)
     
     return () => {
       console.log("Clean up window.ethereum events");
       provider.removeListener('chainChanged', onChainChanged);
-      provider.removeListener('_initialized', onInitialized);
       provider.removeListener('accountsChanged', onAccountChanged);
-      provider.removeListener('connect', onConnect);
       provider.removeListener('disconnect', onDisconnect);
     }
-  }, [provider])
+  }, [provider, chain])
 
   const connect = async () => {
     if (!provider) {
@@ -124,14 +120,24 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
 
     try {
       setConnecting(true)
-      setWalletClient(
+      setWallet(
         createWalletClient({
           chain: chain,
           transport: custom(provider),
         })
       )
-      const address = await walletClient?.requestAddresses()
+      const address = await wallet?.requestAddresses()
       setAccount(address?.[0])
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setConnecting(false)
+    }
+  }
+
+  const disconnect = () => {
+    try {
+      sdk?.terminate()
     } catch (e) {
       console.error(e)
     }
@@ -142,10 +148,10 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       value={{
         chain: chain,
         account: account,
-        connected: connected,
-        connectWallet: connect,
-        walletClient: walletClient,
+        connect: connect,
+        wallet: wallet,
         connecting: connecting,
+        disconnect: disconnect,
       }}
     >
       {children}
