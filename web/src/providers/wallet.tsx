@@ -2,33 +2,37 @@
 
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { MetaMaskSDK, SDKProvider } from "@metamask/sdk";
+import { type Address, type Chain, type WalletClient, custom, createWalletClient } from "viem";
+import "viem/window";
 
 const infuraAPIKey = process.env.NEXT_PUBLIC_INFURA_API_KEY
 
 interface IWalletContext {
-  account: string
+  account: Address | undefined
   connected: boolean
-  chain: string
-  metamaskSdk: MetaMaskSDK
-  metamaskProvider: SDKProvider
+  chain: Chain | undefined
   connectWallet: () => void
+  walletClient: WalletClient | undefined
+  connecting: boolean
 }
 
 const WalletContext = createContext<IWalletContext>({
-  account: "",
+  account: undefined,
   connected: false,
-  chain: "",
-  metamaskSdk: {},
-  metamaskProvider: {},
+  chain: undefined,
   connectWallet: () => {},
+  walletClient: undefined,
+  connecting: false,
 })
 
 const WalletProvider = ({ children }: PropsWithChildren) => {
   const [sdk, setSdk] = useState<MetaMaskSDK>()
   const [provider, setProvider] = useState<SDKProvider>()
-  const [account, setAccount] = useState<string>("")
+  const [account, setAccount] = useState<Address>()
   const [connected, setConnected] = useState<boolean>(false)
-  const [chain, setChain] = useState("")
+  const [chain, setChain] = useState<Chain>()
+  const [walletClient, setWalletClient] = useState<WalletClient>()
+  const [connecting, setConnecting] = useState<boolean>(false)
 
   useEffect(() => {
     const doAsync = async () => {
@@ -64,7 +68,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
 
     const onChainChanged = (chain: unknown) => {
       console.log("Blockchain id changed")
-      setChain(chain as string)
+      setChain(chain as Chain)
     }
 
     const onInitialized = () => {
@@ -81,20 +85,20 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
 
     const onAccountChanged = (accounts: unknown) => {
       console.log("Account changed")
-      setAccount((accounts as string[])?.[0])
+      setAccount((accounts as Address[])?.[0])
       setConnected(true)
     }
 
     const onConnect = (_connectInfo: any) => {
       console.log("Connecting/\n", _connectInfo)
       setConnected(true)
-      setChain(_connectInfo.chainId as string)
+      setChain(_connectInfo.chainId as Chain)
     }
 
     const onDisconnect = (error: unknown) => {
       console.log("Disconnecting\n", error)
       setConnected(false)
-      setChain("")
+      setChain(undefined)
     }
 
     provider.on("accountsChanged", onAccountChanged)
@@ -113,17 +117,24 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
     }
   }, [provider])
 
-  const connect = () => {
+  const connect = async () => {
     if (!provider) {
       throw new Error(`No window.ethereum in the current browser session`)
     }
 
-    provider.request({ method: "eth_requestAccounts", params: [] })
-      .then((accounts) => {
-        console.log("Accounts connected")
-        setAccount((accounts as string[])?.[0])
-      })
-      .catch((error) => console.error("eth_requestAccounts", error))
+    try {
+      setConnecting(true)
+      setWalletClient(
+        createWalletClient({
+          chain: chain,
+          transport: custom(provider),
+        })
+      )
+      const address = await walletClient?.requestAddresses()
+      setAccount(address?.[0])
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (
@@ -132,9 +143,9 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
         chain: chain,
         account: account,
         connected: connected,
-        metamaskSdk: sdk,
-        metamaskProvider: provider,
         connectWallet: connect,
+        walletClient: walletClient,
+        connecting: connecting,
       }}
     >
       {children}
