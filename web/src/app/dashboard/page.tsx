@@ -11,7 +11,7 @@ function Page() {
     variables: {
       status: "success",
     },
-    skip: isLoggedIn,
+    skip: !isLoggedIn,
   })
   console.log(data)
 
