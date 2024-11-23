@@ -7,12 +7,12 @@ import Loader from "@/components/loader";
 const lines = ["Register land.", "Search land.", "Buy land usage rights."]
 
 export default function Home() {
-  const { connecting } = useContext(WalletContext)
+  const { initializing } = useContext(WalletContext)
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2  items-start">
-        {connecting ? <Loader /> : (
+        {initializing ? <Loader /> : (
           <>
             {lines.map((line, index) => <h2 key={index} className="md:text-9xl text-6xl">{line}</h2>)}
           </>

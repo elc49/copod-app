@@ -1,6 +1,4 @@
-"use client";
-
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useContext } from "react";
 import {
   ApolloClient,
   HttpLink,
@@ -10,6 +8,8 @@ import {
   ApolloProvider as ApolloClientProvider,
 } from "@apollo/client";
 import { RetryLink } from "@apollo/client/link/retry";
+import { WalletContext } from "@/providers/wallet";
+import Loader from "@/components/loader";
 
 const api = process.env.NEXT_PUBLIC_COPOD_API
 
@@ -50,8 +50,11 @@ const createClient = (): ApolloClient<NormalizedCacheObject> => {
 
 export const ApolloProvider = ({ children }: PropsWithChildren) => {
   const client = createClient()
+  const { initializing } = useContext(WalletContext)
 
-  return (
+  return initializing ? (
+    <Loader />
+  ) : (
     <ApolloClientProvider client={client}>{children}</ApolloClientProvider>
   )
 }

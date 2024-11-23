@@ -15,7 +15,7 @@ import { WalletContext} from "@/providers/wallet";
 import { Button } from "@/components/ui/button";
 
 function Header() {
-  const { account, connect, disconnect } = useContext(WalletContext)
+  const { isLoggedIn, login, logout } = useContext(WalletContext)
 
   return (
     <nav className="flex flex-row p-4">
@@ -23,7 +23,7 @@ function Header() {
         <h1 className="font-bold text-2xl">Copod</h1>
       </div>
       <div className="ml-auto">
-        {account ? (
+        {isLoggedIn ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar>
@@ -37,7 +37,7 @@ function Header() {
               <DropdownMenuLabel>Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={disconnect}
+                onClick={logout}
               >
                 Log out
               </DropdownMenuItem>
@@ -46,7 +46,7 @@ function Header() {
         ) : (
           <Button
             className="font-bold"
-            onClick={connect}
+            onClick={login}
           >
             Connect Wallet
           </Button>

@@ -1,153 +1,108 @@
 "use client";
 
-import { createContext, PropsWithChildren, useEffect, useState } from "react";
-import { MetaMaskSDK, SDKProvider } from "@metamask/sdk";
-import { type Address, type Chain, type WalletClient, custom, createWalletClient } from "viem";
+import { createContext, PropsWithChildren, useEffect, useMemo, useState } from "react";
 import "viem/window";
-import { useRouter } from "next/navigation";
-
-const infuraAPIKey = process.env.NEXT_PUBLIC_INFURA_API_KEY
+import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
+import { Web3AuthNoModal } from "@web3auth/no-modal";
+import { AuthAdapter } from "@web3auth/auth-adapter";
+import { WEB3AUTH_NETWORK, WALLET_ADAPTERS, IProvider, UserInfo } from "@web3auth/base";
+import chainConfig from "@/blockchain/chains";
 
 interface IWalletContext {
-  account: Address | undefined
-  chain: Chain | undefined
-  connect: () => void
-  disconnect: () => void
-  wallet: WalletClient | undefined
-  connecting: boolean
+  provider: IProvider | null
+  isLoggedIn: boolean
+  initializing: boolean
+  login: () => void
+  logout: () => void
+  user: UserInfo | null
 }
 
 const WalletContext = createContext<IWalletContext>({
-  account: undefined,
-  chain: undefined,
-  connect: () => {},
-  disconnect: () => {},
-  wallet: undefined,
-  connecting: false,
+  provider: null,
+  isLoggedIn: false,
+  initializing: true,
+  login: () => {},
+  logout: () => {},
+  user: null,
 })
 
 const WalletProvider = ({ children }: PropsWithChildren) => {
-  const [sdk, setSdk] = useState<MetaMaskSDK>()
-  const [provider, setProvider] = useState<SDKProvider>()
-  const [account, setAccount] = useState<Address>()
-  const [chain, setChain] = useState<Chain>()
-  const [wallet, setWallet] = useState<WalletClient>()
-  const [connecting, setConnecting] = useState<boolean>(false)
-  const router = useRouter()
+  const [provider, setProvider] = useState<IProvider | null>(null)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+  const [initializing, setInitializing] = useState<boolean>(true)
+  const [user, setUser] = useState<UserInfo | null>(null)
 
-  useEffect(() => {
-    const doAsync = async () => {
-      try {
-        setConnecting(true)
-        const clientSDK = new MetaMaskSDK({
-          dappMetadata: {
-            name: "Copod",
-            url: "http://localhost:3000",
-            iconUrl: "http://localhost:3000/favicon.ico",
+  const privateKeyProvider = useMemo(() => {
+    return new EthereumPrivateKeyProvider({ config: { chainConfig } })
+  }, [])
+  const adapter = useMemo(() => {
+    return new AuthAdapter({
+      adapterSettings: {
+        uxMode: "redirect",
+        loginConfig: {
+          // Google config
+          google: {
+            verifier: "google-web3auth-dev",
+            typeOfLogin: "google",
+            clientId: process.env.NEXT_PUBLIC_WEB3_AUTH_GOOGLE_CLIENT_ID!,
           },
-          infuraAPIKey,
-          checkInstallationImmediately: true,
-        })
-        await clientSDK.init()
-        setSdk(clientSDK)
-        setProvider(clientSDK.getProvider())
-        setChain(await clientSDK.getProvider().request({ method: "eth_chainId" }))
-      } catch (e) {
-        console.error(e)
-      } finally {
-        setConnecting(false)
-      }
-    }
-    doAsync()
+        },
+      },
+    })
+  }, [])
+  const web3auth = useMemo(() => {
+    const web3Client = new Web3AuthNoModal({
+      clientId: process.env.NEXT_PUBLIC_WEB3_AUTH_CLIENT_ID!,
+      web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+      privateKeyProvider,
+    })
+    web3Client.configureAdapter(adapter)
+    return web3Client
   }, [])
 
   useEffect(() => {
-    if (!sdk || !provider) {
-      return;
+    async function init() {
+      try {
+        await web3auth.init()
+        setProvider(web3auth.provider)
+
+        if (web3auth.status === "connected") {
+          setIsLoggedIn(true)
+          setInitializing(false)
+        }
+      } catch (e) {
+        console.error(e)
+      }
     }
 
-    console.log("Setting account from active provider")
+    init()
+  }, [web3auth])
+
+  const login = async() => {
     try {
-      setConnecting(true)
-      setWallet(
-        createWalletClient({
-          chain: chain,
-          transport: custom(provider),
-        })
-      )
-      wallet?.requestAddresses()
-      .then((accounts) => {
-        setAccount(accounts?.[0])
+      setInitializing(true)
+      const provider = await web3auth.connectTo(WALLET_ADAPTERS.AUTH, {
+        loginProvider: "google",
       })
-      .catch((e) => console.error(e))
+      setProvider(provider)
+      if (web3auth.connected) {
+        setUser(null)
+        setIsLoggedIn(true)
+        setInitializing(false)
+      }
     } catch (e) {
       console.error(e)
-    } finally {
-      setConnecting(false)
-    }
-
-    const onChainChanged = (chain: unknown) => {
-      console.log("Blockchain id changed")
-      setChain(chain as Chain)
-    }
-
-    const onAccountChanged = (accounts: unknown) => {
-      console.log("Account changed")
-      setAccount((accounts as Address[])?.[0])
-    }
-
-    const onDisconnect = (error: unknown) => {
-      console.log("Disconnecting\n", error)
-      setAccount(undefined)
-      setProvider(null)
-      setChain(undefined)
-    }
-
-    provider.on("accountsChanged", onAccountChanged)
-    provider.on("chainChanged", onChainChanged)
-    provider.on("disconnect", onDisconnect)
-    
-    return () => {
-      console.log("Clean up window.ethereum events");
-      provider.removeListener('chainChanged', onChainChanged);
-      provider.removeListener('accountsChanged', onAccountChanged);
-      provider.removeListener('disconnect', onDisconnect);
-    }
-  }, [provider])
-
-  useEffect(() => {
-    if (!account) {
-      router.replace("/")
-    } else {
-      router.replace("/dashboard")
-    }
-  }, [account, router])
-
-  const connect = async () => {
-    if (!provider) {
-      throw new Error(`No window.ethereum in the current browser session`)
-    }
-
-    try {
-      setConnecting(true)
-      setWallet(
-        createWalletClient({
-          chain: chain,
-          transport: custom(provider),
-        })
-      )
-      const address = await wallet?.requestAddresses()
-      setAccount(address?.[0])
-    } catch (e) {
-      console.error(e)
-    } finally {
-      setConnecting(false)
     }
   }
 
-  const disconnect = () => {
+  const logout = async () => {
     try {
-      sdk?.terminate()
+      setInitializing(true)
+      await web3auth.logout()
+      setProvider(null)
+      setUser(null)
+      setIsLoggedIn(false)
+      setInitializing(false)
     } catch (e) {
       console.error(e)
     }
@@ -156,12 +111,12 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
   return (
     <WalletContext.Provider
       value={{
-        chain: chain,
-        account: account,
-        connect: connect,
-        wallet: wallet,
-        connecting: connecting,
-        disconnect: disconnect,
+        provider,
+        isLoggedIn,
+        initializing,
+        login,
+        logout,
+        user,
       }}
     >
       {children}

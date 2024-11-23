@@ -6,12 +6,12 @@ import { WalletContext } from "@/providers/wallet";
 import { GET_PAYMENTS_BY_STATUS } from "@/graphql/GetPaymentsByStatus";
 
 function Page() {
-  const { account } = useContext(WalletContext)
+  const { isLoggedIn } = useContext(WalletContext)
   const { data } = useQuery(GET_PAYMENTS_BY_STATUS, {
     variables: {
       status: "success",
     },
-    skip: !account,
+    skip: isLoggedIn,
   })
   console.log(data)
 
