@@ -2,11 +2,14 @@
 
 import { PropsWithChildren } from "react";
 import { WalletProvider } from "./wallet";
+import { ApolloProvider } from "./apollo";
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
     <WalletProvider>
-      {children}
+      <ApolloProvider>
+        {children}
+      </ApolloProvider>
     </WalletProvider>
   )
 }

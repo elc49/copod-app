@@ -4,6 +4,7 @@ import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { MetaMaskSDK, SDKProvider } from "@metamask/sdk";
 import { type Address, type Chain, type WalletClient, custom, createWalletClient } from "viem";
 import "viem/window";
+import { useRouter } from "next/navigation";
 
 const infuraAPIKey = process.env.NEXT_PUBLIC_INFURA_API_KEY
 
@@ -32,6 +33,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
   const [chain, setChain] = useState<Chain>()
   const [wallet, setWallet] = useState<WalletClient>()
   const [connecting, setConnecting] = useState<boolean>(false)
+  const router = useRouter()
 
   useEffect(() => {
     const doAsync = async () => {
@@ -111,7 +113,15 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       provider.removeListener('accountsChanged', onAccountChanged);
       provider.removeListener('disconnect', onDisconnect);
     }
-  }, [provider, chain])
+  }, [provider])
+
+  useEffect(() => {
+    if (!account) {
+      router.replace("/")
+    } else {
+      router.replace("/dashboard")
+    }
+  }, [account, router])
 
   const connect = async () => {
     if (!provider) {
