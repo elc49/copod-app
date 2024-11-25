@@ -15,7 +15,7 @@ import { WalletContext} from "@/providers/wallet";
 import { Button } from "@/components/ui/button";
 
 function Header() {
-  const { isLoggedIn, login, logout } = useContext(WalletContext)
+  const { isLoggedIn, login, user, logout } = useContext(WalletContext)
 
   return (
     <nav className="flex flex-row p-4">
@@ -27,7 +27,7 @@ function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar>
-                <AvatarImage src="https://effigy.im/a/0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045.png" />
+                <AvatarImage src={`${user?.profileImage}`} />
                 <AvatarFallback>
                   <User />
                 </AvatarFallback>

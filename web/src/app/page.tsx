@@ -3,10 +3,11 @@
 import { useContext } from "react";
 import { WalletContext } from "@/providers/wallet";
 import Loader from "@/components/loader";
+import withAuth from "@/providers/auth";
 
 const lines = ["Register land.", "Search land.", "Buy land usage rights."]
 
-export default function Home() {
+function Home() {
   const { initializing } = useContext(WalletContext)
 
   return (
@@ -24,3 +25,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default withAuth(Home)

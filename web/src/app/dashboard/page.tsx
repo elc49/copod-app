@@ -4,6 +4,7 @@ import { useContext } from "react";
 import { useQuery } from "@apollo/client";
 import { WalletContext } from "@/providers/wallet";
 import { GET_PAYMENTS_BY_STATUS } from "@/graphql/GetPaymentsByStatus";
+import withAuth from "@/providers/auth";
 
 function Page() {
   const { isLoggedIn } = useContext(WalletContext)
@@ -20,4 +21,4 @@ function Page() {
   )
 }
 
-export default Page
+export default withAuth(Page)
