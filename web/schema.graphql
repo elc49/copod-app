@@ -1,0 +1,123 @@
+schema {
+  query: Query
+  mutation: Mutation
+  subscription: Subscription
+}
+
+"""
+The @defer directive may be specified on a fragment spread to imply de-prioritization, that causes the fragment to be omitted in the initial response, and delivered as a subsequent response afterward. A query with @defer directive will cause the request to potentially return multiple responses, where non-deferred data is delivered in the initial response and data deferred delivered in a subsequent response. @include and @skip take precedence over @defer.
+"""
+directive @defer(if: Boolean = true, label: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+input DocUploadInput {
+  email: String!
+  url: String!
+  walletAddress: String!
+}
+
+type Land {
+  created_at: Time!
+  id: UUID!
+  size: Int!
+  symbol: String!
+  title: String!
+  titleDocument: String!
+  town: String
+  updated_at: Time!
+  verified: Verification!
+}
+
+type Mutation {
+  chargeMpesa(input: PayWithMpesaInput!): String
+  uploadLandTitle(input: DocUploadInput!): Title!
+  uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
+}
+
+enum PaidFor {
+  NOT_PAID
+  PAID
+}
+
+input PayWithMpesaInput {
+  currency: String!
+  email: String!
+  paymentFor: UUID!
+  phone: String!
+  reason: PaymentReason!
+  walletAddress: String!
+}
+
+type Payment {
+  created_at: Time!
+  id: UUID!
+  reference_id: String!
+  status: String!
+  title: Title
+  title_id: UUID!
+  updated_at: Time!
+  wallet_address: String!
+}
+
+enum PaymentReason {
+  LAND_REGISTRY
+}
+
+enum PaymentStatus {
+  failed
+  pending
+  success
+  timeout
+}
+
+type PaymentUpdate {
+  referenceId: String!
+  status: String!
+  walletAddress: String!
+}
+
+type Query {
+  getLocalLands: [Land!]!
+  getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
+  getUserLands(walletAddress: String!): [Land!]!
+  hasPendingLandRecords(walletAddress: String!): Boolean!
+}
+
+type Subscription {
+  paymentUpdate(walletAddress: String!): PaymentUpdate!
+}
+
+type SupportingDoc {
+  created_at: Time!
+  govt_id: String!
+  id: UUID!
+  updated_at: Time!
+  verified: Verification!
+}
+
+scalar Time
+
+type Title {
+  created_at: Time!
+  id: UUID!
+  title: String!
+  updated_at: Time!
+  verified: Verification!
+}
+
+scalar UUID
+
+type User {
+  created_at: Time!
+  email: String!
+  firstname: String
+  id: UUID!
+  lastname: String
+  updated_at: Time!
+  wallet_address: String!
+}
+
+enum Verification {
+  ONBOARDING
+  REJECTED
+  VERIFIED
+}

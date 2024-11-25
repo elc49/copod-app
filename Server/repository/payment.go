@@ -97,11 +97,12 @@ func (r *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*mo
 
 	for _, i := range p {
 		payment := &model.Payment{
-			ID:        i.ID,
-			Status:    i.Status,
-			TitleID:   i.TitleID.UUID,
-			CreatedAt: i.CreatedAt,
-			UpdatedAt: i.UpdatedAt,
+			ID:          i.ID,
+			Status:      i.Status,
+			ReferenceID: i.ReferenceID,
+			TitleID:     i.TitleID.UUID,
+			CreatedAt:   i.CreatedAt,
+			UpdatedAt:   i.UpdatedAt,
 		}
 
 		payments = append(payments, payment)
