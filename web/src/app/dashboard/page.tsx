@@ -1,24 +1,28 @@
 "use client";
 
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { WalletContext } from "@/providers/wallet";
-import { GET_PAYMENTS_BY_STATUS } from "@/graphql/GetPaymentsByStatus";
+import { GET_PAYMENTS_BY_STATUS } from "@/graphql/query/GetPaymentsByStatus";
 import withAuth from "@/providers/auth";
+import { PaymentStatus } from "@/graphql/graphql";
+import PaymentsByStatusTable from "./components/PaymentsByStatusTable";
+
+import Loader from "@/components/loader";
 
 function Page() {
   const { isLoggedIn } = useContext(WalletContext)
-  const { data } = useQuery(GET_PAYMENTS_BY_STATUS, {
+  const { data, loading } = useQuery(GET_PAYMENTS_BY_STATUS, {
     variables: {
-      status: "success",
+      status: PaymentStatus.Success,
     },
     skip: !isLoggedIn,
   })
-  console.log(data)
+  const payments = useMemo(() => {
+    return data?.getPaymentsByStatus || []
+  }, [data])
 
-  return (
-    <h1 className="text-4xl font-bold">Dashboard</h1>
-  )
+  return loading ? <Loader /> : <PaymentsByStatusTable payments={payments} />
 }
 
 export default withAuth(Page)
