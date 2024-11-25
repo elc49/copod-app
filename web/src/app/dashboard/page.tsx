@@ -4,7 +4,7 @@ import { useContext, useMemo } from "react";
 import { useQuery } from "@apollo/client";
 import { WalletContext } from "@/providers/wallet";
 import { GET_PAYMENTS_BY_STATUS } from "@/graphql/query/GetPaymentsByStatus";
-import withAuth from "@/providers/auth";
+import withAuth from "@/providers/withAuth";
 import { PaymentStatus } from "@/graphql/graphql";
 import PaymentsByStatusTable from "./components/PaymentsByStatusTable";
 

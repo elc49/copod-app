@@ -3,7 +3,7 @@
 import { useContext } from "react";
 import { WalletContext } from "@/providers/wallet";
 import Loader from "@/components/loader";
-import withAuth from "@/providers/auth";
+import withAuth from "@/providers/withAuth";
 
 const lines = ["Register land.", "Search land.", "Buy land usage rights."]
 
