@@ -98,8 +98,6 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
         }
       } catch (e) {
         console.error(e)
-      } finally {
-        setInitializing(false)
       }
     }
 
