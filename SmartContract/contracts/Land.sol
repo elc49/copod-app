@@ -36,11 +36,13 @@ contract Land is ERC721, Ownable {
     }
 
     // Get land
+    // Real-time details
     function getLand() public view returns (LandDetails memory) {
         return land;
     }
 
     // Grant from land space
+    // TODO: should cover requested size
     function grantSize(uint256 size_, address owner_) public returns (bool) {
         require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
         (bool success, uint256 result) =  land.size.trySub(size_);
@@ -52,6 +54,7 @@ contract Land is ERC721, Ownable {
     }
 
     // Reclaim granted land space
+    // Caller - land owner
     function reclaimSize(uint256 size_, address owner_) public returns (bool) {
         require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
         (bool success, uint256 result) = land.size.tryAdd(size_);
