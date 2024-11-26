@@ -18,7 +18,7 @@ function Header() {
   const { isLoggedIn, login, user, logout } = useContext(WalletContext)
 
   return (
-    <Flex gap="4" p="4" justify="space-between">
+    <Flex gap="4" p="4" align="center"justify="space-between">
       <Flex marginEnd="auto">
         <Heading>Copod</Heading>
       </Flex>
