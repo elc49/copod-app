@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -84,7 +83,7 @@ func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.Pa
 
 // GetPaymentDetailsByID is the resolver for the getPaymentDetailsById field.
 func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
-	panic(fmt.Errorf("not implemented: GetPaymentDetailsByID - getPaymentDetailsById"))
+	return r.paymentController.GetPaymentDetailsByID(ctx, id)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

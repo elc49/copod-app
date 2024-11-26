@@ -2,20 +2,15 @@ import { useMemo } from "react";
 import { Payment } from "@/graphql/graphql";
 import {
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+} from "@chakra-ui/react";
 import {
   useReactTable,
   flexRender,
   createColumnHelper,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { useRouter } from "next/navigation";
+import { Tag } from "@/components/ui/tag";
 
 interface Props {
   payments: Payment[]
@@ -35,33 +30,11 @@ export default function PaymentsByStatusTable(props: Props) {
         header: () => <span>#</span>
       }),
       columnHelper.accessor("status", {
-        cell: info => (
-          <div className="capitalize">
-            <Badge>
-              {info.getValue()}
-            </Badge>
-          </div>
-        ),
+        cell: info => <Tag>{info.getValue()}</Tag>,
         header: () => <span>Payment</span>
       }),
       columnHelper.accessor("title.verified", {
-        cell: info => (
-          <div>
-            <Badge
-              variant={
-                info.getValue() === "ONBOARDING"
-                  ? `secondary`
-                  : info.getValue() === "VERIFIED"
-                    ? `default`
-                    : info.getValue() === "REJECTED"
-                      ? `destructive`
-                      : `outline`
-              }
-            >
-              {info.getValue()}
-            </Badge>
-          </div>
-        ),
+        cell: info => <Tag>{info.getValue()}</Tag>,
         header: () => <span>Verification</span>
       }),
     ]
@@ -74,49 +47,45 @@ export default function PaymentsByStatusTable(props: Props) {
   const router = useRouter()
 
   return (
-    <div className="w-full p-4">
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                  </TableHead>
-                ))}
-              </TableRow>
+    <Table.Root size="lg">
+      <Table.Header>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <Table.Row key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <Table.ColumnHeader key={header.id}>
+                {header.isPlaceholder
+                  ? null
+                  : flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+              </Table.ColumnHeader>
             ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                 key={row.id}
-                 onClick={() => router.push(`payment/${row.original.id}`)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">No results.</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </div>
+          </Table.Row>
+        ))}
+      </Table.Header>
+      <Table.Body>
+        {table.getRowModel().rows?.length ? (
+          table.getRowModel().rows.map((row) => (
+            <Table.Row
+             key={row.id}
+             onClick={() => router.push(`payment/${row.original.id}`)}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <Table.Cell key={cell.id}>
+                  {flexRender(
+                    cell.column.columnDef.cell,
+                    cell.getContext(),
+                  )}
+                </Table.Cell>
+              ))}
+            </Table.Row>))
+        ) : (
+          <Table.Row>
+            <Table.Cell colSpan={columns.length} className="h-24 text-center">No results.</Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+    </Table.Root>
   )
 }
