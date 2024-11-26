@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { createListCollection, Input, Stack } from "@chakra-ui/react";
 import {
   SelectContent,
@@ -22,8 +21,8 @@ function LandDetails() {
     register,
     handleSubmit,
     formState: { errors },
-  }= useForm<z.infer<typeof landDetailsSchema>>({
-    resolver: zodResolver(landDetailsSchema),
+  }= useForm({
+    resolver: yupResolver(landDetailsSchema),
     defaultValues: {
       titleId: "",
       size: "",
@@ -45,7 +44,7 @@ function LandDetails() {
     })
   }, [])
 
-  const onSubmit = (values: z.infer<typeof landDetailsSchema>) => {
+  const onSubmit = (values: any) => {
     console.log(values)
   }
 
@@ -97,7 +96,7 @@ function LandDetails() {
             )}
           />
         </Field>
-        <Button onClick={() => {}}>
+        <Button type="submit">
           Send
         </Button>
       </Stack>

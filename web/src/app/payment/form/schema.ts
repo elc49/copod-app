@@ -1,9 +1,7 @@
-import { z } from "zod";
+import * as yup from "yup";
 
-export const landDetailsSchema = z.object({
-  titleId: z.string(),
-  size: z.string(),
-  unit: z.string({
-    required_error: "Select land measurement unit",
-  }).array(),
+export const landDetailsSchema = yup.object({
+  titleId: yup.string().required(),
+  size: yup.string().required(),
+  unit: yup.array().required(),
 })
