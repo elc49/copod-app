@@ -73,4 +73,11 @@ func Test_Payment_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.True(t, len(payments) > 0)
 	})
+
+	t.Run("get_payment_details_by_id", func(t *testing.T) {
+		py, err := pc.GetPaymentDetailsByID(ctx, p.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, py.ID, p.ID)
+	})
 }

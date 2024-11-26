@@ -110,6 +110,7 @@ type Query {
   getUserLands(walletAddress: String!): [Land!]!
   hasPendingLandRecords(walletAddress: String!): Boolean!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
+  getPaymentDetailsById(id: UUID!): Payment!
 }
 
 type Mutation {

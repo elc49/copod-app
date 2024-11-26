@@ -6,12 +6,14 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -78,6 +80,11 @@ func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress
 // GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.
 func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error) {
 	return r.paymentController.GetPaymentsByStatus(ctx, status.String())
+}
+
+// GetPaymentDetailsByID is the resolver for the getPaymentDetailsById field.
+func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
+	panic(fmt.Errorf("not implemented: GetPaymentDetailsByID - getPaymentDetailsById"))
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

@@ -17,6 +17,7 @@ type PaymentController interface {
 	UpdatePaymentStatus(context.Context, sql.UpdatePaymentStatusParams) (*model.Payment, error)
 	GetPaymentTitleByID(context.Context, uuid.UUID) (*model.Title, error)
 	GetPaymentsByStatus(context.Context, string) ([]*model.Payment, error)
+	GetPaymentDetailsByID(context.Context, uuid.UUID) (*model.Payment, error)
 }
 
 type Payment struct {
@@ -52,4 +53,8 @@ func (c *Payment) GetPaymentTitleByID(ctx context.Context, titleID uuid.UUID) (*
 
 func (c *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*model.Payment, error) {
 	return c.r.GetPaymentsByStatus(ctx, status)
+}
+
+func (c *Payment) GetPaymentDetailsByID(ctx context.Context, paymentID uuid.UUID) (*model.Payment, error) {
+	return c.r.GetPaymentDetailsByID(ctx, paymentID)
 }
