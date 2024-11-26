@@ -15,6 +15,7 @@ import {
   getCoreRowModel,
 } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
+import { useRouter } from "next/navigation";
 
 interface Props {
   payments: Payment[]
@@ -29,7 +30,7 @@ export default function PaymentsByStatusTable(props: Props) {
     return [
       columnHelper.accessor("reference_id", {
         cell: info => (
-          <div className="font-semibold">{info.getValue()}</div>
+          <div>{info.getValue()}</div>
         ),
         header: () => <span>#</span>
       }),
@@ -70,6 +71,7 @@ export default function PaymentsByStatusTable(props: Props) {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
+  const router = useRouter()
 
   return (
     <div className="w-full p-4">
@@ -96,6 +98,7 @@ export default function PaymentsByStatusTable(props: Props) {
               table.getRowModel().rows.map((row) => (
                 <TableRow
                  key={row.id}
+                 onClick={() => router.push(`payment/${row.original.id}`)}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
