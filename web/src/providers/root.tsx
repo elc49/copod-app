@@ -7,13 +7,13 @@ import { ChakraUIProvider } from "./chakra-ui";
 
 const Providers = ({ children }: PropsWithChildren) => {
   return (
-    <WalletProvider>
-      <ApolloProvider>
-        <ChakraUIProvider>
+    <ChakraUIProvider>
+      <WalletProvider>
+        <ApolloProvider>
           {children}
-        </ChakraUIProvider>
-      </ApolloProvider>
-    </WalletProvider>
+        </ApolloProvider>
+      </WalletProvider>
+    </ChakraUIProvider>
   )
 }
 

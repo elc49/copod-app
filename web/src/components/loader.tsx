@@ -1,10 +1,12 @@
 "use client";
 
-import { Loader as Loader2 } from "lucide-react";
+import { AbsoluteCenter, Spinner } from "@chakra-ui/react";
 
 function Loader() {
   return (
-    <Loader2 className="animate-spin" />
+    <AbsoluteCenter>
+      <Spinner size="md" />
+    </AbsoluteCenter>
   );
 }
 
