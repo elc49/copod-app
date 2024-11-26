@@ -50,7 +50,7 @@ function LandDetails() {
   }
 
   return (
-    <form onSubmit={onSubmit}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap="4" align="flex-start" maxW="sm">
         <Field
           label="Title number"
