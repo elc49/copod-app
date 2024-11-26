@@ -6,6 +6,7 @@ import { Box, Heading, SimpleGrid } from "@chakra-ui/react";
 import { GET_PAYMENT_DETAILS_BY_ID } from "@/graphql/query";
 import LandDetails from "../form/LandDetails";
 import Loader from "@/components/loader";
+import withAuth from "@/providers/withAuth";
 
 function Page() {
   const params = useParams()
@@ -29,4 +30,4 @@ function Page() {
   )
 }
 
-export default Page
+export default withAuth(Page)
