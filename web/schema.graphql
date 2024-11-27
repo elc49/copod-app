@@ -77,6 +77,7 @@ type PaymentUpdate {
 
 type Query {
   getLocalLands: [Land!]!
+  getPaymentDetailsById(id: UUID!): Payment!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getUserLands(walletAddress: String!): [Land!]!
   hasPendingLandRecords(walletAddress: String!): Boolean!

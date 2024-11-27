@@ -1,58 +1,48 @@
 "use client";
 
 import { useContext } from "react";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { User } from "lucide-react";
+import { Flex, Heading } from "@chakra-ui/react";
 import { WalletContext} from "@/providers/wallet";
+import {
+  MenuContent,
+  MenuItem,
+  MenuTrigger,
+  MenuRoot,
+} from "@/components/ui/menu";
+import {
+  Avatar,
+} from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 
 function Header() {
   const { isLoggedIn, login, user, logout } = useContext(WalletContext)
 
   return (
-    <nav className="flex flex-row p-4">
-      <div>
-        <h1 className="font-bold text-2xl">Copod</h1>
-      </div>
-      <div className="ml-auto">
-        {isLoggedIn ? (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Avatar>
-                <AvatarImage src={`${user?.profileImage}`} />
-                <AvatarFallback>
-                  <User />
-                </AvatarFallback>
-              </Avatar>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onClick={logout}
-              >
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ) : (
-          <Button
-            className="font-bold"
-            onClick={login}
-          >
-            Connect Wallet
-          </Button>
-        )}
-      </div>
-    </nav>
+    <Flex gap="4" p="4" align="center"justify="space-between">
+      <Flex marginEnd="auto">
+        <Heading>Copod</Heading>
+      </Flex>
+      {isLoggedIn ? (
+        <Flex>
+          <MenuRoot>
+            <MenuTrigger>
+              <Avatar
+                src={user?.profileImage}
+              />
+            </MenuTrigger>
+            <MenuContent>
+              <MenuItem fontWeight="bold" onClick={logout} value="sign-out">
+                Sign out
+              </MenuItem>
+            </MenuContent>
+          </MenuRoot>
+        </Flex>
+      ) : (
+        <Button onClick={login}>
+          Connect Wallet
+        </Button>
+      )}
+    </Flex>
   )
 }
 

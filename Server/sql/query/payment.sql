@@ -22,3 +22,7 @@ WHERE id = $1;
 -- name: GetPaymentsByStatus :many
 SELECT * FROM payments
 WHERE status = $1;
+
+-- name: GetPaymentDetailsByID :one
+SELECT * FROM payments
+WHERE id = $1;

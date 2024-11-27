@@ -105,9 +105,15 @@ export type PaymentUpdate = {
 export type Query = {
   __typename?: 'Query';
   getLocalLands: Array<Land>;
+  getPaymentDetailsById: Payment;
   getPaymentsByStatus: Array<Payment>;
   getUserLands: Array<Land>;
   hasPendingLandRecords: Scalars['Boolean']['output'];
+};
+
+
+export type QueryGetPaymentDetailsByIdArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
