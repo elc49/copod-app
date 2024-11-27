@@ -2,6 +2,7 @@
 
 import { useContext, useMemo } from "react";
 import { useQuery } from "@apollo/client";
+import { Box } from "@chakra-ui/react";
 import { WalletContext } from "@/providers/wallet";
 import { GET_PAYMENTS_BY_STATUS } from "@/graphql/query";
 import withAuth from "@/providers/withAuth";
@@ -22,7 +23,11 @@ function Page() {
     return data?.getPaymentsByStatus || []
   }, [data])
 
-  return loading ? <Loader /> : <PaymentsByStatusTable payments={payments} />
+  return loading ? <Loader /> : (
+    <Box p="4">
+      <PaymentsByStatusTable payments={payments} />
+    </Box>
+  )
 }
 
 export default withAuth(Page)
