@@ -1,32 +1,30 @@
 "use client";
 
-import { useContext, useMemo } from "react";
-import { useQuery } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
-import { WalletContext } from "@/providers/wallet";
-import { GET_PAYMENTS_BY_STATUS } from "@/graphql/query";
+import { useMemo } from "react";
+import { AbsoluteCenter, Card, Stack } from "@chakra-ui/react";
+import NextLink from "next/link";
 import withAuth from "@/providers/withAuth";
-import { PaymentStatus } from "@/graphql/graphql";
-import PaymentsByStatusTable from "./components/PaymentsByStatusTable";
 
-import Loader from "@/components/loader";
 
 function Page() {
-  const { isLoggedIn } = useContext(WalletContext)
-  const { data, loading } = useQuery(GET_PAYMENTS_BY_STATUS, {
-    variables: {
-      status: PaymentStatus.Success,
-    },
-    skip: !isLoggedIn,
-  })
-  const payments = useMemo(() => {
-    return data?.getPaymentsByStatus || []
-  }, [data])
+  const cardPoints = useMemo(() => {
+    return ["lands", "users"]
+  }, [])
 
-  return loading ? <Loader /> : (
-    <Box p="4">
-      <PaymentsByStatusTable payments={payments} />
-    </Box>
+  return (
+    <AbsoluteCenter>
+      <Stack direction="row" gap="4" wrap="wrap">
+        {cardPoints.map((point: string, i: number) => (
+          <NextLink key={i} href={`/${point}`}>
+            <Card.Root key={i} size="lg" width="320px" onClick={() => {}}>
+              <Card.Body textAlign="center" textTransform="capitalize" fontSize="4xl" fontWeight="bold">
+                {point}
+              </Card.Body>
+            </Card.Root>
+          </NextLink>
+        ))}
+      </Stack>
+    </AbsoluteCenter>
   )
 }
 
