@@ -4,7 +4,6 @@ import { useContext } from "react";
 import { AbsoluteCenter, Heading, Stack } from "@chakra-ui/react";
 import { WalletContext } from "@/providers/wallet";
 import Loader from "@/components/loader";
-import withAuth from "@/providers/withAuth";
 
 const lines = ["Register land.", "Search land.", "Buy land usage rights."]
 
@@ -23,4 +22,4 @@ function Home() {
   );
 }
 
-export default withAuth(Home)
+export default Home

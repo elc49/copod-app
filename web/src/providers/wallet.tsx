@@ -6,6 +6,7 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { AuthAdapter } from "@web3auth/auth-adapter";
 import { WEB3AUTH_NETWORK, WALLET_ADAPTERS, IProvider, UserInfo } from "@web3auth/base";
+import { useRouter } from "next/navigation";
 import chainConfig from "@/blockchain/chains";
 
 interface IWalletContext {
@@ -31,6 +32,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
   const [initializing, setInitializing] = useState<boolean>(true)
   const [user, setUser] = useState<Partial<UserInfo> | null>(null)
+  const router = useRouter()
 
   const privateKeyProvider = useMemo(() => {
     return new EthereumPrivateKeyProvider({ config: { chainConfig } })
@@ -72,6 +74,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
           const user = await web3auth.getUserInfo()
           setUser(user)
           setIsLoggedIn(true)
+          router.replace("/dashboard")
         }
       } catch (e) {
         console.error(e)
@@ -109,6 +112,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
       try {
         setInitializing(true)
         await web3auth.logout()
+        web3auth.clearCache()
         setProvider(null)
         setUser(null)
         setIsLoggedIn(false)
