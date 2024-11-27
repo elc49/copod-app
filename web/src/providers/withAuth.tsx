@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { WalletContext } from "@/providers/wallet";
 
 const LOGIN_ROUTE = "/"
+const DASHBOARD_ROUTE = "/dashboard"
 
 function withAuth(Component: React.ComponentType) {
   const ComponentWithAuth: React.FC = (props) => {
@@ -14,6 +15,8 @@ function withAuth(Component: React.ComponentType) {
     React.useEffect(() => {
       if (!isLoggedIn) {
         router.replace(LOGIN_ROUTE)
+      } else {
+        router.replace(DASHBOARD_ROUTE)
       }
     }, [isLoggedIn, router])
 
