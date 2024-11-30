@@ -35,13 +35,13 @@ contract Registry {
     error NoTokenizedLand(string titleNo);
     
     // Register land
-    function register(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) public returns (Land landAddress) {
+    function register(string memory titleNo_, string memory symbol_, address owner_, uint256 size_) public returns (Land landAddress) {
         // Don't mint same land
         require(lands[titleNo_] == address(0), LandAlreadyExists(titleNo_));
 
-        Land land = new Land(titleNo_, symbol_, owner_, size_, tokenId_);
-        lands[titleNo_] = address(land);
         tokenizedLands += 1;
+        Land land = new Land(titleNo_, symbol_, owner_, size_, tokenizedLands);
+        lands[titleNo_] = address(land);
         emit LandCreated(titleNo_, size_);
         return land;
     }

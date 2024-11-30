@@ -15,7 +15,7 @@ import { landDetailsSchema } from "./schema";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
-function LandDetails() {
+function LandDetails({ registerLand }: any) {
   const {
     control,
     register,
@@ -45,7 +45,7 @@ function LandDetails() {
   }, [])
 
   const onSubmit = (values: any) => {
-    console.log(values)
+    registerLand(values.titleId, values.size, values.unit[0])
   }
 
   return (
