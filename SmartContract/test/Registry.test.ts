@@ -8,7 +8,6 @@ interface Land {
   titleNo: string
   size: number
   unit: string
-  tokenId: number
 }
 
 let signers: Signer[], owner: Signer, tenant: Signer
@@ -17,7 +16,6 @@ const land: Land = {
   titleNo: "FE/E32/HZ",
   size: 32,
   unit: "HA",
-  tokenId: 4842,
 }
 const timeInFuture = Math.floor((Date.now() + (60*60*24))/1000)
 
@@ -31,7 +29,7 @@ describe("Registry", () => {
 
   describe("register", async () => {
     it("register success", async () => {
-      await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size, 4842)
+      await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size)
 
       landContract = (await ethers.getContractFactory("Land")).attach(await registryContract.getLandERC721Contract(land.titleNo))
       const result = await landContract.getLand()
@@ -46,7 +44,7 @@ describe("Registry", () => {
 
     it("Dont't register same land parcel", async () => {
       await expect(
-        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, 482)
+        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34)
       ).to.be.reverted
     })
   })

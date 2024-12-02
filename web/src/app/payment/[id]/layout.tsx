@@ -1,8 +1,8 @@
 "use client";
 
-import { Box, IconButton } from "@chakra-ui/react";
-import { ArrowLeft } from "lucide-react";
+import { Box, HStack, Heading, IconButton } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "@/components/icons";
 
 export default function RootLayout({
   children,
@@ -13,11 +13,12 @@ export default function RootLayout({
 
   return (
     <Box p="4">
-      <Box py="4">
+      <HStack gap="4" py="4" align="center">
         <IconButton aria-label="Go back" onClick={() => router.back()}>
           <ArrowLeft />
         </IconButton>
-      </Box>
+        <Heading>Payment details</Heading>
+      </HStack>
       {children}
     </Box>
   )

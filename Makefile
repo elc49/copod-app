@@ -19,3 +19,6 @@ sqlc:
 # Web
 web-app:
 	cd web && npm run dev
+# Deploy smart contract to optimisim sepolia testnet
+op-sepolia-deploy:
+	cd SmartContract && rm -rf ignition/deployments && npx hardhat ignition deploy ./ignition/modules/Registry.ts --network sepolia

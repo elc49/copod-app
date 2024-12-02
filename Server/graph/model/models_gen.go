@@ -80,6 +80,11 @@ type Title struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
+type UpdateTitleVerificationInput struct {
+	ID           uuid.UUID    `json:"id"`
+	Verification Verification `json:"verification"`
+}
+
 type User struct {
 	ID            uuid.UUID `json:"id"`
 	Firstname     *string   `json:"firstname,omitempty"`

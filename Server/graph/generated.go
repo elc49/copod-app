@@ -65,9 +65,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChargeMpesa         func(childComplexity int, input model.PayWithMpesaInput) int
-		UploadLandTitle     func(childComplexity int, input model.DocUploadInput) int
-		UploadSupportingDoc func(childComplexity int, input model.DocUploadInput) int
+		ChargeMpesa             func(childComplexity int, input model.PayWithMpesaInput) int
+		UpdateTitleVerification func(childComplexity int, input model.UpdateTitleVerificationInput) int
+		UploadLandTitle         func(childComplexity int, input model.DocUploadInput) int
+		UploadSupportingDoc     func(childComplexity int, input model.DocUploadInput) int
 	}
 
 	Payment struct {
@@ -92,7 +93,6 @@ type ComplexityRoot struct {
 		GetPaymentDetailsByID func(childComplexity int, id uuid.UUID) int
 		GetPaymentsByStatus   func(childComplexity int, status model.PaymentStatus) int
 		GetUserLands          func(childComplexity int, walletAddress string) int
-		HasPendingLandRecords func(childComplexity int, walletAddress string) int
 	}
 
 	Subscription struct {
@@ -130,6 +130,7 @@ type MutationResolver interface {
 	UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error)
 	UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
+	UpdateTitleVerification(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error)
 }
 type PaymentResolver interface {
 	Title(ctx context.Context, obj *model.Payment) (*model.Title, error)
@@ -137,7 +138,6 @@ type PaymentResolver interface {
 type QueryResolver interface {
 	GetLocalLands(ctx context.Context) ([]*model.Land, error)
 	GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error)
-	HasPendingLandRecords(ctx context.Context, walletAddress string) (bool, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
 }
@@ -238,6 +238,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ChargeMpesa(childComplexity, args["input"].(model.PayWithMpesaInput)), true
+
+	case "Mutation.updateTitleVerification":
+		if e.complexity.Mutation.UpdateTitleVerification == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTitleVerification_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTitleVerification(childComplexity, args["input"].(model.UpdateTitleVerificationInput)), true
 
 	case "Mutation.uploadLandTitle":
 		if e.complexity.Mutation.UploadLandTitle == nil {
@@ -383,18 +395,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetUserLands(childComplexity, args["walletAddress"].(string)), true
 
-	case "Query.hasPendingLandRecords":
-		if e.complexity.Query.HasPendingLandRecords == nil {
-			break
-		}
-
-		args, err := ec.field_Query_hasPendingLandRecords_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.HasPendingLandRecords(childComplexity, args["walletAddress"].(string)), true
-
 	case "Subscription.paymentUpdate":
 		if e.complexity.Subscription.PaymentUpdate == nil {
 			break
@@ -536,6 +536,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputDocUploadInput,
 		ec.unmarshalInputPayWithMpesaInput,
+		ec.unmarshalInputUpdateTitleVerificationInput,
 	)
 	first := true
 
@@ -692,6 +693,29 @@ func (ec *executionContext) field_Mutation_chargeMpesa_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_updateTitleVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_updateTitleVerification_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateTitleVerification_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.UpdateTitleVerificationInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateTitleVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateTitleVerificationInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_uploadLandTitle_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -818,29 +842,6 @@ func (ec *executionContext) field_Query_getUserLands_args(ctx context.Context, r
 	return args, nil
 }
 func (ec *executionContext) field_Query_getUserLands_argsWalletAddress(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-	if tmp, ok := rawArgs["walletAddress"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_hasPendingLandRecords_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_hasPendingLandRecords_argsWalletAddress(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["walletAddress"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_hasPendingLandRecords_argsWalletAddress(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (string, error) {
@@ -1509,6 +1510,73 @@ func (ec *executionContext) fieldContext_Mutation_chargeMpesa(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_updateTitleVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTitleVerification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTitleVerification(rctx, fc.Args["input"].(model.UpdateTitleVerificationInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Title)
+	fc.Result = res
+	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTitleVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Title_id(ctx, field)
+			case "title":
+				return ec.fieldContext_Title_title(ctx, field)
+			case "verified":
+				return ec.fieldContext_Title_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Title_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Title_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTitleVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Payment_id(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_id(ctx, field)
 	if err != nil {
@@ -2135,61 +2203,6 @@ func (ec *executionContext) fieldContext_Query_getUserLands(ctx context.Context,
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getUserLands_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_hasPendingLandRecords(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_hasPendingLandRecords(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().HasPendingLandRecords(rctx, fc.Args["walletAddress"].(string))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_hasPendingLandRecords(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_hasPendingLandRecords_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5166,6 +5179,40 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateTitleVerificationInput(ctx context.Context, obj interface{}) (model.UpdateTitleVerificationInput, error) {
+	var it model.UpdateTitleVerificationInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "verification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -5287,6 +5334,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_chargeMpesa(ctx, field)
 			})
+		case "updateTitleVerification":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTitleVerification(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5512,28 +5566,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getUserLands(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "hasPendingLandRecords":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_hasPendingLandRecords(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6405,6 +6437,11 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateTitleVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationInput(ctx context.Context, v interface{}) (model.UpdateTitleVerificationInput, error) {
+	res, err := ec.unmarshalInputUpdateTitleVerificationInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx context.Context, v interface{}) (model.Verification, error) {

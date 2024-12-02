@@ -7,6 +7,8 @@ package sql
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createTitle = `-- name: CreateTitle :one
@@ -72,6 +74,32 @@ type UpdateEmailTitleParams struct {
 
 func (q *Queries) UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error) {
 	row := q.db.QueryRowContext(ctx, updateEmailTitle, arg.Title, arg.Verification, arg.Email)
+	var i Title
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Verification,
+		&i.Email,
+		&i.WalletAddress,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const updateTitleVerification = `-- name: UpdateTitleVerification :one
+UPDATE titles SET verification = $1
+WHERE id = $2
+RETURNING id, title, verification, email, wallet_address, created_at, updated_at
+`
+
+type UpdateTitleVerificationParams struct {
+	Verification string    `json:"verification"`
+	ID           uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateTitleVerification(ctx context.Context, arg UpdateTitleVerificationParams) (Title, error) {
+	row := q.db.QueryRowContext(ctx, updateTitleVerification, arg.Verification, arg.ID)
 	var i Title
 	err := row.Scan(
 		&i.ID,

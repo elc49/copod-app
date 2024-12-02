@@ -6,6 +6,8 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { AuthAdapter } from "@web3auth/auth-adapter";
 import { WEB3AUTH_NETWORK, WALLET_ADAPTERS, IProvider, UserInfo } from "@web3auth/base";
+import { createWalletClient, custom, WalletClient } from "viem";
+import { optimismSepolia } from "viem/chains";
 import { useRouter } from "next/navigation";
 import chainConfig from "@/blockchain/chains";
 
@@ -16,6 +18,7 @@ interface IWalletContext {
   login: () => void
   logout: () => void
   user: Partial<UserInfo> | null
+  wallet: WalletClient | null
 }
 
 const WalletContext = createContext<IWalletContext>({
@@ -25,6 +28,7 @@ const WalletContext = createContext<IWalletContext>({
   login: () => {},
   logout: () => {},
   user: null,
+  wallet: null,
 })
 
 const WalletProvider = ({ children }: PropsWithChildren) => {
@@ -33,6 +37,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
   const [initializing, setInitializing] = useState<boolean>(true)
   const [user, setUser] = useState<Partial<UserInfo> | null>(null)
   const router = useRouter()
+  const [wallet, setWallet] = useState<WalletClient | null>(null)
 
   const privateKeyProvider = useMemo(() => {
     return new EthereumPrivateKeyProvider({ config: { chainConfig } })
@@ -86,6 +91,16 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
     init()
   }, [web3auth])
 
+  useEffect(() => {
+    if (provider != null) {
+      const wallet = createWalletClient({
+        chain: optimismSepolia,
+        transport: custom(web3auth.provider!),
+      })
+      setWallet(wallet)
+    }
+  }, [provider, web3auth])
+
   const login = useCallback(() => {
     async function web3authLogin() {
       try {
@@ -134,6 +149,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
         login,
         logout,
         user,
+        wallet,
       }}
     >
       {children}

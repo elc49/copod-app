@@ -56,6 +56,15 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 	return &res.Data.Reference, nil
 }
 
+// UpdateTitleVerification is the resolver for the updateTitleVerification field.
+func (r *mutationResolver) UpdateTitleVerification(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error) {
+	args := sql.UpdateTitleVerificationParams{
+		ID:           input.ID,
+		Verification: input.Verification.String(),
+	}
+	return r.titleController.UpdateTitleVerification(ctx, args)
+}
+
 // Title is the resolver for the title field.
 func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
 	return r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
@@ -69,11 +78,6 @@ func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error
 // GetUserLands is the resolver for the getUserLands field.
 func (r *queryResolver) GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error) {
 	return make([]*model.Land, 0), nil
-}
-
-// HasPendingLandRecords is the resolver for the hasPendingLandRecords field.
-func (r *queryResolver) HasPendingLandRecords(ctx context.Context, walletAddress string) (bool, error) {
-	return false, nil
 }
 
 // GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.

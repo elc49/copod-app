@@ -7,6 +7,7 @@ export const GET_PAYMENT_DETAILS_BY_ID = gql`
       title {
         id
         title
+        verified
       }
     }
   }

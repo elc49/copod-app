@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS titles(
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_title_email ON titles(email);
+CREATE INDEX IF NOT EXISTS idx_title_land_title ON titles(title);
 
 CREATE TABLE IF NOT EXISTS support_docs(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
