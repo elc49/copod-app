@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 import { useRouter } from "next/navigation";
 import { Tag } from "@/components/ui/tag";
+import { DoneIcon, WaitingIcon, FailIcon } from "@/components/icons";
 
 interface Props {
   payments: Payment[]
@@ -21,6 +22,16 @@ const columnHelper = createColumnHelper<Payment>()
 
 export default function PaymentsByStatusTable(props: Props) {
   const { payments } = props
+  const renderStatusColumn = (status: string) => {
+    switch (status) {
+      case "ONBOARDING":
+        return <WaitingIcon />
+      case "VERIFIED":
+        return <DoneIcon />
+      case "REJECTED":
+        return <FailIcon />
+    }
+  }
   const columns = useMemo(() => {
     return [
       columnHelper.accessor("reference_id", {
@@ -34,7 +45,7 @@ export default function PaymentsByStatusTable(props: Props) {
         header: () => <span>Payment</span>
       }),
       columnHelper.accessor("title.verified", {
-        cell: info => <Tag>{info.getValue()}</Tag>,
+        cell: info => renderStatusColumn(info.getValue()),
         header: () => <span>Verification</span>
       }),
     ]

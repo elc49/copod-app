@@ -5,23 +5,37 @@ import (
 	"testing"
 
 	"github.com/elc49/copod/controller"
+	"github.com/elc49/copod/graph/model"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_Title_Controller(t *testing.T) {
 	ctx := context.Background()
+	var title *model.Title
+	var err error
+	tc := controller.GetTitleController()
 
 	t.Run("create_title", func(t *testing.T) {
-		tc := controller.GetTitleController()
 		args := sql.CreateTitleParams{
 			Title:         docUri,
 			Email:         superUserEmail,
 			WalletAddress: superUserWallet,
 		}
-		title, err := tc.CreateTitle(ctx, args)
+		title, err = tc.CreateTitle(ctx, args)
 
 		assert.Nil(t, err)
 		assert.Equal(t, title.Title, docUri)
+	})
+
+	t.Run("update_title_verification", func(t *testing.T) {
+		args := sql.UpdateTitleVerificationParams{
+			ID:           title.ID,
+			Verification: model.VerificationVerified.String(),
+		}
+		title, err := tc.UpdateTitleVerification(ctx, args)
+
+		assert.Nil(t, err)
+		assert.Equal(t, title.Verified, model.VerificationVerified)
 	})
 }

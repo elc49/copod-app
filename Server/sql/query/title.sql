@@ -13,3 +13,8 @@ WHERE email = $1 LIMIT 1;
 UPDATE titles SET title = $1, verification = $2
 WHERE email = $3
 RETURNING *;
+
+-- name: UpdateTitleVerification :one
+UPDATE titles SET verification = $1
+WHERE id = $2
+RETURNING *;

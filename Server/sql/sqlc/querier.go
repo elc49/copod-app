@@ -25,6 +25,7 @@ type Querier interface {
 	UpdateEmailSupportDoc(ctx context.Context, arg UpdateEmailSupportDocParams) (SupportDoc, error)
 	UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
+	UpdateTitleVerification(ctx context.Context, arg UpdateTitleVerificationParams) (Title, error)
 	UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error)
 }
 

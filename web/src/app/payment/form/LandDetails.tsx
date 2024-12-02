@@ -50,10 +50,12 @@ function LandDetails({ registerLand, registering }: Props) {
   }, [])
 
   const onSubmit = (values: any) => {
-    try {
-      registerLand(values.titleId, values.size, values.unit[0])
-    } catch (e) {
-      console.error(e)
+    if (!registering) {
+      try {
+        registerLand(values.titleId, values.size, values.unit[0])
+      } catch (e) {
+        console.error(e)
+      }
     }
   }
 

@@ -69,3 +69,18 @@ func (r *Title) UpdateEmailTitle(ctx context.Context, args sql.UpdateEmailTitleP
 		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
+
+func (r *Title) UpdateTitleVerification(ctx context.Context, args sql.UpdateTitleVerificationParams) (*model.Title, error) {
+	u, err := r.sql.UpdateTitleVerification(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleVerification")
+		return nil, err
+	}
+
+	return &model.Title{
+		ID:        u.ID,
+		Verified:  model.Verification(u.Verification),
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
+	}, nil
+}

@@ -105,10 +105,14 @@ input PayWithMpesaInput {
   paymentFor: UUID!
 }
 
+input UpdateTitleVerificationInput {
+  id: UUID!
+  verification: Verification!
+}
+
 type Query {
   getLocalLands: [Land!]!
   getUserLands(walletAddress: String!): [Land!]!
-  hasPendingLandRecords(walletAddress: String!): Boolean!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
 }
@@ -117,6 +121,7 @@ type Mutation {
   uploadLandTitle(input: DocUploadInput!): Title!
   uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
+  updateTitleVerification(input: UpdateTitleVerificationInput!): Title!
 }
 
 type Subscription {

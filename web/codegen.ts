@@ -11,12 +11,6 @@ const config: CodegenConfig = {
         documentMode: 'string'
       }
     },
-    './schema.graphql': {
-      plugins: ['schema-ast'],
-      config: {
-        includeDirectives: true
-      }
-    }
   }
 }
  

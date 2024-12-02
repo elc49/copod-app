@@ -12,6 +12,7 @@ var titleController *Title
 
 type TitleController interface {
 	CreateTitle(context.Context, sql.CreateTitleParams) (*model.Title, error)
+	UpdateTitleVerification(context.Context, sql.UpdateTitleVerificationParams) (*model.Title, error)
 }
 
 type Title struct {
@@ -31,4 +32,8 @@ func (c *Title) Init(sql *sql.Queries) {
 
 func (c *Title) CreateTitle(ctx context.Context, args sql.CreateTitleParams) (*model.Title, error) {
 	return c.r.CreateTitle(ctx, args)
+}
+
+func (c *Title) UpdateTitleVerification(ctx context.Context, args sql.UpdateTitleVerificationParams) (*model.Title, error) {
+	return c.r.UpdateTitleVerification(ctx, args)
 }

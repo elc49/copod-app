@@ -39,6 +39,7 @@ export type Land = {
 export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
+  updateTitleVerification: Title;
   uploadLandTitle: Title;
   uploadSupportingDoc: SupportingDoc;
 };
@@ -46,6 +47,11 @@ export type Mutation = {
 
 export type MutationChargeMpesaArgs = {
   input: PayWithMpesaInput;
+};
+
+
+export type MutationUpdateTitleVerificationArgs = {
+  input: UpdateTitleVerificationInput;
 };
 
 
@@ -108,7 +114,6 @@ export type Query = {
   getPaymentDetailsById: Payment;
   getPaymentsByStatus: Array<Payment>;
   getUserLands: Array<Land>;
-  hasPendingLandRecords: Scalars['Boolean']['output'];
 };
 
 
@@ -123,11 +128,6 @@ export type QueryGetPaymentsByStatusArgs = {
 
 
 export type QueryGetUserLandsArgs = {
-  walletAddress: Scalars['String']['input'];
-};
-
-
-export type QueryHasPendingLandRecordsArgs = {
   walletAddress: Scalars['String']['input'];
 };
 
@@ -157,6 +157,11 @@ export type Title = {
   title: Scalars['String']['output'];
   updated_at: Scalars['Time']['output'];
   verified: Verification;
+};
+
+export type UpdateTitleVerificationInput = {
+  id: Scalars['UUID']['input'];
+  verification: Verification;
 };
 
 export type User = {
