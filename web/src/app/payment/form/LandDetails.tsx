@@ -15,7 +15,12 @@ import { landDetailsSchema } from "./schema";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
-function LandDetails({ registerLand }: any) {
+interface Props {
+  registerLand: (titleId: string, size: number, unit: string) => void
+  registering: boolean
+}
+
+function LandDetails({ registerLand, registering }: Props) {
   const {
     control,
     register,
@@ -45,7 +50,11 @@ function LandDetails({ registerLand }: any) {
   }, [])
 
   const onSubmit = (values: any) => {
-    registerLand(values.titleId, values.size, values.unit[0])
+    try {
+      registerLand(values.titleId, values.size, values.unit[0])
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (
@@ -96,7 +105,7 @@ function LandDetails({ registerLand }: any) {
             )}
           />
         </Field>
-        <Button type="submit">
+        <Button loading={registering} type="submit">
           Send
         </Button>
       </Stack>

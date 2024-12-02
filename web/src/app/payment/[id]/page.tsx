@@ -1,6 +1,6 @@
 "use client";
 
-import { useContext, useMemo } from "react";
+import { useContext, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client";
 import { Flex, Heading, SimpleGrid } from "@chakra-ui/react";
@@ -14,6 +14,7 @@ import { WalletContext } from "@/providers/wallet";
 import { getAccounts, publicClient, privateClient } from "@/blockchain/rpc";
 
 function Page() {
+  const [registering, setRegistering] = useState(false)
   const { provider } = useContext(WalletContext)
   const params = useParams()
   const { data, loading } = useQuery(GET_PAYMENT_DETAILS_BY_ID, {
@@ -28,6 +29,7 @@ function Page() {
   // TODO: break this down further to simplify
   const registerLand = async (title: string, size: number, unit: string) => {
     try {
+      setRegistering(true)
       const registryContractAddress = await import("../../../../../SmartContract/ignition/deployments/chain-11155420/deployed_addresses.json")
       const abi: any = await import("../../../../../SmartContract/ignition/deployments/chain-11155420/artifacts/Registry#Registry.json")
       const account = await getAccounts(provider!)
@@ -43,6 +45,8 @@ function Page() {
       console.log(receipt)
     } catch (e) {
       console.error(e)
+    } finally {
+      setRegistering(false)
     }
   }
 
@@ -60,7 +64,7 @@ function Page() {
       </Flex>
       <Flex direction="column" gap="4">
         <Heading>Registration form</Heading>
-        <LandDetails registerLand={registerLand} />
+        <LandDetails registerLand={registerLand} registering={registering} />
       </Flex>
     </SimpleGrid>
   )
