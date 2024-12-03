@@ -110,12 +110,20 @@ input UpdateTitleVerificationInput {
   verification: Verification!
 }
 
+input CreateUserInput {
+  email: String!
+  firstname: String!
+  lastname: String!
+  govtid: String!
+}
+
 type Query {
   getLocalLands: [Land!]!
   getUserLands(email: String!): [Land!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
+  getSupportingDocById(id: UUID!): SupportingDoc!
 }
 
 type Mutation {
@@ -123,6 +131,7 @@ type Mutation {
   uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
   updateTitleVerificationById(input: UpdateTitleVerificationInput!): Title!
+  createUser(input: CreateUserInput!): User!
 }
 
 type Subscription {

@@ -8,7 +8,9 @@ import { Box } from "@chakra-ui/react";
 import { WalletContext } from "@/providers/wallet";
 import SupportingDocsVerificationTable from "./components/SupportingDocsVerificationTable";
 import Loader from "@/components/loader";
+import withAuth from "@/providers/withAuth";
 
+export default withAuth(Page)
 function Page() {
   const { isLoggedIn } = useContext(WalletContext)
   const { data, loading } = useQuery(GET_SUPPORTING_DOCS_BY_VERIFICATION, {
@@ -27,5 +29,3 @@ function Page() {
     </Box>
   )
 }
-
-export default Page

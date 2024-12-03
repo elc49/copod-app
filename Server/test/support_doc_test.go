@@ -43,4 +43,11 @@ func Test_SupportDoc_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.True(t, len(docs) > 0)
 	})
+
+	t.Run("get_supporting_doc_by_id", func(t *testing.T) {
+		doc, err := sc.GetSupportingDocByID(ctx, s.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, doc.GovtID, docUri)
+	})
 }

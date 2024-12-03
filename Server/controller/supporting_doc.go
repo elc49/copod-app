@@ -6,6 +6,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 )
 
 var supportingDocController *SupportingDoc
@@ -13,6 +14,7 @@ var supportingDocController *SupportingDoc
 type SupportingDocController interface {
 	CreateSupportingDoc(context.Context, sql.CreateSupportDocParams) (*model.SupportingDoc, error)
 	GetSupportingDocsByVerification(context.Context, model.Verification) ([]*model.SupportingDoc, error)
+	GetSupportingDocByID(context.Context, uuid.UUID) (*model.SupportingDoc, error)
 }
 
 type SupportingDoc struct {
@@ -53,4 +55,8 @@ func (c *SupportingDoc) CreateSupportingDoc(ctx context.Context, args sql.Create
 
 func (c *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
 	return c.r.GetSupportingDocsByVerification(ctx, verification)
+}
+
+func (c *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
+	return c.r.GetSupportingDocByID(ctx, id)
 }

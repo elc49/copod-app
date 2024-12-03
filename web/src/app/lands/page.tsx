@@ -7,9 +7,11 @@ import { PaymentStatus } from "@/graphql/graphql";
 import { GET_PAYMENTS_BY_STATUS } from "@/graphql/query";
 import PaymentsByStatusTable from "./components/PaymentsByStatusTable";
 import { WalletContext } from "@/providers/wallet";
+import withAuth from "@/providers/withAuth";
 
 import Loader from "@/components/loader";
 
+export default withAuth(Page)
 function Page() {
   const { isLoggedIn } = useContext(WalletContext)
   const { data, loading } = useQuery(GET_PAYMENTS_BY_STATUS, {
@@ -28,5 +30,3 @@ function Page() {
     </Box>
   )
 }
-
-export default Page

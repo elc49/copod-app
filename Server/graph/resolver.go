@@ -22,6 +22,7 @@ type Resolver struct {
 	titleController      controller.TitleController
 	supportDocController controller.SupportingDocController
 	paymentController    controller.PaymentController
+	userController       controller.UserController
 }
 
 func New() Config {
@@ -32,6 +33,7 @@ func New() Config {
 		controller.GetTitleController(),
 		controller.GetSupportingDocController(),
 		controller.GetPaymentController(),
+		controller.GetUserController(),
 	}
 	return Config{Resolvers: r}
 }

@@ -13,11 +13,11 @@ export default function RootLayout({
 
   return (
     <Box p="4">
-      <HStack gap="4" align="center" py="4">
+      <HStack gap="4" py="4" align="center">
         <IconButton aria-label="Go back" onClick={() => router.back()}>
           <ArrowLeft />
         </IconButton>
-        <Heading>Users</Heading>
+        <Heading>Document details</Heading>
       </HStack>
       {children}
     </Box>

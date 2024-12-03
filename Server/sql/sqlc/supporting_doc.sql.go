@@ -7,6 +7,8 @@ package sql
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createSupportDoc = `-- name: CreateSupportDoc :one
@@ -43,6 +45,25 @@ WHERE email = $1 LIMIT 1
 
 func (q *Queries) GetSupportDocByEmail(ctx context.Context, email string) (SupportDoc, error) {
 	row := q.db.QueryRowContext(ctx, getSupportDocByEmail, email)
+	var i SupportDoc
+	err := row.Scan(
+		&i.ID,
+		&i.GovtID,
+		&i.Verification,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getSupportingDocById = `-- name: GetSupportingDocById :one
+SELECT id, govt_id, verification, email, created_at, updated_at FROM support_docs
+WHERE id = $1
+`
+
+func (q *Queries) GetSupportingDocById(ctx context.Context, id uuid.UUID) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, getSupportingDocById, id)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,

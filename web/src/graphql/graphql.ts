@@ -39,6 +39,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
   updateTitleVerificationById: Title;
+  updateUserDetailsByEmail: User;
   uploadLandTitle: Title;
   uploadSupportingDoc: SupportingDoc;
 };
@@ -51,6 +52,11 @@ export type MutationChargeMpesaArgs = {
 
 export type MutationUpdateTitleVerificationByIdArgs = {
   input: UpdateTitleVerificationInput;
+};
+
+
+export type MutationUpdateUserDetailsByEmailArgs = {
+  input: UpdateUserDetailsByEmailInput;
 };
 
 
@@ -112,6 +118,7 @@ export type Query = {
   getLocalLands: Array<Land>;
   getPaymentDetailsById: Payment;
   getPaymentsByStatus: Array<Payment>;
+  getSupportingDocById: SupportingDoc;
   getSupportingDocsByVerification: Array<SupportingDoc>;
   getUserLands: Array<Land>;
 };
@@ -124,6 +131,11 @@ export type QueryGetPaymentDetailsByIdArgs = {
 
 export type QueryGetPaymentsByStatusArgs = {
   status: PaymentStatus;
+};
+
+
+export type QueryGetSupportingDocByIdArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -168,6 +180,13 @@ export type Title = {
 export type UpdateTitleVerificationInput = {
   id: Scalars['UUID']['input'];
   verification: Verification;
+};
+
+export type UpdateUserDetailsByEmailInput = {
+  email: Scalars['String']['input'];
+  firstname: Scalars['String']['input'];
+  govtid: Scalars['String']['input'];
+  lastname: Scalars['String']['input'];
 };
 
 export type User = {

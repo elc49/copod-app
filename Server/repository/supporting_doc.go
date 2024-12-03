@@ -7,6 +7,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -91,4 +92,20 @@ func (r *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, ver
 	}
 
 	return docs, nil
+}
+
+func (r *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
+	d, err := r.sql.GetSupportingDocById(ctx, id)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetSupportingDocById")
+		return nil, err
+	}
+
+	return &model.SupportingDoc{
+		ID:        d.ID,
+		GovtID:    d.GovtID,
+		Verified:  model.Verification(d.Verification),
+		CreatedAt: d.CreatedAt,
+		UpdatedAt: d.UpdatedAt,
+	}, nil
 }

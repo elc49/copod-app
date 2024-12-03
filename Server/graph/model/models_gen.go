@@ -11,6 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type CreateUserInput struct {
+	Email     string `json:"email"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Govtid    string `json:"govtid"`
+}
+
 type DocUploadInput struct {
 	URL   string `json:"url"`
 	Email string `json:"email"`

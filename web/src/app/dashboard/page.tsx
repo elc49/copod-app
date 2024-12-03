@@ -5,10 +5,10 @@ import { AbsoluteCenter, Card, Stack } from "@chakra-ui/react";
 import NextLink from "next/link";
 import withAuth from "@/providers/withAuth";
 
-
+export default withAuth(Page)
 function Page() {
   const cardPoints = useMemo(() => {
-    return ["lands", "users"]
+    return ["lands", "docs"]
   }, [])
 
   return (
@@ -27,5 +27,3 @@ function Page() {
     </AbsoluteCenter>
   )
 }
-
-export default withAuth(Page)

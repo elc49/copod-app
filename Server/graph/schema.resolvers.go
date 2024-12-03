@@ -62,6 +62,17 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 	return r.titleController.UpdateTitleVerificationById(ctx, args)
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	args := sql.CreateUserParams{
+		Email:     input.Email,
+		Firstname: input.Firstname,
+		Lastname:  input.Lastname,
+		GovtID:    input.Govtid,
+	}
+	return r.userController.CreateUser(ctx, args)
+}
+
 // Title is the resolver for the title field.
 func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
 	return r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
@@ -90,6 +101,11 @@ func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID)
 // GetSupportingDocsByVerification is the resolver for the getSupportingDocsByVerification field.
 func (r *queryResolver) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
 	return r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
+}
+
+// GetSupportingDocByID is the resolver for the getSupportingDocById field.
+func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
+	return r.supportDocController.GetSupportingDocByID(ctx, id)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

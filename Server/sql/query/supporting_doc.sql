@@ -17,3 +17,7 @@ RETURNING *;
 -- name: GetSupportingDocsByVerification :many
 SELECT * FROM support_docs
 WHERE verification = $1;
+
+-- name: GetSupportingDocById :one
+SELECT * FROM support_docs
+WHERE id = $1;

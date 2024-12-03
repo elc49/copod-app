@@ -63,6 +63,7 @@ function LandDetails({ registerLand, registering }: Props) {
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap="4" align="flex-start" maxW="sm">
         <Field
+          required
           label="Title number"
           invalid={!!errors.titleId}
           errorText={errors.titleId?.message}
@@ -72,6 +73,7 @@ function LandDetails({ registerLand, registering }: Props) {
           />
         </Field>
         <Field
+          required
           label="Size"
           invalid={!!errors.size}
           errorText={errors.size?.message}
@@ -80,6 +82,7 @@ function LandDetails({ registerLand, registering }: Props) {
           />
         </Field>
         <Field
+          required
           label="Unit"
           invalid={!!errors.unit}
           errorText={errors.unit?.message}
