@@ -105,14 +105,13 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 	go func() {
 		ctx := context.Background()
 		args := sql.CreatePaymentParams{
-			Email:         input.Email,
-			ReferenceID:   chargeResponse.Data.Reference,
-			Status:        chargeResponse.Data.Status,
-			Reason:        input.Reason,
-			WalletAddress: input.WalletAddress,
-			Amount:        int32(input.Amount),
-			Currency:      input.Currency,
-			TitleID:       uuid.NullUUID{UUID: paymentFor, Valid: true},
+			Email:       input.Email,
+			ReferenceID: chargeResponse.Data.Reference,
+			Status:      chargeResponse.Data.Status,
+			Reason:      input.Reason,
+			Amount:      int32(input.Amount),
+			Currency:    input.Currency,
+			TitleID:     uuid.NullUUID{UUID: paymentFor, Valid: true},
 		}
 		_, err := controller.GetPaymentController().CreatePayment(ctx, args)
 		if err != nil {
@@ -135,9 +134,9 @@ func (p *paystackClient) HappyPaystack(ctx context.Context, input *PaystackWebho
 	}
 
 	payload := model.PaymentUpdate{
-		ReferenceID:   input.Data.Reference,
-		Status:        input.Data.Status,
-		WalletAddress: payment.WalletAddress,
+		ReferenceID: input.Data.Reference,
+		Status:      input.Data.Status,
+		Email:       payment.Email,
 	}
 	b, err := util.EncodeJson(payload)
 	if err != nil {

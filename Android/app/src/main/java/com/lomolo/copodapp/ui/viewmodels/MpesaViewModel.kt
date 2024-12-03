@@ -93,8 +93,8 @@ class MpesaViewModel(
     init {
         viewModelScope.launch {
             try {
-                val credentials = web3Auth.getCredentials(web3Auth.getPrivateKey())
-                graphqlApiService.paymentUpdate(credentials.address).collect {
+                val userInfo = web3Auth.getUserInfo()
+                graphqlApiService.paymentUpdate(userInfo.email).collect {
                     Log.d(TAG, it.data?.paymentUpdate.toString())
                     val data = it.data?.paymentUpdate
                     chargingMpesa = when(data?.status) {
