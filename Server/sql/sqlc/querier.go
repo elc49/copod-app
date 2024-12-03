@@ -20,6 +20,7 @@ type Querier interface {
 	GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (Title, error)
 	GetPaymentsByStatus(ctx context.Context, status string) ([]Payment, error)
 	GetSupportDocByEmail(ctx context.Context, email string) (SupportDoc, error)
+	GetSupportingDocsByVerification(ctx context.Context, verification string) ([]SupportDoc, error)
 	GetTitleByEmail(ctx context.Context, email string) (Title, error)
 	GetUser(ctx context.Context, email string) (User, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)

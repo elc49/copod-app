@@ -87,6 +87,11 @@ func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID)
 	return r.paymentController.GetPaymentDetailsByID(ctx, id)
 }
 
+// GetSupportingDocsByVerification is the resolver for the getSupportingDocsByVerification field.
+func (r *queryResolver) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
+	return r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
+}
+
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)

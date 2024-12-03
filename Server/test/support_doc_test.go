@@ -36,4 +36,11 @@ func Test_SupportDoc_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, s.ID, e.ID)
 	})
+
+	t.Run("get_support_docs_by_verification", func(t *testing.T) {
+		docs, err := sc.GetSupportingDocsByVerification(ctx, model.VerificationOnboarding)
+
+		assert.Nil(t, err)
+		assert.True(t, len(docs) > 0)
+	})
 }

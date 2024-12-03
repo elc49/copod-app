@@ -9,6 +9,7 @@ export const GET_PAYMENTS_BY_STATUS = gql`
         title
         verified
       }
+      email
       status
       title_id
       reference_id

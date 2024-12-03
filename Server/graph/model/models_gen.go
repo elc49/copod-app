@@ -40,13 +40,15 @@ type PayWithMpesaInput struct {
 }
 
 type Payment struct {
-	ID          uuid.UUID `json:"id"`
-	ReferenceID string    `json:"reference_id"`
-	Status      string    `json:"status"`
-	Title       *Title    `json:"title,omitempty"`
-	TitleID     uuid.UUID `json:"title_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID            uuid.UUID      `json:"id"`
+	ReferenceID   string         `json:"reference_id"`
+	Status        string         `json:"status"`
+	Email         string         `json:"email"`
+	Title         *Title         `json:"title,omitempty"`
+	TitleID       uuid.UUID      `json:"title_id"`
+	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
 }
 
 type PaymentUpdate struct {
@@ -64,6 +66,7 @@ type Subscription struct {
 type SupportingDoc struct {
 	ID        uuid.UUID    `json:"id"`
 	GovtID    string       `json:"govt_id"`
+	Email     string       `json:"email"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`

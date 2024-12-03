@@ -12,6 +12,7 @@ var supportingDocController *SupportingDoc
 
 type SupportingDocController interface {
 	CreateSupportingDoc(context.Context, sql.CreateSupportDocParams) (*model.SupportingDoc, error)
+	GetSupportingDocsByVerification(context.Context, model.Verification) ([]*model.SupportingDoc, error)
 }
 
 type SupportingDoc struct {
@@ -48,4 +49,8 @@ func (c *SupportingDoc) CreateSupportingDoc(ctx context.Context, args sql.Create
 	default:
 		return c.r.CreateSupportDoc(ctx, args)
 	}
+}
+
+func (c *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
+	return c.r.GetSupportingDocsByVerification(ctx, verification)
 }

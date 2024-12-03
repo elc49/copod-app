@@ -55,6 +55,7 @@ type Title {
 type SupportingDoc {
   id: UUID!
   govt_id: String!
+  email: String!
   verified: Verification!
   created_at: Time!
   updated_at: Time!
@@ -76,8 +77,10 @@ type Payment {
   id: UUID!
   reference_id: String!
   status: String!
+  email: String!
   title: Title
   title_id: UUID!
+  supportingDoc: SupportingDoc
   created_at: Time!
   updated_at: Time!
 }
@@ -112,6 +115,7 @@ type Query {
   getUserLands(email: String!): [Land!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
+  getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
 }
 
 type Mutation {

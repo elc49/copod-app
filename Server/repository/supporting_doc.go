@@ -68,3 +68,27 @@ func (r *SupportingDoc) UpdateSupportDocByEmail(ctx context.Context, args sql.Up
 		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
+
+func (r *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
+	var docs []*model.SupportingDoc
+	d, err := r.sql.GetSupportingDocsByVerification(ctx, verification.String())
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"verification": verification}).Errorf("repository: GetSupportingDocsByVerification")
+		return nil, err
+	}
+
+	for _, item := range d {
+		doc := &model.SupportingDoc{
+			ID:        item.ID,
+			Email:     item.Email,
+			GovtID:    item.GovtID,
+			Verified:  model.Verification(item.Verification),
+			CreatedAt: item.CreatedAt,
+			UpdatedAt: item.UpdatedAt,
+		}
+
+		docs = append(docs, doc)
+	}
+
+	return docs, nil
+}
