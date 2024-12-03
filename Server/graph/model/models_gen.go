@@ -12,9 +12,8 @@ import (
 )
 
 type DocUploadInput struct {
-	URL           string `json:"url"`
-	Email         string `json:"email"`
-	WalletAddress string `json:"walletAddress"`
+	URL   string `json:"url"`
+	Email string `json:"email"`
 }
 
 type Land struct {
@@ -33,29 +32,27 @@ type Mutation struct {
 }
 
 type PayWithMpesaInput struct {
-	Reason        PaymentReason `json:"reason"`
-	Phone         string        `json:"phone"`
-	Email         string        `json:"email"`
-	WalletAddress string        `json:"walletAddress"`
-	Currency      string        `json:"currency"`
-	PaymentFor    uuid.UUID     `json:"paymentFor"`
+	Reason     PaymentReason `json:"reason"`
+	Phone      string        `json:"phone"`
+	Email      string        `json:"email"`
+	Currency   string        `json:"currency"`
+	PaymentFor uuid.UUID     `json:"paymentFor"`
 }
 
 type Payment struct {
-	ID            uuid.UUID `json:"id"`
-	ReferenceID   string    `json:"reference_id"`
-	Status        string    `json:"status"`
-	Title         *Title    `json:"title,omitempty"`
-	TitleID       uuid.UUID `json:"title_id"`
-	WalletAddress string    `json:"wallet_address"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID          uuid.UUID `json:"id"`
+	ReferenceID string    `json:"reference_id"`
+	Status      string    `json:"status"`
+	Title       *Title    `json:"title,omitempty"`
+	TitleID     uuid.UUID `json:"title_id"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 type PaymentUpdate struct {
-	ReferenceID   string `json:"referenceId"`
-	Status        string `json:"status"`
-	WalletAddress string `json:"walletAddress"`
+	ReferenceID string `json:"referenceId"`
+	Status      string `json:"status"`
+	Email       string `json:"email"`
 }
 
 type Query struct {
@@ -86,13 +83,13 @@ type UpdateTitleVerificationInput struct {
 }
 
 type User struct {
-	ID            uuid.UUID `json:"id"`
-	Firstname     *string   `json:"firstname,omitempty"`
-	Lastname      *string   `json:"lastname,omitempty"`
-	Email         string    `json:"email"`
-	WalletAddress string    `json:"wallet_address"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
+	ID        uuid.UUID `json:"id"`
+	Firstname *string   `json:"firstname,omitempty"`
+	Lastname  *string   `json:"lastname,omitempty"`
+	GovtID    string    `json:"govt_id"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type PaidFor string

@@ -35,13 +35,13 @@ func (r *SupportingDoc) CreateSupportDoc(ctx context.Context, args sql.CreateSup
 	}, nil
 }
 
-func (r *SupportingDoc) GetEmailSupportDoc(ctx context.Context, email string) (*model.SupportingDoc, error) {
-	s, err := r.sql.GetEmailSupportDoc(ctx, email)
+func (r *SupportingDoc) GetSupportDocByEmail(ctx context.Context, email string) (*model.SupportingDoc, error) {
+	s, err := r.sql.GetSupportDocByEmail(ctx, email)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetEmailSupportDoc")
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetSupportDocByEmail")
 		return nil, err
 	}
 
@@ -54,10 +54,10 @@ func (r *SupportingDoc) GetEmailSupportDoc(ctx context.Context, email string) (*
 	}, nil
 }
 
-func (r *SupportingDoc) UpdateEmailSupportDoc(ctx context.Context, args sql.UpdateEmailSupportDocParams) (*model.SupportingDoc, error) {
-	u, err := r.sql.UpdateEmailSupportDoc(ctx, args)
+func (r *SupportingDoc) UpdateSupportDocByEmail(ctx context.Context, args sql.UpdateSupportDocByEmailParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateSupportDocByEmail(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateEmailSupportDoc")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocByEmail")
 		return nil, err
 	}
 

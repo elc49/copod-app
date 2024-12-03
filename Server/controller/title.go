@@ -12,7 +12,7 @@ var titleController *Title
 
 type TitleController interface {
 	CreateTitle(context.Context, sql.CreateTitleParams) (*model.Title, error)
-	UpdateTitleVerification(context.Context, sql.UpdateTitleVerificationParams) (*model.Title, error)
+	UpdateTitleVerificationById(context.Context, sql.UpdateTitleVerificationByIdParams) (*model.Title, error)
 }
 
 type Title struct {
@@ -34,6 +34,6 @@ func (c *Title) CreateTitle(ctx context.Context, args sql.CreateTitleParams) (*m
 	return c.r.CreateTitle(ctx, args)
 }
 
-func (c *Title) UpdateTitleVerification(ctx context.Context, args sql.UpdateTitleVerificationParams) (*model.Title, error) {
-	return c.r.UpdateTitleVerification(ctx, args)
+func (c *Title) UpdateTitleVerificationById(ctx context.Context, args sql.UpdateTitleVerificationByIdParams) (*model.Title, error) {
+	return c.r.UpdateTitleVerificationById(ctx, args)
 }

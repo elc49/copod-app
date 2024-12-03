@@ -21,20 +21,18 @@ func Test_Payment_Controller(t *testing.T) {
 	t.Run("create_payment", func(t *testing.T) {
 		tc := controller.GetTitleController()
 		args := sql.CreateTitleParams{
-			Title:         docUri,
-			Email:         superUserEmail,
-			WalletAddress: superUserWallet,
+			Title: docUri,
+			Email: email,
 		}
 		title, err := tc.CreateTitle(ctx, args)
 		p, err = pc.CreatePayment(ctx, sql.CreatePaymentParams{
-			Email:         superUserEmail,
-			ReferenceID:   refId,
-			Status:        "pay_offline",
-			Reason:        model.PaymentReasonLandRegistry.String(),
-			Amount:        1500,
-			Currency:      "KES",
-			WalletAddress: superUserWallet,
-			TitleID:       uuid.NullUUID{UUID: title.ID, Valid: true},
+			Email:       email,
+			ReferenceID: refId,
+			Status:      "pay_offline",
+			Reason:      model.PaymentReasonLandRegistry.String(),
+			Amount:      1500,
+			Currency:    "KES",
+			TitleID:     uuid.NullUUID{UUID: title.ID, Valid: true},
 		})
 
 		assert.Nil(t, err)

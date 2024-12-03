@@ -65,8 +65,8 @@ type User {
   id: UUID!
   firstname: String
   lastname: String
+  govt_id: String!
   email: String!
-  wallet_address: String!
   created_at: Time!
   updated_at: Time!
 }
@@ -78,7 +78,6 @@ type Payment {
   status: String!
   title: Title
   title_id: UUID!
-  wallet_address: String!
   created_at: Time!
   updated_at: Time!
 }
@@ -87,20 +86,18 @@ type Payment {
 type PaymentUpdate {
   referenceId: String!
   status: String!
-  walletAddress: String!
+  email: String!
 }
 
 input DocUploadInput {
   url: String!
   email: String!
-  walletAddress: String!
 }
 
 input PayWithMpesaInput {
   reason: PaymentReason!
   phone: String!
   email: String!
-  walletAddress: String!
   currency: String!
   paymentFor: UUID!
 }
@@ -112,7 +109,7 @@ input UpdateTitleVerificationInput {
 
 type Query {
   getLocalLands: [Land!]!
-  getUserLands(walletAddress: String!): [Land!]!
+  getUserLands(email: String!): [Land!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
 }
@@ -121,9 +118,9 @@ type Mutation {
   uploadLandTitle(input: DocUploadInput!): Title!
   uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
-  updateTitleVerification(input: UpdateTitleVerificationInput!): Title!
+  updateTitleVerificationById(input: UpdateTitleVerificationInput!): Title!
 }
 
 type Subscription {
-  paymentUpdate(walletAddress: String!): PaymentUpdate!
+  paymentUpdate(email: String!): PaymentUpdate!
 }

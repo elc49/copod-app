@@ -65,38 +65,37 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChargeMpesa             func(childComplexity int, input model.PayWithMpesaInput) int
-		UpdateTitleVerification func(childComplexity int, input model.UpdateTitleVerificationInput) int
-		UploadLandTitle         func(childComplexity int, input model.DocUploadInput) int
-		UploadSupportingDoc     func(childComplexity int, input model.DocUploadInput) int
+		ChargeMpesa                 func(childComplexity int, input model.PayWithMpesaInput) int
+		UpdateTitleVerificationByID func(childComplexity int, input model.UpdateTitleVerificationInput) int
+		UploadLandTitle             func(childComplexity int, input model.DocUploadInput) int
+		UploadSupportingDoc         func(childComplexity int, input model.DocUploadInput) int
 	}
 
 	Payment struct {
-		CreatedAt     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		ReferenceID   func(childComplexity int) int
-		Status        func(childComplexity int) int
-		Title         func(childComplexity int) int
-		TitleID       func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		WalletAddress func(childComplexity int) int
+		CreatedAt   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		ReferenceID func(childComplexity int) int
+		Status      func(childComplexity int) int
+		Title       func(childComplexity int) int
+		TitleID     func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
 	}
 
 	PaymentUpdate struct {
-		ReferenceID   func(childComplexity int) int
-		Status        func(childComplexity int) int
-		WalletAddress func(childComplexity int) int
+		Email       func(childComplexity int) int
+		ReferenceID func(childComplexity int) int
+		Status      func(childComplexity int) int
 	}
 
 	Query struct {
 		GetLocalLands         func(childComplexity int) int
 		GetPaymentDetailsByID func(childComplexity int, id uuid.UUID) int
 		GetPaymentsByStatus   func(childComplexity int, status model.PaymentStatus) int
-		GetUserLands          func(childComplexity int, walletAddress string) int
+		GetUserLands          func(childComplexity int, email string) int
 	}
 
 	Subscription struct {
-		PaymentUpdate func(childComplexity int, walletAddress string) int
+		PaymentUpdate func(childComplexity int, email string) int
 	}
 
 	SupportingDoc struct {
@@ -116,13 +115,13 @@ type ComplexityRoot struct {
 	}
 
 	User struct {
-		CreatedAt     func(childComplexity int) int
-		Email         func(childComplexity int) int
-		Firstname     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Lastname      func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		WalletAddress func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Firstname func(childComplexity int) int
+		GovtID    func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Lastname  func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
 	}
 }
 
@@ -130,19 +129,19 @@ type MutationResolver interface {
 	UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error)
 	UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
-	UpdateTitleVerification(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error)
+	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error)
 }
 type PaymentResolver interface {
 	Title(ctx context.Context, obj *model.Payment) (*model.Title, error)
 }
 type QueryResolver interface {
 	GetLocalLands(ctx context.Context) ([]*model.Land, error)
-	GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error)
+	GetUserLands(ctx context.Context, email string) ([]*model.Land, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
 }
 type SubscriptionResolver interface {
-	PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error)
+	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
 }
 
 type executableSchema struct {
@@ -239,17 +238,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChargeMpesa(childComplexity, args["input"].(model.PayWithMpesaInput)), true
 
-	case "Mutation.updateTitleVerification":
-		if e.complexity.Mutation.UpdateTitleVerification == nil {
+	case "Mutation.updateTitleVerificationById":
+		if e.complexity.Mutation.UpdateTitleVerificationByID == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_updateTitleVerification_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateTitleVerificationById_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateTitleVerification(childComplexity, args["input"].(model.UpdateTitleVerificationInput)), true
+		return e.complexity.Mutation.UpdateTitleVerificationByID(childComplexity, args["input"].(model.UpdateTitleVerificationInput)), true
 
 	case "Mutation.uploadLandTitle":
 		if e.complexity.Mutation.UploadLandTitle == nil {
@@ -324,12 +323,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.UpdatedAt(childComplexity), true
 
-	case "Payment.wallet_address":
-		if e.complexity.Payment.WalletAddress == nil {
+	case "PaymentUpdate.email":
+		if e.complexity.PaymentUpdate.Email == nil {
 			break
 		}
 
-		return e.complexity.Payment.WalletAddress(childComplexity), true
+		return e.complexity.PaymentUpdate.Email(childComplexity), true
 
 	case "PaymentUpdate.referenceId":
 		if e.complexity.PaymentUpdate.ReferenceID == nil {
@@ -344,13 +343,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PaymentUpdate.Status(childComplexity), true
-
-	case "PaymentUpdate.walletAddress":
-		if e.complexity.PaymentUpdate.WalletAddress == nil {
-			break
-		}
-
-		return e.complexity.PaymentUpdate.WalletAddress(childComplexity), true
 
 	case "Query.getLocalLands":
 		if e.complexity.Query.GetLocalLands == nil {
@@ -393,7 +385,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetUserLands(childComplexity, args["walletAddress"].(string)), true
+		return e.complexity.Query.GetUserLands(childComplexity, args["email"].(string)), true
 
 	case "Subscription.paymentUpdate":
 		if e.complexity.Subscription.PaymentUpdate == nil {
@@ -405,7 +397,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Subscription.PaymentUpdate(childComplexity, args["walletAddress"].(string)), true
+		return e.complexity.Subscription.PaymentUpdate(childComplexity, args["email"].(string)), true
 
 	case "SupportingDoc.created_at":
 		if e.complexity.SupportingDoc.CreatedAt == nil {
@@ -498,6 +490,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.User.Firstname(childComplexity), true
 
+	case "User.govt_id":
+		if e.complexity.User.GovtID == nil {
+			break
+		}
+
+		return e.complexity.User.GovtID(childComplexity), true
+
 	case "User.id":
 		if e.complexity.User.ID == nil {
 			break
@@ -518,13 +517,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.UpdatedAt(childComplexity), true
-
-	case "User.wallet_address":
-		if e.complexity.User.WalletAddress == nil {
-			break
-		}
-
-		return e.complexity.User.WalletAddress(childComplexity), true
 
 	}
 	return 0, false
@@ -693,17 +685,17 @@ func (ec *executionContext) field_Mutation_chargeMpesa_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_updateTitleVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_updateTitleVerificationById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_updateTitleVerification_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_updateTitleVerificationById_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_updateTitleVerification_argsInput(
+func (ec *executionContext) field_Mutation_updateTitleVerificationById_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (model.UpdateTitleVerificationInput, error) {
@@ -834,19 +826,19 @@ func (ec *executionContext) field_Query_getPaymentsByStatus_argsStatus(
 func (ec *executionContext) field_Query_getUserLands_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getUserLands_argsWalletAddress(ctx, rawArgs)
+	arg0, err := ec.field_Query_getUserLands_argsEmail(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["walletAddress"] = arg0
+	args["email"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getUserLands_argsWalletAddress(
+func (ec *executionContext) field_Query_getUserLands_argsEmail(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-	if tmp, ok := rawArgs["walletAddress"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+	if tmp, ok := rawArgs["email"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -857,19 +849,19 @@ func (ec *executionContext) field_Query_getUserLands_argsWalletAddress(
 func (ec *executionContext) field_Subscription_paymentUpdate_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Subscription_paymentUpdate_argsWalletAddress(ctx, rawArgs)
+	arg0, err := ec.field_Subscription_paymentUpdate_argsEmail(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["walletAddress"] = arg0
+	args["email"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Subscription_paymentUpdate_argsWalletAddress(
+func (ec *executionContext) field_Subscription_paymentUpdate_argsEmail(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-	if tmp, ok := rawArgs["walletAddress"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+	if tmp, ok := rawArgs["email"]; ok {
 		return ec.unmarshalNString2string(ctx, tmp)
 	}
 
@@ -1510,8 +1502,8 @@ func (ec *executionContext) fieldContext_Mutation_chargeMpesa(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_updateTitleVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTitleVerification(ctx, field)
+func (ec *executionContext) _Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTitleVerificationById(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1524,7 +1516,7 @@ func (ec *executionContext) _Mutation_updateTitleVerification(ctx context.Contex
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTitleVerification(rctx, fc.Args["input"].(model.UpdateTitleVerificationInput))
+		return ec.resolvers.Mutation().UpdateTitleVerificationByID(rctx, fc.Args["input"].(model.UpdateTitleVerificationInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1541,7 +1533,7 @@ func (ec *executionContext) _Mutation_updateTitleVerification(ctx context.Contex
 	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_updateTitleVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -1570,7 +1562,7 @@ func (ec *executionContext) fieldContext_Mutation_updateTitleVerification(ctx co
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTitleVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_updateTitleVerificationById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1806,50 +1798,6 @@ func (ec *executionContext) fieldContext_Payment_title_id(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Payment_wallet_address(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_wallet_address(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WalletAddress, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Payment_wallet_address(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Payment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Payment_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_created_at(ctx, field)
 	if err != nil {
@@ -2026,8 +1974,8 @@ func (ec *executionContext) fieldContext_PaymentUpdate_status(_ context.Context,
 	return fc, nil
 }
 
-func (ec *executionContext) _PaymentUpdate_walletAddress(ctx context.Context, field graphql.CollectedField, obj *model.PaymentUpdate) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PaymentUpdate_walletAddress(ctx, field)
+func (ec *executionContext) _PaymentUpdate_email(ctx context.Context, field graphql.CollectedField, obj *model.PaymentUpdate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PaymentUpdate_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2040,7 +1988,7 @@ func (ec *executionContext) _PaymentUpdate_walletAddress(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.WalletAddress, nil
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2057,7 +2005,7 @@ func (ec *executionContext) _PaymentUpdate_walletAddress(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PaymentUpdate_walletAddress(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PaymentUpdate_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PaymentUpdate",
 		Field:      field,
@@ -2148,7 +2096,7 @@ func (ec *executionContext) _Query_getUserLands(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUserLands(rctx, fc.Args["walletAddress"].(string))
+		return ec.resolvers.Query().GetUserLands(rctx, fc.Args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2258,8 +2206,6 @@ func (ec *executionContext) fieldContext_Query_getPaymentsByStatus(ctx context.C
 				return ec.fieldContext_Payment_title(ctx, field)
 			case "title_id":
 				return ec.fieldContext_Payment_title_id(ctx, field)
-			case "wallet_address":
-				return ec.fieldContext_Payment_wallet_address(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
@@ -2331,8 +2277,6 @@ func (ec *executionContext) fieldContext_Query_getPaymentDetailsById(ctx context
 				return ec.fieldContext_Payment_title(ctx, field)
 			case "title_id":
 				return ec.fieldContext_Payment_title_id(ctx, field)
-			case "wallet_address":
-				return ec.fieldContext_Payment_wallet_address(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
@@ -2498,7 +2442,7 @@ func (ec *executionContext) _Subscription_paymentUpdate(ctx context.Context, fie
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Subscription().PaymentUpdate(rctx, fc.Args["walletAddress"].(string))
+		return ec.resolvers.Subscription().PaymentUpdate(rctx, fc.Args["email"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2541,8 +2485,8 @@ func (ec *executionContext) fieldContext_Subscription_paymentUpdate(ctx context.
 				return ec.fieldContext_PaymentUpdate_referenceId(ctx, field)
 			case "status":
 				return ec.fieldContext_PaymentUpdate_status(ctx, field)
-			case "walletAddress":
-				return ec.fieldContext_PaymentUpdate_walletAddress(ctx, field)
+			case "email":
+				return ec.fieldContext_PaymentUpdate_email(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PaymentUpdate", field.Name)
 		},
@@ -3127,6 +3071,50 @@ func (ec *executionContext) fieldContext_User_lastname(_ context.Context, field 
 	return fc, nil
 }
 
+func (ec *executionContext) _User_govt_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_User_govt_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GovtID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_User_govt_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _User_email(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_User_email(ctx, field)
 	if err != nil {
@@ -3159,50 +3147,6 @@ func (ec *executionContext) _User_email(ctx context.Context, field graphql.Colle
 }
 
 func (ec *executionContext) fieldContext_User_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _User_wallet_address(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_wallet_address(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.WalletAddress, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_wallet_address(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5083,7 +5027,7 @@ func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"url", "email", "walletAddress"}
+	fieldsInOrder := [...]string{"url", "email"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5104,13 +5048,6 @@ func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, ob
 				return it, err
 			}
 			it.Email = data
-		case "walletAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.WalletAddress = data
 		}
 	}
 
@@ -5124,7 +5061,7 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"reason", "phone", "email", "walletAddress", "currency", "paymentFor"}
+	fieldsInOrder := [...]string{"reason", "phone", "email", "currency", "paymentFor"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5152,13 +5089,6 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 				return it, err
 			}
 			it.Email = data
-		case "walletAddress":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("walletAddress"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.WalletAddress = data
 		case "currency":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -5334,9 +5264,9 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_chargeMpesa(ctx, field)
 			})
-		case "updateTitleVerification":
+		case "updateTitleVerificationById":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTitleVerification(ctx, field)
+				return ec._Mutation_updateTitleVerificationById(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -5428,11 +5358,6 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "wallet_address":
-			out.Values[i] = ec._Payment_wallet_address(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		case "created_at":
 			out.Values[i] = ec._Payment_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5487,8 +5412,8 @@ func (ec *executionContext) _PaymentUpdate(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "walletAddress":
-			out.Values[i] = ec._PaymentUpdate_walletAddress(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._PaymentUpdate_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5811,13 +5736,13 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_firstname(ctx, field, obj)
 		case "lastname":
 			out.Values[i] = ec._User_lastname(ctx, field, obj)
-		case "email":
-			out.Values[i] = ec._User_email(ctx, field, obj)
+		case "govt_id":
+			out.Values[i] = ec._User_govt_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "wallet_address":
-			out.Values[i] = ec._User_wallet_address(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._User_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}

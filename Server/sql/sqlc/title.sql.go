@@ -13,100 +13,95 @@ import (
 
 const createTitle = `-- name: CreateTitle :one
 INSERT INTO titles (
-  title, email, wallet_address
+  title, email
 ) VALUES (
-  $1, $2, $3
-) RETURNING id, title, verification, email, wallet_address, created_at, updated_at
+  $1, $2
+) RETURNING id, title, verification, email, created_at, updated_at
 `
 
 type CreateTitleParams struct {
-	Title         string `json:"title"`
-	Email         string `json:"email"`
-	WalletAddress string `json:"wallet_address"`
+	Title string `json:"title"`
+	Email string `json:"email"`
 }
 
 func (q *Queries) CreateTitle(ctx context.Context, arg CreateTitleParams) (Title, error) {
-	row := q.db.QueryRowContext(ctx, createTitle, arg.Title, arg.Email, arg.WalletAddress)
+	row := q.db.QueryRowContext(ctx, createTitle, arg.Title, arg.Email)
 	var i Title
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const getEmailTitle = `-- name: GetEmailTitle :one
-SELECT id, title, verification, email, wallet_address, created_at, updated_at FROM titles
+const getTitleByEmail = `-- name: GetTitleByEmail :one
+SELECT id, title, verification, email, created_at, updated_at FROM titles
 WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetEmailTitle(ctx context.Context, email string) (Title, error) {
-	row := q.db.QueryRowContext(ctx, getEmailTitle, email)
+func (q *Queries) GetTitleByEmail(ctx context.Context, email string) (Title, error) {
+	row := q.db.QueryRowContext(ctx, getTitleByEmail, email)
 	var i Title
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const updateEmailTitle = `-- name: UpdateEmailTitle :one
+const updateTitleByEmail = `-- name: UpdateTitleByEmail :one
 UPDATE titles SET title = $1, verification = $2
 WHERE email = $3
-RETURNING id, title, verification, email, wallet_address, created_at, updated_at
+RETURNING id, title, verification, email, created_at, updated_at
 `
 
-type UpdateEmailTitleParams struct {
+type UpdateTitleByEmailParams struct {
 	Title        string `json:"title"`
 	Verification string `json:"verification"`
 	Email        string `json:"email"`
 }
 
-func (q *Queries) UpdateEmailTitle(ctx context.Context, arg UpdateEmailTitleParams) (Title, error) {
-	row := q.db.QueryRowContext(ctx, updateEmailTitle, arg.Title, arg.Verification, arg.Email)
+func (q *Queries) UpdateTitleByEmail(ctx context.Context, arg UpdateTitleByEmailParams) (Title, error) {
+	row := q.db.QueryRowContext(ctx, updateTitleByEmail, arg.Title, arg.Verification, arg.Email)
 	var i Title
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const updateTitleVerification = `-- name: UpdateTitleVerification :one
+const updateTitleVerificationById = `-- name: UpdateTitleVerificationById :one
 UPDATE titles SET verification = $1
 WHERE id = $2
-RETURNING id, title, verification, email, wallet_address, created_at, updated_at
+RETURNING id, title, verification, email, created_at, updated_at
 `
 
-type UpdateTitleVerificationParams struct {
+type UpdateTitleVerificationByIdParams struct {
 	Verification string    `json:"verification"`
 	ID           uuid.UUID `json:"id"`
 }
 
-func (q *Queries) UpdateTitleVerification(ctx context.Context, arg UpdateTitleVerificationParams) (Title, error) {
-	row := q.db.QueryRowContext(ctx, updateTitleVerification, arg.Verification, arg.ID)
+func (q *Queries) UpdateTitleVerificationById(ctx context.Context, arg UpdateTitleVerificationByIdParams) (Title, error) {
+	row := q.db.QueryRowContext(ctx, updateTitleVerificationById, arg.Verification, arg.ID)
 	var i Title
 	err := row.Scan(
 		&i.ID,
 		&i.Title,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

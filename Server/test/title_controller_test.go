@@ -18,9 +18,8 @@ func Test_Title_Controller(t *testing.T) {
 
 	t.Run("create_title", func(t *testing.T) {
 		args := sql.CreateTitleParams{
-			Title:         docUri,
-			Email:         superUserEmail,
-			WalletAddress: superUserWallet,
+			Title: docUri,
+			Email: email,
 		}
 		title, err = tc.CreateTitle(ctx, args)
 
@@ -29,11 +28,11 @@ func Test_Title_Controller(t *testing.T) {
 	})
 
 	t.Run("update_title_verification", func(t *testing.T) {
-		args := sql.UpdateTitleVerificationParams{
+		args := sql.UpdateTitleVerificationByIdParams{
 			ID:           title.ID,
 			Verification: model.VerificationVerified.String(),
 		}
-		title, err := tc.UpdateTitleVerification(ctx, args)
+		title, err := tc.UpdateTitleVerificationById(ctx, args)
 
 		assert.Nil(t, err)
 		assert.Equal(t, title.Verified, model.VerificationVerified)

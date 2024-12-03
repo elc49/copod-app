@@ -1,20 +1,20 @@
 -- name: CreateTitle :one
 INSERT INTO titles (
-  title, email, wallet_address
+  title, email
 ) VALUES (
-  $1, $2, $3
+  $1, $2
 ) RETURNING *;
 
--- name: GetEmailTitle :one
+-- name: GetTitleByEmail :one
 SELECT * FROM titles
 WHERE email = $1 LIMIT 1;
 
--- name: UpdateEmailTitle :one
+-- name: UpdateTitleByEmail :one
 UPDATE titles SET title = $1, verification = $2
 WHERE email = $3
 RETURNING *;
 
--- name: UpdateTitleVerification :one
+-- name: UpdateTitleVerificationById :one
 UPDATE titles SET verification = $1
 WHERE id = $2
 RETURNING *;

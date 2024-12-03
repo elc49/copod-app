@@ -30,13 +30,13 @@ func GetSupportingDocController() SupportingDocController {
 }
 
 func (c *SupportingDoc) CreateSupportingDoc(ctx context.Context, args sql.CreateSupportDocParams) (*model.SupportingDoc, error) {
-	s, err := c.r.GetEmailSupportDoc(ctx, args.Email)
+	s, err := c.r.GetSupportDocByEmail(ctx, args.Email)
 	switch {
 	case s != nil && err == nil:
 		switch s.Verified {
 		case model.VerificationRejected:
 			// update don't recreate
-			return c.r.UpdateEmailSupportDoc(ctx, sql.UpdateEmailSupportDocParams{
+			return c.r.UpdateSupportDocByEmail(ctx, sql.UpdateSupportDocByEmailParams{
 				Email:        args.Email,
 				GovtID:       args.GovtID,
 				Verification: model.VerificationOnboarding.String(),

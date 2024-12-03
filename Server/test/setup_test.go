@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	superUserEmail  = RandomEmailAddress()
-	superUserWallet = RandomWalletAddress()
+	email           = RandomEmailAddress()
 	superUserGovtId = RandomGovtID()
 
 	docUri    = "https://doc.io/title"
@@ -40,11 +39,7 @@ func init() {
 	u.Init(q)
 	// Super user
 	uc := controller.GetUserController()
-	user, err := uc.CreateUser(context.Background(), sqlc.CreateUserParams{
-		Email:         superUserEmail,
-		WalletAddress: superUserWallet,
-		GovtID:        superUserGovtId,
-	})
+	user, err := uc.CreateUser(context.Background(), email)
 	if err != nil {
 		logrus.WithError(err).Fatalln("test: init: CreateUser")
 	}

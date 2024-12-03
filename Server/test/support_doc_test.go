@@ -18,9 +18,8 @@ func Test_SupportDoc_Controller(t *testing.T) {
 
 	t.Run("create_support_doc", func(t *testing.T) {
 		args := sql.CreateSupportDocParams{
-			GovtID:        docUri,
-			Email:         superUserEmail,
-			WalletAddress: superUserWallet,
+			GovtID: docUri,
+			Email:  email,
 		}
 		s, err = sc.CreateSupportingDoc(ctx, args)
 
@@ -30,9 +29,8 @@ func Test_SupportDoc_Controller(t *testing.T) {
 
 	t.Run("should_only_be_one_supporting_doc", func(t *testing.T) {
 		e, err := sc.CreateSupportingDoc(ctx, sql.CreateSupportDocParams{
-			GovtID:        docUri,
-			Email:         superUserEmail,
-			WalletAddress: superUserWallet,
+			GovtID: docUri,
+			Email:  email,
 		})
 
 		assert.Nil(t, err)

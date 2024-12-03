@@ -29,10 +29,6 @@ func RandomStringByLength(length int) string {
 	return b
 }
 
-func RandomWalletAddress() string {
-	return fmt.Sprintf("0x41eD3Ce6DC13fD4F67Eb715f5c3B105B%s", RandomStringByLength(8))
-}
-
 func RandomEmailAddress() string {
 	return fmt.Sprintf("%s@em.com", RandomStringByLength(4))
 }

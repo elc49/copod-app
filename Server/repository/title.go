@@ -35,13 +35,13 @@ func (r *Title) CreateTitle(ctx context.Context, args sql.CreateTitleParams) (*m
 	}, nil
 }
 
-func (r *Title) GetEmailTitle(ctx context.Context, email string) (*model.Title, error) {
-	t, err := r.sql.GetEmailTitle(ctx, email)
+func (r *Title) GetTitleByEmail(ctx context.Context, email string) (*model.Title, error) {
+	t, err := r.sql.GetTitleByEmail(ctx, email)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetEmailTitle")
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetTitleByEmail")
 		return nil, err
 	}
 
@@ -54,10 +54,10 @@ func (r *Title) GetEmailTitle(ctx context.Context, email string) (*model.Title, 
 	}, nil
 }
 
-func (r *Title) UpdateEmailTitle(ctx context.Context, args sql.UpdateEmailTitleParams) (*model.Title, error) {
-	u, err := r.sql.UpdateEmailTitle(ctx, args)
+func (r *Title) UpdateTitleByEmail(ctx context.Context, args sql.UpdateTitleByEmailParams) (*model.Title, error) {
+	u, err := r.sql.UpdateTitleByEmail(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateEmailTitle")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleByEmail")
 		return nil, err
 	}
 
@@ -70,10 +70,10 @@ func (r *Title) UpdateEmailTitle(ctx context.Context, args sql.UpdateEmailTitleP
 	}, nil
 }
 
-func (r *Title) UpdateTitleVerification(ctx context.Context, args sql.UpdateTitleVerificationParams) (*model.Title, error) {
-	u, err := r.sql.UpdateTitleVerification(ctx, args)
+func (r *Title) UpdateTitleVerificationById(ctx context.Context, args sql.UpdateTitleVerificationByIdParams) (*model.Title, error) {
+	u, err := r.sql.UpdateTitleVerificationById(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleVerification")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleVerificationById")
 		return nil, err
 	}
 

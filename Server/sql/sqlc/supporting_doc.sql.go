@@ -11,74 +11,70 @@ import (
 
 const createSupportDoc = `-- name: CreateSupportDoc :one
 INSERT INTO support_docs (
-  govt_id, email, wallet_address
+  email, govt_id
 ) VALUES (
-  $1, $2, $3
-) RETURNING id, govt_id, verification, email, wallet_address, created_at, updated_at
+  $1, $2
+) RETURNING id, govt_id, verification, email, created_at, updated_at
 `
 
 type CreateSupportDocParams struct {
-	GovtID        string `json:"govt_id"`
-	Email         string `json:"email"`
-	WalletAddress string `json:"wallet_address"`
+	Email  string `json:"email"`
+	GovtID string `json:"govt_id"`
 }
 
 func (q *Queries) CreateSupportDoc(ctx context.Context, arg CreateSupportDocParams) (SupportDoc, error) {
-	row := q.db.QueryRowContext(ctx, createSupportDoc, arg.GovtID, arg.Email, arg.WalletAddress)
+	row := q.db.QueryRowContext(ctx, createSupportDoc, arg.Email, arg.GovtID)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,
 		&i.GovtID,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const getEmailSupportDoc = `-- name: GetEmailSupportDoc :one
-SELECT id, govt_id, verification, email, wallet_address, created_at, updated_at FROM support_docs
+const getSupportDocByEmail = `-- name: GetSupportDocByEmail :one
+SELECT id, govt_id, verification, email, created_at, updated_at FROM support_docs
 WHERE email = $1 LIMIT 1
 `
 
-func (q *Queries) GetEmailSupportDoc(ctx context.Context, email string) (SupportDoc, error) {
-	row := q.db.QueryRowContext(ctx, getEmailSupportDoc, email)
+func (q *Queries) GetSupportDocByEmail(ctx context.Context, email string) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, getSupportDocByEmail, email)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,
 		&i.GovtID,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const updateEmailSupportDoc = `-- name: UpdateEmailSupportDoc :one
+const updateSupportDocByEmail = `-- name: UpdateSupportDocByEmail :one
 UPDATE support_docs SET govt_id = $1, verification = $2
 WHERE email = $3
-RETURNING id, govt_id, verification, email, wallet_address, created_at, updated_at
+RETURNING id, govt_id, verification, email, created_at, updated_at
 `
 
-type UpdateEmailSupportDocParams struct {
+type UpdateSupportDocByEmailParams struct {
 	GovtID       string `json:"govt_id"`
 	Verification string `json:"verification"`
 	Email        string `json:"email"`
 }
 
-func (q *Queries) UpdateEmailSupportDoc(ctx context.Context, arg UpdateEmailSupportDocParams) (SupportDoc, error) {
-	row := q.db.QueryRowContext(ctx, updateEmailSupportDoc, arg.GovtID, arg.Verification, arg.Email)
+func (q *Queries) UpdateSupportDocByEmail(ctx context.Context, arg UpdateSupportDocByEmailParams) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, updateSupportDocByEmail, arg.GovtID, arg.Verification, arg.Email)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,
 		&i.GovtID,
 		&i.Verification,
 		&i.Email,
-		&i.WalletAddress,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

@@ -19,9 +19,8 @@ import (
 // UploadLandTitle is the resolver for the uploadLandTitle field.
 func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
 	args := sql.CreateTitleParams{
-		Email:         input.Email,
-		Title:         input.URL,
-		WalletAddress: input.WalletAddress,
+		Email: input.Email,
+		Title: input.URL,
 	}
 
 	return r.titleController.CreateTitle(ctx, args)
@@ -30,9 +29,8 @@ func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocU
 // UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
 func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
 	args := sql.CreateSupportDocParams{
-		Email:         input.Email,
-		GovtID:        input.URL,
-		WalletAddress: input.WalletAddress,
+		Email:  input.Email,
+		GovtID: input.URL,
 	}
 
 	return r.supportDocController.CreateSupportingDoc(ctx, args)
@@ -41,10 +39,9 @@ func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.
 // ChargeMpesa is the resolver for the chargeMpesa field.
 func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
 	charge := paystack.MpesaCharge{
-		Email:         input.Email,
-		Reason:        input.Reason.String(),
-		Currency:      input.Currency,
-		WalletAddress: input.WalletAddress,
+		Email:    input.Email,
+		Reason:   input.Reason.String(),
+		Currency: input.Currency,
 	}
 
 	res, err := r.paystack.ChargeMpesa(ctx, input.PaymentFor, charge)
@@ -56,13 +53,13 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 	return &res.Data.Reference, nil
 }
 
-// UpdateTitleVerification is the resolver for the updateTitleVerification field.
-func (r *mutationResolver) UpdateTitleVerification(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error) {
-	args := sql.UpdateTitleVerificationParams{
+// UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
+func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error) {
+	args := sql.UpdateTitleVerificationByIdParams{
 		ID:           input.ID,
 		Verification: input.Verification.String(),
 	}
-	return r.titleController.UpdateTitleVerification(ctx, args)
+	return r.titleController.UpdateTitleVerificationById(ctx, args)
 }
 
 // Title is the resolver for the title field.
@@ -76,7 +73,7 @@ func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error
 }
 
 // GetUserLands is the resolver for the getUserLands field.
-func (r *queryResolver) GetUserLands(ctx context.Context, walletAddress string) ([]*model.Land, error) {
+func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Land, error) {
 	return make([]*model.Land, 0), nil
 }
 
@@ -91,7 +88,7 @@ func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
-func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress string) (<-chan *model.PaymentUpdate, error) {
+func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)
 	pubsub := r.redis.Subscribe(context.Background(), cache.PAYMENT_UPDATED_CHANNEL)
 
@@ -103,7 +100,7 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, walletAddress 
 				return
 			}
 
-			if result.WalletAddress == walletAddress {
+			if result.Email == email {
 				ch <- result
 			}
 		}

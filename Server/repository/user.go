@@ -19,34 +19,32 @@ func (r *User) Init(sql *sql.Queries) {
 	r.log = logger.GetLogger()
 }
 
-func (r *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*model.User, error) {
-	u, err := r.sql.CreateUser(ctx, args)
+func (r *User) CreateUser(ctx context.Context, email string) (*model.User, error) {
+	u, err := r.sql.CreateUser(ctx, email)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"user": args}).Errorf("repository: CreateUser")
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: CreateUser")
 		return nil, err
 	}
 
 	return &model.User{
-		ID:            u.ID,
-		Email:         u.Email,
-		WalletAddress: u.WalletAddress,
-		CreatedAt:     u.CreatedAt,
-		UpdatedAt:     u.UpdatedAt,
+		ID:        u.ID,
+		Email:     u.Email,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
 
-func (r *User) GetUser(ctx context.Context, walletAddress string) (*model.User, error) {
-	u, err := r.sql.GetUser(ctx, walletAddress)
+func (r *User) GetUser(ctx context.Context, email string) (*model.User, error) {
+	u, err := r.sql.GetUser(ctx, email)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"walletAddress": walletAddress}).Errorf("repository: GetUser")
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetUser")
 		return nil, err
 	}
 
 	return &model.User{
-		ID:            u.ID,
-		Email:         u.Email,
-		WalletAddress: u.WalletAddress,
-		CreatedAt:     u.CreatedAt,
-		UpdatedAt:     u.UpdatedAt,
+		ID:        u.ID,
+		Email:     u.Email,
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
