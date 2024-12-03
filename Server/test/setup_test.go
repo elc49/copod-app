@@ -39,7 +39,12 @@ func init() {
 	u.Init(q)
 	// Super user
 	uc := controller.GetUserController()
-	user, err := uc.CreateUser(context.Background(), email)
+	user, err := uc.CreateUser(context.Background(), sqlc.CreateUserParams{
+		Email:     email,
+		Firstname: "John",
+		Lastname:  "Doe",
+		GovtID:    "4903",
+	})
 	if err != nil {
 		logrus.WithError(err).Fatalln("test: init: CreateUser")
 	}

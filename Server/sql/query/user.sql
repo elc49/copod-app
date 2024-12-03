@@ -1,15 +1,6 @@
 -- name: CreateUser :one
 INSERT INTO users (
-  email
+  email, firstname, lastname, govt_id
 ) VALUES (
-  $1
+  $1, $2, $3, $4
 ) RETURNING *;
-
--- name: GetUser :one
-SELECT * FROM users
-WHERE email = $1;
-
--- name: UpdateUserByEmail :one
-UPDATE users SET firstname = $1, lastname = $2, govt_id = $3
-WHERE email = $4
-RETURNING  *;

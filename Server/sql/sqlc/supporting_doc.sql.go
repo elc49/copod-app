@@ -7,6 +7,8 @@ package sql
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const createSupportDoc = `-- name: CreateSupportDoc :one
@@ -53,6 +55,60 @@ func (q *Queries) GetSupportDocByEmail(ctx context.Context, email string) (Suppo
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getSupportingDocById = `-- name: GetSupportingDocById :one
+SELECT id, govt_id, verification, email, created_at, updated_at FROM support_docs
+WHERE id = $1
+`
+
+func (q *Queries) GetSupportingDocById(ctx context.Context, id uuid.UUID) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, getSupportingDocById, id)
+	var i SupportDoc
+	err := row.Scan(
+		&i.ID,
+		&i.GovtID,
+		&i.Verification,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getSupportingDocsByVerification = `-- name: GetSupportingDocsByVerification :many
+SELECT id, govt_id, verification, email, created_at, updated_at FROM support_docs
+WHERE verification = $1
+`
+
+func (q *Queries) GetSupportingDocsByVerification(ctx context.Context, verification string) ([]SupportDoc, error) {
+	rows, err := q.db.QueryContext(ctx, getSupportingDocsByVerification, verification)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []SupportDoc{}
+	for rows.Next() {
+		var i SupportDoc
+		if err := rows.Scan(
+			&i.ID,
+			&i.GovtID,
+			&i.Verification,
+			&i.Email,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const updateSupportDocByEmail = `-- name: UpdateSupportDocByEmail :one

@@ -99,6 +99,7 @@ func (r *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*mo
 		payment := &model.Payment{
 			ID:          i.ID,
 			Status:      i.Status,
+			Email:       i.Email,
 			ReferenceID: i.ReferenceID,
 			TitleID:     i.TitleID.UUID,
 			CreatedAt:   i.CreatedAt,

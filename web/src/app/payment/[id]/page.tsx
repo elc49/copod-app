@@ -16,6 +16,7 @@ import withAuth from "@/providers/withAuth";
 import { WalletContext } from "@/providers/wallet";
 import { getAccounts, publicClient, privateClient } from "@/blockchain/rpc";
 
+export default withAuth(Page)
 function Page() {
   const [registering, setRegistering] = useState(false)
   const { provider } = useContext(WalletContext)
@@ -39,6 +40,9 @@ function Page() {
           verification: "VERIFIED",
         },
       },
+      onCompleted: () => {
+        router.back()
+      },
     })
   }
 
@@ -49,7 +53,6 @@ function Page() {
       type: "success",
     })
     saveLandLocally()
-    router.back()
   }
 
   const onFailure = () => {
@@ -107,5 +110,3 @@ function Page() {
     </SimpleGrid>
   )
 }
-
-export default withAuth(Page)

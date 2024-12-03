@@ -66,19 +66,22 @@ type ComplexityRoot struct {
 
 	Mutation struct {
 		ChargeMpesa                 func(childComplexity int, input model.PayWithMpesaInput) int
+		CreateUser                  func(childComplexity int, input model.CreateUserInput) int
 		UpdateTitleVerificationByID func(childComplexity int, input model.UpdateTitleVerificationInput) int
 		UploadLandTitle             func(childComplexity int, input model.DocUploadInput) int
 		UploadSupportingDoc         func(childComplexity int, input model.DocUploadInput) int
 	}
 
 	Payment struct {
-		CreatedAt   func(childComplexity int) int
-		ID          func(childComplexity int) int
-		ReferenceID func(childComplexity int) int
-		Status      func(childComplexity int) int
-		Title       func(childComplexity int) int
-		TitleID     func(childComplexity int) int
-		UpdatedAt   func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		Email         func(childComplexity int) int
+		ID            func(childComplexity int) int
+		ReferenceID   func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SupportingDoc func(childComplexity int) int
+		Title         func(childComplexity int) int
+		TitleID       func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
 	}
 
 	PaymentUpdate struct {
@@ -88,10 +91,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetLocalLands         func(childComplexity int) int
-		GetPaymentDetailsByID func(childComplexity int, id uuid.UUID) int
-		GetPaymentsByStatus   func(childComplexity int, status model.PaymentStatus) int
-		GetUserLands          func(childComplexity int, email string) int
+		GetLocalLands                   func(childComplexity int) int
+		GetPaymentDetailsByID           func(childComplexity int, id uuid.UUID) int
+		GetPaymentsByStatus             func(childComplexity int, status model.PaymentStatus) int
+		GetSupportingDocByID            func(childComplexity int, id uuid.UUID) int
+		GetSupportingDocsByVerification func(childComplexity int, verification model.Verification) int
+		GetUserLands                    func(childComplexity int, email string) int
 	}
 
 	Subscription struct {
@@ -100,6 +105,7 @@ type ComplexityRoot struct {
 
 	SupportingDoc struct {
 		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
 		GovtID    func(childComplexity int) int
 		ID        func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -130,6 +136,7 @@ type MutationResolver interface {
 	UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error)
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
 	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error)
+	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
 }
 type PaymentResolver interface {
 	Title(ctx context.Context, obj *model.Payment) (*model.Title, error)
@@ -139,6 +146,8 @@ type QueryResolver interface {
 	GetUserLands(ctx context.Context, email string) ([]*model.Land, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
+	GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error)
+	GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
@@ -238,6 +247,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.ChargeMpesa(childComplexity, args["input"].(model.PayWithMpesaInput)), true
 
+	case "Mutation.createUser":
+		if e.complexity.Mutation.CreateUser == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
+
 	case "Mutation.updateTitleVerificationById":
 		if e.complexity.Mutation.UpdateTitleVerificationByID == nil {
 			break
@@ -281,6 +302,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.CreatedAt(childComplexity), true
 
+	case "Payment.email":
+		if e.complexity.Payment.Email == nil {
+			break
+		}
+
+		return e.complexity.Payment.Email(childComplexity), true
+
 	case "Payment.id":
 		if e.complexity.Payment.ID == nil {
 			break
@@ -301,6 +329,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Payment.Status(childComplexity), true
+
+	case "Payment.supportingDoc":
+		if e.complexity.Payment.SupportingDoc == nil {
+			break
+		}
+
+		return e.complexity.Payment.SupportingDoc(childComplexity), true
 
 	case "Payment.title":
 		if e.complexity.Payment.Title == nil {
@@ -375,6 +410,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetPaymentsByStatus(childComplexity, args["status"].(model.PaymentStatus)), true
 
+	case "Query.getSupportingDocById":
+		if e.complexity.Query.GetSupportingDocByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getSupportingDocById_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetSupportingDocByID(childComplexity, args["id"].(uuid.UUID)), true
+
+	case "Query.getSupportingDocsByVerification":
+		if e.complexity.Query.GetSupportingDocsByVerification == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getSupportingDocsByVerification_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetSupportingDocsByVerification(childComplexity, args["verification"].(model.Verification)), true
+
 	case "Query.getUserLands":
 		if e.complexity.Query.GetUserLands == nil {
 			break
@@ -405,6 +464,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.SupportingDoc.CreatedAt(childComplexity), true
+
+	case "SupportingDoc.email":
+		if e.complexity.SupportingDoc.Email == nil {
+			break
+		}
+
+		return e.complexity.SupportingDoc.Email(childComplexity), true
 
 	case "SupportingDoc.govt_id":
 		if e.complexity.SupportingDoc.GovtID == nil {
@@ -526,6 +592,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputDocUploadInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateTitleVerificationInput,
@@ -685,6 +752,29 @@ func (ec *executionContext) field_Mutation_chargeMpesa_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_createUser_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_createUser_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.CreateUserInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
+	}
+
+	var zeroVal model.CreateUserInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_updateTitleVerificationById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -820,6 +910,52 @@ func (ec *executionContext) field_Query_getPaymentsByStatus_argsStatus(
 	}
 
 	var zeroVal model.PaymentStatus
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getSupportingDocById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getSupportingDocById_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getSupportingDocById_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (uuid.UUID, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+	}
+
+	var zeroVal uuid.UUID
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getSupportingDocsByVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getSupportingDocsByVerification_argsVerification(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["verification"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getSupportingDocsByVerification_argsVerification(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.Verification, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+	if tmp, ok := rawArgs["verification"]; ok {
+		return ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, tmp)
+	}
+
+	var zeroVal model.Verification
 	return zeroVal, nil
 }
 
@@ -1426,6 +1562,8 @@ func (ec *executionContext) fieldContext_Mutation_uploadSupportingDoc(ctx contex
 				return ec.fieldContext_SupportingDoc_id(ctx, field)
 			case "govt_id":
 				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "email":
+				return ec.fieldContext_SupportingDoc_email(ctx, field)
 			case "verified":
 				return ec.fieldContext_SupportingDoc_verified(ctx, field)
 			case "created_at":
@@ -1569,6 +1707,77 @@ func (ec *executionContext) fieldContext_Mutation_updateTitleVerificationById(ct
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.User)
+	fc.Result = res
+	return ec.marshalNUser2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_User_id(ctx, field)
+			case "firstname":
+				return ec.fieldContext_User_firstname(ctx, field)
+			case "lastname":
+				return ec.fieldContext_User_lastname(ctx, field)
+			case "govt_id":
+				return ec.fieldContext_User_govt_id(ctx, field)
+			case "email":
+				return ec.fieldContext_User_email(ctx, field)
+			case "created_at":
+				return ec.fieldContext_User_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_User_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Payment_id(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_id(ctx, field)
 	if err != nil {
@@ -1701,6 +1910,50 @@ func (ec *executionContext) fieldContext_Payment_status(_ context.Context, field
 	return fc, nil
 }
 
+func (ec *executionContext) _Payment_email(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Payment_title(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_title(ctx, field)
 	if err != nil {
@@ -1793,6 +2046,61 @@ func (ec *executionContext) fieldContext_Payment_title_id(_ context.Context, fie
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type UUID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Payment_supportingDoc(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_supportingDoc(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SupportingDoc, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.SupportingDoc)
+	fc.Result = res
+	return ec.marshalOSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_supportingDoc(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SupportingDoc_id(ctx, field)
+			case "govt_id":
+				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "email":
+				return ec.fieldContext_SupportingDoc_email(ctx, field)
+			case "verified":
+				return ec.fieldContext_SupportingDoc_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
 		},
 	}
 	return fc, nil
@@ -2202,10 +2510,14 @@ func (ec *executionContext) fieldContext_Query_getPaymentsByStatus(ctx context.C
 				return ec.fieldContext_Payment_reference_id(ctx, field)
 			case "status":
 				return ec.fieldContext_Payment_status(ctx, field)
+			case "email":
+				return ec.fieldContext_Payment_email(ctx, field)
 			case "title":
 				return ec.fieldContext_Payment_title(ctx, field)
 			case "title_id":
 				return ec.fieldContext_Payment_title_id(ctx, field)
+			case "supportingDoc":
+				return ec.fieldContext_Payment_supportingDoc(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
@@ -2273,10 +2585,14 @@ func (ec *executionContext) fieldContext_Query_getPaymentDetailsById(ctx context
 				return ec.fieldContext_Payment_reference_id(ctx, field)
 			case "status":
 				return ec.fieldContext_Payment_status(ctx, field)
+			case "email":
+				return ec.fieldContext_Payment_email(ctx, field)
 			case "title":
 				return ec.fieldContext_Payment_title(ctx, field)
 			case "title_id":
 				return ec.fieldContext_Payment_title_id(ctx, field)
+			case "supportingDoc":
+				return ec.fieldContext_Payment_supportingDoc(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
@@ -2293,6 +2609,144 @@ func (ec *executionContext) fieldContext_Query_getPaymentDetailsById(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getPaymentDetailsById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getSupportingDocsByVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getSupportingDocsByVerification(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetSupportingDocsByVerification(rctx, fc.Args["verification"].(model.Verification))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.SupportingDoc)
+	fc.Result = res
+	return ec.marshalNSupportingDoc2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDocᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getSupportingDocsByVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SupportingDoc_id(ctx, field)
+			case "govt_id":
+				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "email":
+				return ec.fieldContext_SupportingDoc_email(ctx, field)
+			case "verified":
+				return ec.fieldContext_SupportingDoc_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getSupportingDocsByVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getSupportingDocById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getSupportingDocById(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetSupportingDocByID(rctx, fc.Args["id"].(uuid.UUID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.SupportingDoc)
+	fc.Result = res
+	return ec.marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getSupportingDocById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_SupportingDoc_id(ctx, field)
+			case "govt_id":
+				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "email":
+				return ec.fieldContext_SupportingDoc_email(ctx, field)
+			case "verified":
+				return ec.fieldContext_SupportingDoc_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getSupportingDocById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2581,6 +3035,50 @@ func (ec *executionContext) _SupportingDoc_govt_id(ctx context.Context, field gr
 }
 
 func (ec *executionContext) fieldContext_SupportingDoc_govt_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "SupportingDoc",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _SupportingDoc_email(ctx context.Context, field graphql.CollectedField, obj *model.SupportingDoc) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SupportingDoc_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_SupportingDoc_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SupportingDoc",
 		Field:      field,
@@ -5020,6 +5518,54 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context
 
 // region    **************************** input.gotpl *****************************
 
+func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (model.CreateUserInput, error) {
+	var it model.CreateUserInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email", "firstname", "lastname", "govtid"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "firstname":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("firstname"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Firstname = data
+		case "lastname":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastname"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Lastname = data
+		case "govtid":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("govtid"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Govtid = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, obj interface{}) (model.DocUploadInput, error) {
 	var it model.DocUploadInput
 	asMap := map[string]interface{}{}
@@ -5271,6 +5817,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "createUser":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createUser(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5320,6 +5873,11 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "email":
+			out.Values[i] = ec._Payment_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "title":
 			field := field
 
@@ -5358,6 +5916,8 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "supportingDoc":
+			out.Values[i] = ec._Payment_supportingDoc(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._Payment_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5547,6 +6107,50 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getSupportingDocsByVerification":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getSupportingDocsByVerification(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getSupportingDocById":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getSupportingDocById(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -5616,6 +6220,11 @@ func (ec *executionContext) _SupportingDoc(ctx context.Context, sel ast.Selectio
 			}
 		case "govt_id":
 			out.Values[i] = ec._SupportingDoc_govt_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._SupportingDoc_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6120,6 +6729,11 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
+	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNDocUploadInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDocUploadInput(ctx context.Context, v interface{}) (model.DocUploadInput, error) {
 	res, err := ec.unmarshalInputDocUploadInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6310,6 +6924,50 @@ func (ec *executionContext) marshalNSupportingDoc2githubᚗcomᚋelc49ᚋcopod�
 	return ec._SupportingDoc(ctx, sel, &v)
 }
 
+func (ec *executionContext) marshalNSupportingDoc2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDocᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SupportingDoc) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v *model.SupportingDoc) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -6367,6 +7025,20 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 func (ec *executionContext) unmarshalNUpdateTitleVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationInput(ctx context.Context, v interface{}) (model.UpdateTitleVerificationInput, error) {
 	res, err := ec.unmarshalInputUpdateTitleVerificationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNUser2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
+	return ec._User(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._User(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx context.Context, v interface{}) (model.Verification, error) {
@@ -6672,6 +7344,13 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v *model.SupportingDoc) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._SupportingDoc(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v *model.Title) graphql.Marshaler {

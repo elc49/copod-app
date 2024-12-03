@@ -11,6 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type CreateUserInput struct {
+	Email     string `json:"email"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	Govtid    string `json:"govtid"`
+}
+
 type DocUploadInput struct {
 	URL   string `json:"url"`
 	Email string `json:"email"`
@@ -40,13 +47,15 @@ type PayWithMpesaInput struct {
 }
 
 type Payment struct {
-	ID          uuid.UUID `json:"id"`
-	ReferenceID string    `json:"reference_id"`
-	Status      string    `json:"status"`
-	Title       *Title    `json:"title,omitempty"`
-	TitleID     uuid.UUID `json:"title_id"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	ID            uuid.UUID      `json:"id"`
+	ReferenceID   string         `json:"reference_id"`
+	Status        string         `json:"status"`
+	Email         string         `json:"email"`
+	Title         *Title         `json:"title,omitempty"`
+	TitleID       uuid.UUID      `json:"title_id"`
+	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
 }
 
 type PaymentUpdate struct {
@@ -64,6 +73,7 @@ type Subscription struct {
 type SupportingDoc struct {
 	ID        uuid.UUID    `json:"id"`
 	GovtID    string       `json:"govt_id"`
+	Email     string       `json:"email"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
 	UpdatedAt time.Time    `json:"updated_at"`

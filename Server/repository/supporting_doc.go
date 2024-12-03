@@ -7,6 +7,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -66,5 +67,45 @@ func (r *SupportingDoc) UpdateSupportDocByEmail(ctx context.Context, args sql.Up
 		GovtID:    u.GovtID,
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
+	}, nil
+}
+
+func (r *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
+	var docs []*model.SupportingDoc
+	d, err := r.sql.GetSupportingDocsByVerification(ctx, verification.String())
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"verification": verification}).Errorf("repository: GetSupportingDocsByVerification")
+		return nil, err
+	}
+
+	for _, item := range d {
+		doc := &model.SupportingDoc{
+			ID:        item.ID,
+			Email:     item.Email,
+			GovtID:    item.GovtID,
+			Verified:  model.Verification(item.Verification),
+			CreatedAt: item.CreatedAt,
+			UpdatedAt: item.UpdatedAt,
+		}
+
+		docs = append(docs, doc)
+	}
+
+	return docs, nil
+}
+
+func (r *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
+	d, err := r.sql.GetSupportingDocById(ctx, id)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetSupportingDocById")
+		return nil, err
+	}
+
+	return &model.SupportingDoc{
+		ID:        d.ID,
+		GovtID:    d.GovtID,
+		Verified:  model.Verification(d.Verification),
+		CreatedAt: d.CreatedAt,
+		UpdatedAt: d.UpdatedAt,
 	}, nil
 }

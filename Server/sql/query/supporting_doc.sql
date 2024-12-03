@@ -13,3 +13,11 @@ WHERE email = $1 LIMIT 1;
 UPDATE support_docs SET govt_id = $1, verification = $2
 WHERE email = $3
 RETURNING *;
+
+-- name: GetSupportingDocsByVerification :many
+SELECT * FROM support_docs
+WHERE verification = $1;
+
+-- name: GetSupportingDocById :one
+SELECT * FROM support_docs
+WHERE id = $1;
