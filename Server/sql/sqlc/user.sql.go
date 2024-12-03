@@ -52,21 +52,21 @@ func (q *Queries) GetUser(ctx context.Context, email string) (User, error) {
 	return i, err
 }
 
-const updateUser = `-- name: UpdateUser :one
+const updateUserByEmail = `-- name: UpdateUserByEmail :one
 UPDATE users SET firstname = $1, lastname = $2, govt_id = $3
 WHERE email = $4
 RETURNING  id, firstname, lastname, govt_id, email, created_at, updated_at
 `
 
-type UpdateUserParams struct {
+type UpdateUserByEmailParams struct {
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 	GovtID    string `json:"govt_id"`
 	Email     string `json:"email"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
-	row := q.db.QueryRowContext(ctx, updateUser,
+func (q *Queries) UpdateUserByEmail(ctx context.Context, arg UpdateUserByEmailParams) (User, error) {
+	row := q.db.QueryRowContext(ctx, updateUserByEmail,
 		arg.Firstname,
 		arg.Lastname,
 		arg.GovtID,

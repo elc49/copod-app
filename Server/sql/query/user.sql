@@ -9,7 +9,7 @@ INSERT INTO users (
 SELECT * FROM users
 WHERE email = $1;
 
--- name: UpdateUser :one
+-- name: UpdateUserByEmail :one
 UPDATE users SET firstname = $1, lastname = $2, govt_id = $3
 WHERE email = $4
 RETURNING  *;

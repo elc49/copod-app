@@ -13,6 +13,7 @@ var userController *User
 type UserController interface {
 	CreateUser(context.Context, string) (*model.User, error)
 	GetUser(context.Context, string) (*model.User, error)
+	UpdateUserByEmail(context.Context, sql.UpdateUserByEmailParams) (*model.User, error)
 }
 
 type User struct {
@@ -36,4 +37,8 @@ func (c *User) CreateUser(ctx context.Context, email string) (*model.User, error
 
 func (c *User) GetUser(ctx context.Context, email string) (*model.User, error) {
 	return c.r.GetUser(ctx, email)
+}
+
+func (c *User) UpdateUserByEmail(ctx context.Context, args sql.UpdateUserByEmailParams) (*model.User, error) {
+	return c.r.UpdateUserByEmail(ctx, args)
 }
