@@ -9,11 +9,6 @@ INSERT INTO support_docs (
 SELECT * FROM support_docs
 WHERE email = $1 LIMIT 1;
 
--- name: UpdateSupportDocByEmail :one
-UPDATE support_docs SET govt_id = $1, verification = $2
-WHERE email = $3
-RETURNING *;
-
 -- name: GetSupportingDocsByVerification :many
 SELECT * FROM support_docs
 WHERE verification = $1;
@@ -21,3 +16,8 @@ WHERE verification = $1;
 -- name: GetSupportingDocById :one
 SELECT * FROM support_docs
 WHERE id = $1;
+
+-- name: UpdateUserSupportDocById :one
+UPDATE support_docs SET verification = $1
+WHERE id = $2
+RETURNING *;

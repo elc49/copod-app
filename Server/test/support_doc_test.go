@@ -50,4 +50,15 @@ func Test_SupportDoc_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, doc.GovtID, docUri)
 	})
+
+	t.Run("should_update_supporting_doc_by_email", func(t *testing.T) {
+		args := sql.UpdateUserSupportDocByIdParams{
+			Verification: model.VerificationVerified.String(),
+			ID:           s.ID,
+		}
+		doc, err := sc.UpdateUserSupportDocById(ctx, args)
+
+		assert.Nil(t, err)
+		assert.Equal(t, doc.Verified, model.VerificationVerified)
+	})
 }

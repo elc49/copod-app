@@ -33,3 +33,19 @@ func (r *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*mode
 		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
+
+func (r *User) UpdateUserSupportDocById(ctx context.Context, args sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateUserSupportDocById(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateUserSupportDocById")
+		return nil, err
+	}
+
+	return &model.SupportingDoc{
+		ID:        u.ID,
+		GovtID:    u.GovtID,
+		Verified:  model.Verification(u.Verification),
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
+	}, nil
+}

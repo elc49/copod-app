@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createListCollection, Input, Stack } from "@chakra-ui/react";
+import { Input, Stack } from "@chakra-ui/react";
 import {
   SelectContent,
   SelectItem,
@@ -11,12 +10,12 @@ import {
   SelectTrigger,
   SelectValueText,
 } from "@/components/ui/select";
-import { landDetailsSchema } from "./schema";
+import { landDetailsSchema, units, status } from "./schema";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
 interface Props {
-  registerLand: (titleId: string, size: number, unit: string) => void
+  registerLand: (titleId: string, size: number, unit: string, status: string) => void
   registering: boolean
 }
 
@@ -26,33 +25,20 @@ function LandDetails({ registerLand, registering }: Props) {
     register,
     handleSubmit,
     formState: { errors },
-  }= useForm({
+  } = useForm({
     resolver: yupResolver(landDetailsSchema),
     defaultValues: {
       titleId: "",
       size: "",
-      unit: [],
+      unit: undefined,
+      status: undefined,
     },
   })
-  const sizeUnits = useMemo(() => {
-    return createListCollection({
-      items: [
-        {
-          label: "acres",
-          value: "acres",
-        },
-        {
-          label: "Hectares",
-          value: "ha",
-        },
-      ]
-    })
-  }, [])
 
   const onSubmit = (values: any) => {
     if (!registering) {
       try {
-        registerLand(values.titleId, values.size, values.unit[0])
+        registerLand(values.titleId, values.size, values.unit[0], values.status[0])
       } catch (e) {
         console.error(e)
       }
@@ -69,7 +55,7 @@ function LandDetails({ registerLand, registering }: Props) {
           errorText={errors.titleId?.message}
         >
           <Input
-            {...register("titleId", { required: "Land title required" })}
+            {...register("titleId")}
           />
         </Field>
         <Field
@@ -78,7 +64,7 @@ function LandDetails({ registerLand, registering }: Props) {
           invalid={!!errors.size}
           errorText={errors.size?.message}
         >
-          <Input {...register("size", { required: "Land size required" })}
+          <Input {...register("size")}
           />
         </Field>
         <Field
@@ -96,14 +82,43 @@ function LandDetails({ registerLand, registering }: Props) {
                 value={field.value}
                 onValueChange={({ value }) => field.onChange(value)}
                 onInteractOutside={() => field.onBlur()}
-                collection={sizeUnits}
+                collection={units}
               >
                 <SelectTrigger>
                   <SelectValueText placeholder="Select land size unit" />
                 </SelectTrigger>
                 <SelectContent>
-                  {sizeUnits.items.map((item) => (
-                    <SelectItem item={item.value} key={item.value}>{item.label}</SelectItem>
+                  {units.items.map((item) => (
+                    <SelectItem item={item} key={item.value}>{item.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
+            )}
+          />
+        </Field>
+        <Field
+          required
+          label="Status"
+          invalid={!!errors.status}
+          errorText={errors.status?.message}
+        >
+          <Controller
+            control={control}
+            name="status"
+            render={({ field }) => (
+              <SelectRoot
+                name={field.name}
+                value={field.value}
+                onValueChange={({ value }) => field.onChange(value)}
+                onInteractOutside={() => field.onBlur()}
+                collection={status}
+              >
+                <SelectTrigger>
+                  <SelectValueText placeholder="Verification status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {status.items.map((item) => (
+                    <SelectItem item={item} key={item.value}>{item.label}</SelectItem>
                   ))}
                 </SelectContent>
               </SelectRoot>

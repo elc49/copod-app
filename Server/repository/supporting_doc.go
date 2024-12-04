@@ -55,16 +55,17 @@ func (r *SupportingDoc) GetSupportDocByEmail(ctx context.Context, email string) 
 	}, nil
 }
 
-func (r *SupportingDoc) UpdateSupportDocByEmail(ctx context.Context, args sql.UpdateSupportDocByEmailParams) (*model.SupportingDoc, error) {
-	u, err := r.sql.UpdateSupportDocByEmail(ctx, args)
+func (r *SupportingDoc) UpdateUserSupportDocById(ctx context.Context, args sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateUserSupportDocById(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocByEmail")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateUserSupportDocById")
 		return nil, err
 	}
 
 	return &model.SupportingDoc{
 		ID:        u.ID,
 		GovtID:    u.GovtID,
+		Verified:  model.Verification(u.Verification),
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
 	}, nil

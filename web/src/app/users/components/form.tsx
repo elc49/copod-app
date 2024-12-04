@@ -1,11 +1,18 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Input, Stack } from "@chakra-ui/react";
 import { Field } from "@/components/ui/field";
 import { Button } from "@/components/ui/button";
-import { userDetailsSchema } from "./schema";
+import {
+  SelectRoot,
+  SelectContent,
+  SelectTrigger,
+  SelectValueText,
+  SelectItem,
+} from "@/components/ui/select";
+import { userDetailsSchema, verifications } from "./schema";
 
 interface Props {
   updating: boolean
@@ -24,6 +31,7 @@ export default function UserDetailsForm({ updating, saveDetails }: Props) {
       govtid: "",
       firstname: "",
       lastname: "",
+      verification: undefined,
     },
   })
 
@@ -68,6 +76,35 @@ export default function UserDetailsForm({ updating, saveDetails }: Props) {
         >
           <Input
             {...register("lastname", { required: "Last name required" })}
+          />
+        </Field>
+        <Field
+          required
+          label="Verification"
+          invalid={!!errors.verification}
+          errorText={errors.verification?.message}
+        >
+          <Controller
+            control={control}
+            name="verification"
+            render={({ field }) => (
+              <SelectRoot
+                name={field.name}
+                value={field.value}
+                onValueChange={({ value }) => field.onChange(value)}
+                onInteractOutside={() => field.onBlur()}
+                collection={verifications}
+              >
+                <SelectTrigger>
+                  <SelectValueText placeholder="Verification status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {verifications.items.map((item) => (
+                    <SelectItem item={item} key={item.value}>{item.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </SelectRoot>
+            )}
           />
         </Field>
         <Button loading={updating} type="submit">
