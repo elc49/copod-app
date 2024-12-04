@@ -43,3 +43,29 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 	)
 	return i, err
 }
+
+const updateUserSupportDocByEmail = `-- name: UpdateUserSupportDocByEmail :one
+UPDATE support_docs SET govt_id = $1, verification = $2
+WHERE email = $3
+RETURNING id, govt_id, verification, email, created_at, updated_at
+`
+
+type UpdateUserSupportDocByEmailParams struct {
+	GovtID       string `json:"govt_id"`
+	Verification string `json:"verification"`
+	Email        string `json:"email"`
+}
+
+func (q *Queries) UpdateUserSupportDocByEmail(ctx context.Context, arg UpdateUserSupportDocByEmailParams) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, updateUserSupportDocByEmail, arg.GovtID, arg.Verification, arg.Email)
+	var i SupportDoc
+	err := row.Scan(
+		&i.ID,
+		&i.GovtID,
+		&i.Verification,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

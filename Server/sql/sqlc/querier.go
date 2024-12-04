@@ -24,9 +24,9 @@ type Querier interface {
 	GetSupportingDocsByVerification(ctx context.Context, verification string) ([]SupportDoc, error)
 	GetTitleByEmail(ctx context.Context, email string) (Title, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
-	UpdateSupportDocByEmail(ctx context.Context, arg UpdateSupportDocByEmailParams) (SupportDoc, error)
 	UpdateTitleByEmail(ctx context.Context, arg UpdateTitleByEmailParams) (Title, error)
 	UpdateTitleVerificationById(ctx context.Context, arg UpdateTitleVerificationByIdParams) (Title, error)
+	UpdateUserSupportDocByEmail(ctx context.Context, arg UpdateUserSupportDocByEmailParams) (SupportDoc, error)
 }
 
 var _ Querier = (*Queries)(nil)

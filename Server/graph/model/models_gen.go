@@ -12,10 +12,11 @@ import (
 )
 
 type CreateUserInput struct {
-	Email     string `json:"email"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	Govtid    string `json:"govtid"`
+	Email        string       `json:"email"`
+	Firstname    string       `json:"firstname"`
+	Lastname     string       `json:"lastname"`
+	Govtid       string       `json:"govtid"`
+	Verification Verification `json:"verification"`
 }
 
 type DocUploadInput struct {
