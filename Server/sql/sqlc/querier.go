@@ -26,7 +26,7 @@ type Querier interface {
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
 	UpdateTitleByEmail(ctx context.Context, arg UpdateTitleByEmailParams) (Title, error)
 	UpdateTitleVerificationById(ctx context.Context, arg UpdateTitleVerificationByIdParams) (Title, error)
-	UpdateUserSupportDocByEmail(ctx context.Context, arg UpdateUserSupportDocByEmailParams) (SupportDoc, error)
+	UpdateUserSupportDocById(ctx context.Context, arg UpdateUserSupportDocByIdParams) (SupportDoc, error)
 }
 
 var _ Querier = (*Queries)(nil)

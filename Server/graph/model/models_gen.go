@@ -17,6 +17,7 @@ type CreateUserInput struct {
 	Lastname     string       `json:"lastname"`
 	Govtid       string       `json:"govtid"`
 	Verification Verification `json:"verification"`
+	SupportDocID uuid.UUID    `json:"supportDocId"`
 }
 
 type DocUploadInput struct {

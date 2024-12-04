@@ -15,7 +15,7 @@ type SupportingDocController interface {
 	CreateSupportingDoc(context.Context, sql.CreateSupportDocParams) (*model.SupportingDoc, error)
 	GetSupportingDocsByVerification(context.Context, model.Verification) ([]*model.SupportingDoc, error)
 	GetSupportingDocByID(context.Context, uuid.UUID) (*model.SupportingDoc, error)
-	UpdateSupportingDocByEmail(context.Context, sql.UpdateUserSupportDocByEmailParams) (*model.SupportingDoc, error)
+	UpdateUserSupportDocById(context.Context, sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error)
 }
 
 type SupportingDoc struct {
@@ -40,12 +40,11 @@ func (c *SupportingDoc) CreateSupportingDoc(ctx context.Context, args sql.Create
 		switch s.Verified {
 		case model.VerificationRejected:
 			// update don't recreate
-			args := sql.UpdateUserSupportDocByEmailParams{
-				Email:        args.Email,
-				GovtID:       args.GovtID,
+			args := sql.UpdateUserSupportDocByIdParams{
+				ID:           s.ID,
 				Verification: model.VerificationOnboarding.String(),
 			}
-			return c.r.UpdateUserSupportDocByEmail(ctx, args)
+			return c.r.UpdateUserSupportDocById(ctx, args)
 		}
 		return s, nil
 	case err != nil:
@@ -63,6 +62,6 @@ func (c *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 	return c.r.GetSupportingDocByID(ctx, id)
 }
 
-func (c *SupportingDoc) UpdateSupportingDocByEmail(ctx context.Context, args sql.UpdateUserSupportDocByEmailParams) (*model.SupportingDoc, error) {
-	return c.r.UpdateUserSupportDocByEmail(ctx, args)
+func (c *SupportingDoc) UpdateUserSupportDocById(ctx context.Context, args sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error) {
+	return c.r.UpdateUserSupportDocById(ctx, args)
 }

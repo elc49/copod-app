@@ -5525,7 +5525,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "firstname", "lastname", "govtid", "verification"}
+	fieldsInOrder := [...]string{"email", "firstname", "lastname", "govtid", "verification", "supportDocId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5567,6 +5567,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Verification = data
+		case "supportDocId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportDocId"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SupportDocID = data
 		}
 	}
 

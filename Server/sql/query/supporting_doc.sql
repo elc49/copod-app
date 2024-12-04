@@ -16,3 +16,8 @@ WHERE verification = $1;
 -- name: GetSupportingDocById :one
 SELECT * FROM support_docs
 WHERE id = $1;
+
+-- name: UpdateUserSupportDocById :one
+UPDATE support_docs SET verification = $1
+WHERE id = $2
+RETURNING *;

@@ -22,6 +22,7 @@ export type CreateUserInput = {
   firstname: Scalars['String']['input'];
   govtid: Scalars['String']['input'];
   lastname: Scalars['String']['input'];
+  supportDocId: Scalars['UUID']['input'];
   verification: Verification;
 };
 

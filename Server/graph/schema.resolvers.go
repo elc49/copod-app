@@ -75,17 +75,13 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		return nil, err
 	}
 
-	go func() {
-		uargs := sql.UpdateUserSupportDocByEmailParams{
-			Email:        input.Email,
-			Verification: input.Verification.String(),
-			GovtID:       input.Govtid,
-		}
-		r.supportDocController.UpdateSupportingDocByEmail(ctx, uargs)
-		if err != nil {
-			return
-		}
-	}()
+	uargs := sql.UpdateUserSupportDocByIdParams{
+		ID:           input.SupportDocID,
+		Verification: input.Verification.String(),
+	}
+	if _, err = r.supportDocController.UpdateUserSupportDocById(ctx, uargs); err != nil {
+		return nil, err
+	}
 
 	return u, err
 }

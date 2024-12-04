@@ -41,6 +41,7 @@ function Page() {
             lastname: values.lastname,
             govtid: values.govtid,
             verification: values.verification[0],
+            supportDocId: params.id,
           },
         },
         onCompleted: () => {

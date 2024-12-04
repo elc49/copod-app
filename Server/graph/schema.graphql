@@ -116,6 +116,7 @@ input CreateUserInput {
   lastname: String!
   govtid: String!
   verification: Verification!
+  supportDocId: UUID!
 }
 
 type Query {
