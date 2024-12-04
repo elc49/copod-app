@@ -17,6 +17,14 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+export type CreateUserInput = {
+  email: Scalars['String']['input'];
+  firstname: Scalars['String']['input'];
+  govtid: Scalars['String']['input'];
+  lastname: Scalars['String']['input'];
+  verification: Verification;
+};
+
 export type DocUploadInput = {
   email: Scalars['String']['input'];
   url: Scalars['String']['input'];
@@ -38,8 +46,8 @@ export type Land = {
 export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
+  createUser: User;
   updateTitleVerificationById: Title;
-  updateUserDetailsByEmail: User;
   uploadLandTitle: Title;
   uploadSupportingDoc: SupportingDoc;
 };
@@ -50,13 +58,13 @@ export type MutationChargeMpesaArgs = {
 };
 
 
-export type MutationUpdateTitleVerificationByIdArgs = {
-  input: UpdateTitleVerificationInput;
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
 };
 
 
-export type MutationUpdateUserDetailsByEmailArgs = {
-  input: UpdateUserDetailsByEmailInput;
+export type MutationUpdateTitleVerificationByIdArgs = {
+  input: UpdateTitleVerificationInput;
 };
 
 
@@ -180,13 +188,6 @@ export type Title = {
 export type UpdateTitleVerificationInput = {
   id: Scalars['UUID']['input'];
   verification: Verification;
-};
-
-export type UpdateUserDetailsByEmailInput = {
-  email: Scalars['String']['input'];
-  firstname: Scalars['String']['input'];
-  govtid: Scalars['String']['input'];
-  lastname: Scalars['String']['input'];
 };
 
 export type User = {

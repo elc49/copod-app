@@ -32,27 +32,32 @@ function Page() {
   const [updateTitleVerification, { loading: updatingTitleVerification }] = useMutation(UPDATE_TITLE_VERIFICATION)
   const router = useRouter()
 
-  const saveLandLocally = () => {
+  const saveLandLocally = (status: string) => {
     updateTitleVerification({
       variables: {
         input: {
           id: paymentDetails.title.id,
-          verification: "VERIFIED",
+          verification: status,
         },
       },
       onCompleted: () => {
+        toaster.create({
+          title: "Success",
+          description: "Land saved locally",
+          type: "success",
+        })
         router.back()
       },
     })
   }
 
-  const onSuccess = () => {
+  const onSuccess = (status: string) => {
     toaster.create({
       title: "Success",
       description: "Land registered",
       type: "success",
     })
-    saveLandLocally()
+    saveLandLocally(status)
   }
 
   const onFailure = () => {
@@ -64,7 +69,7 @@ function Page() {
   }
 
   // TODO: break this down further to simplify
-  const registerLand = async (title: string, size: number, unit: string) => {
+  const registerLand = async (title: string, size: number, unit: string, status: string) => {
     try {
       setRegistering(true)
       const registryContractAddress = await import("../../../../../SmartContract/ignition/deployments/chain-11155420/deployed_addresses.json")
@@ -79,7 +84,7 @@ function Page() {
       })
       const hash = await privateClient(provider!).writeContract(request)
       const receipt = await publicClient(provider!).waitForTransactionReceipt({ hash })
-      onSuccess()
+      onSuccess(status)
       console.log(receipt)
     } catch (e) {
       onFailure()

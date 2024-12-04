@@ -28,18 +28,19 @@ function Page() {
   const docDetails = useMemo(() => {
     return documentDetails?.getSupportingDocById
   }, [documentDetails])
-  const [updateUserDetailsById, { loading: updatingUserDetails }] = useMutation(CREATE_USER)
+  const [creaeUser, { loading: updatingUserDetails }] = useMutation(CREATE_USER)
 
   const saveDetails = (values: any) => {
     try {
       setSaving(true)
-      updateUserDetailsById({
+      creaeUser({
         variables: {
           input: {
             email: user?.email,
             firstname: values.firstname,
             lastname: values.lastname,
             govtid: values.govtid,
+            verification: values.verification,
           },
         },
         onCompleted: () => {

@@ -70,7 +70,24 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		Lastname:  input.Lastname,
 		GovtID:    input.Govtid,
 	}
-	return r.userController.CreateUser(ctx, args)
+	u, err := r.userController.CreateUser(ctx, args)
+	if err != nil {
+		return nil, err
+	}
+
+	go func() {
+		uargs := sql.UpdateUserSupportDocByEmailParams{
+			Email:        input.Email,
+			Verification: input.Verification.String(),
+			GovtID:       input.Govtid,
+		}
+		r.supportDocController.UpdateSupportingDocByEmail(ctx, uargs)
+		if err != nil {
+			return
+		}
+	}()
+
+	return u, err
 }
 
 // Title is the resolver for the title field.
