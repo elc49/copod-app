@@ -40,7 +40,7 @@ function Page() {
             firstname: values.firstname,
             lastname: values.lastname,
             govtid: values.govtid,
-            verification: values.verification,
+            verification: values.verification[0],
           },
         },
         onCompleted: () => {
