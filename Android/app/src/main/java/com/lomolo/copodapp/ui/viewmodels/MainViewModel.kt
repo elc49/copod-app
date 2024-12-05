@@ -10,7 +10,6 @@ import androidx.lifecycle.viewModelScope
 import com.lomolo.copodapp.model.DeviceDetails
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
-import com.web3auth.core.types.ExtraLoginOptions
 import com.web3auth.core.types.LoginParams
 import com.web3auth.core.types.Provider
 import com.web3auth.core.types.UserInfo
@@ -40,10 +39,6 @@ interface GetDeviceDetails {
     data class Error(val msg: String?) : GetDeviceDetails
 }
 
-data class LoginInput(
-    val email: String = "",
-)
-
 class MainViewModel(
     private val web3Auth: IWeb3Auth,
     private val restApiService: IRestFul,
@@ -63,20 +58,11 @@ class MainViewModel(
     var loginSdk: LoginSdk by mutableStateOf(LoginSdk.Success)
         private set
 
-    private val _loginInput: MutableStateFlow<LoginInput> = MutableStateFlow(LoginInput())
-    val loginInput: StateFlow<LoginInput> = _loginInput.asStateFlow()
-
     private val _deviceDetails: MutableStateFlow<DeviceDetails> = MutableStateFlow(DeviceDetails())
     val deviceDetails: StateFlow<DeviceDetails> = _deviceDetails.asStateFlow()
 
     var gettingDeviceDetails: GetDeviceDetails by mutableStateOf(GetDeviceDetails.Success)
         private set
-
-    fun setEmail(email: String) {
-        _loginInput.update {
-            it.copy(email = email)
-        }
-    }
 
     private fun prepareCredentials() {
         credentials = web3Auth.getCredentials(privateKey())
@@ -106,18 +92,11 @@ class MainViewModel(
         }
     }
 
-    fun isValidEmail(email: String): Boolean {
-        val emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}$"
-        return email.matches(emailRegex.toRegex())
-    }
-
     fun login() {
-        val email = _loginInput.value.email
-        if (loginSdk !is LoginSdk.Loading && isValidEmail(email)) {
+        if (loginSdk !is LoginSdk.Loading) {
             loginSdk = LoginSdk.Loading
             val loginParams = LoginParams(
                 loginProvider = Provider.GOOGLE,
-                extraLoginOptions = ExtraLoginOptions(login_hint = email)
             )
             viewModelScope.launch {
                 loginSdk = try {
