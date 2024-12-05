@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material3.AlertDialogDefaults
@@ -39,7 +38,6 @@ fun AccountDetails(
     BasicAlertDialog(onDismissRequest = {}) {
         Surface(
             modifier
-                .wrapContentWidth()
                 .wrapContentHeight(),
             shape = MaterialTheme.shapes.large,
             tonalElevation = AlertDialogDefaults.TonalElevation,
@@ -63,13 +61,13 @@ fun AccountDetails(
                         ) {
                            Avatar(
                                userInfo.profileImage,
-                               userInfo.email
+                               userInfo.name
                            ) { setDialog(true) }
                             Column(
                                 verticalArrangement = Arrangement.spacedBy(4.dp),
                             ) {
                                 Text(
-                                    userInfo.email,
+                                    userInfo.name,
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Bold,
                                     overflow = TextOverflow.Ellipsis,

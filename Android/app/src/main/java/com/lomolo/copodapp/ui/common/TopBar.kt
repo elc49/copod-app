@@ -19,7 +19,7 @@ fun TopBar(
         if (userInfo != null) {
             Avatar(
                 avatar = userInfo.profileImage,
-                email = userInfo.email,
+                name = userInfo.name,
                 onClick = onOpenDialog,
             )
         }

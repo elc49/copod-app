@@ -22,7 +22,7 @@ import com.lomolo.copodapp.util.Util
 @Composable
 fun Avatar(
     avatar: String = "",
-    email: String = "",
+    name: String = "",
     onClick: () -> Unit = {},
 ) {
     if (avatar.isNotEmpty()) {
@@ -50,7 +50,7 @@ fun Avatar(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                Util.capitalize(email.first().toString())
+                Util.capitalize(name.first().toString())
             )
         }
     }
