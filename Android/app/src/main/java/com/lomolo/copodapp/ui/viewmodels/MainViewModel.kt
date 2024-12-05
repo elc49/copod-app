@@ -116,7 +116,7 @@ class MainViewModel(
         if (loginSdk !is LoginSdk.Loading && isValidEmail(email)) {
             loginSdk = LoginSdk.Loading
             val loginParams = LoginParams(
-                loginProvider = Provider.EMAIL_PASSWORDLESS,
+                loginProvider = Provider.GOOGLE,
                 extraLoginOptions = ExtraLoginOptions(login_hint = email)
             )
             viewModelScope.launch {

@@ -29,7 +29,8 @@ fun Avatar(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(avatar)
-                .crossfade(true),
+                .crossfade(true)
+                .build(),
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(48.dp)
