@@ -37,7 +37,6 @@ fun UploadGovtIssuedId(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     userEmail: String,
-    userWallet: String,
     onNext: (String) -> Unit,
     viewModel: RegisterLandViewModel,
 ) {
@@ -95,7 +94,7 @@ fun UploadGovtIssuedId(
         image = idDoc,
         onNext = {
             if (image.isNotEmpty()) {
-                viewModel.saveSupportingDoc(userEmail, userWallet) {
+                viewModel.saveSupportingDoc(userEmail) {
                     if (it != null) onNext(it)
                 }
             }

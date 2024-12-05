@@ -39,7 +39,7 @@ import com.lomolo.copodapp.ui.viewmodels.MainViewModel
 import com.web3auth.core.types.UserInfo
 import org.koin.androidx.compose.koinViewModel
 
-object LandScreenDestination: Navigation {
+object LandScreenDestination : Navigation {
     override val title = null
     override val route = "land"
 }
@@ -61,20 +61,17 @@ fun LandScreen(
     val lands by viewModel.lands.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopBar(
-                userInfo = userInfo!!,
-                onOpenDialog = { openDialog = true },
-            )
-        },
-        bottomBar = {
-            BottomNavBar(
-                currentDestination = currentDestination,
-                onNavigateTo = onNavigateTo,
-            )
-        }
-    ) { innerPadding ->
+    Scaffold(topBar = {
+        TopBar(
+            userInfo = userInfo!!,
+            onOpenDialog = { openDialog = true },
+        )
+    }, bottomBar = {
+        BottomNavBar(
+            currentDestination = currentDestination,
+            onNavigateTo = onNavigateTo,
+        )
+    }) { innerPadding ->
         Surface(
             modifier = modifier.padding(innerPadding)
         ) {
@@ -85,14 +82,17 @@ fun LandScreen(
                     signOut = { mainViewModel.logOut() },
                 )
             }
-            when(viewModel.gettingUserLands) {
+            when (viewModel.gettingUserLands) {
                 GetUserLands.Success -> {
                     if (lands.isEmpty()) {
                         NoLand(
                             onClickAddLand = onClickAddLand,
                         )
+                    } else {
+                        Lands()
                     }
                 }
+
                 GetUserLands.Loading -> Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
@@ -102,6 +102,7 @@ fun LandScreen(
                         Modifier.size(20.dp)
                     )
                 }
+
                 is GetUserLands.Error -> Text(
                     "Something went wrong",
                     color = MaterialTheme.colorScheme.error,

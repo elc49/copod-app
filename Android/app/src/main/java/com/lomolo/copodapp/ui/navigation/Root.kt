@@ -125,7 +125,6 @@ fun NavigationHost(
                     navHostController.navigate(it)
                 },
                 userEmail = mainViewModel.userInfo!!.email,
-                userWallet = mainViewModel.credentials!!.address,
                 viewModel = registerLandViewModel,
             )
         }
@@ -141,7 +140,6 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 userEmail = mainViewModel.userInfo!!.email,
-                userWallet = mainViewModel.credentials!!.address,
                 viewModel = registerLandViewModel,
                 onNext = { uploadId ->
                     navHostController.navigate("${MpesaScreenDestination.route}/${uploadId}")

@@ -103,13 +103,13 @@ class RegisterLandViewModel(
         }
     }
 
-    fun saveLandTitle(email: String, address: String, cb: (String) -> Unit) {
+    fun saveLandTitle(email: String, cb: (String) -> Unit) {
         if (savingLandTitle !is SaveUpload.Loading) {
             savingLandTitle = SaveUpload.Loading
             viewModelScope.launch {
                 savingLandTitle = try {
                     val res = graphqlApiService.uploadLandTitle(
-                        DocUploadInput(landTitle.value, email, address)
+                        DocUploadInput(landTitle.value, email)
                     ).dataOrThrow()
                     SaveUpload.Success.also { cb(res.uploadLandTitle.id.toString()) }
                 } catch (e: ApolloException) {
@@ -120,13 +120,13 @@ class RegisterLandViewModel(
         }
     }
 
-    fun saveSupportingDoc(email: String, address: String, cb: (String?) -> Unit) {
+    fun saveSupportingDoc(email: String, cb: (String?) -> Unit) {
         if (savingSupportingDoc !is SaveUpload.Loading) {
             savingSupportingDoc = SaveUpload.Loading
             viewModelScope.launch {
                 savingSupportingDoc = try {
                     graphqlApiService.uploadSupportingDoc(
-                        DocUploadInput(supportingDoc.value, email, address)
+                        DocUploadInput(supportingDoc.value, email)
                     ).dataOrThrow()
                     SaveUpload.Success.also { cb(titleId) }
                 } catch (e: ApolloException) {

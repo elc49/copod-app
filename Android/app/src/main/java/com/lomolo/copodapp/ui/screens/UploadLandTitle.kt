@@ -36,7 +36,6 @@ fun UploadLandTitle(
     onGoBack: () -> Unit,
     onNavigateTo: (String) -> Unit,
     userEmail: String,
-    userWallet: String,
     viewModel: RegisterLandViewModel,
 ) {
     val image by viewModel.landTitle.collectAsState()
@@ -90,7 +89,7 @@ fun UploadLandTitle(
         }
     }, image = landTitle, savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
         if (image.isNotEmpty()) {
-            viewModel.saveLandTitle(userEmail, userWallet) {
+            viewModel.saveLandTitle(userEmail) {
                 onNavigateTo("${UploadGovtIssuedIdScreenDestination.route}/${it}")
             }
         }

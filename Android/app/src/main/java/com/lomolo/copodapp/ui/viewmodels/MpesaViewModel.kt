@@ -62,7 +62,7 @@ class MpesaViewModel(
         }
     }
 
-    fun chargeMpesa(email: String, wallet: String, deviceDetails: DeviceDetails) {
+    fun chargeMpesa(email: String, deviceDetails: DeviceDetails) {
         if (chargingMpesa !is ChargingMpesa.Loading && chargingMpesa !is ChargingMpesa.Paying) {
             chargingMpesa = ChargingMpesa.Loading
             viewModelScope.launch {
@@ -72,7 +72,6 @@ class MpesaViewModel(
                         reason = PaymentReason.LAND_REGISTRY,
                         phone = phone,
                         email = email,
-                        walletAddress = wallet,
                         currency = deviceDetails.currency,
                         paymentFor = uploadId,
                     )

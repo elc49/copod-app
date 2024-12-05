@@ -121,7 +121,7 @@ input CreateUserInput {
 
 type Query {
   getLocalLands: [Land!]!
-  getUserLands(email: String!): [Land!]!
+  getUserLands(email: String!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!

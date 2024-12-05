@@ -18,3 +18,7 @@ RETURNING *;
 UPDATE titles SET verification = $1
 WHERE id = $2
 RETURNING *;
+
+-- name: GetTitlesByEmail :many
+SELECT * FROM titles
+WHERE email = $1;

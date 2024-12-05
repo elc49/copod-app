@@ -16,9 +16,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface IGraphQL {
     suspend fun getLocalLands(): ApolloResponse<GetLocalLandsQuery.Data>
-    suspend fun getUserLands(walletAddress: String): ApolloResponse<GetUserLandQuery.Data>
+    suspend fun getUserLands(email: String): ApolloResponse<GetUserLandQuery.Data>
     suspend fun chargeMpesa(input: PayWithMpesaInput): ApolloResponse<ChargeMpesaMutation.Data>
-    fun paymentUpdate(walletAddress: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
+    fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
     suspend fun uploadLandTitle(input: DocUploadInput): ApolloResponse<UploadLandTitleMutation.Data>
     suspend fun uploadSupportingDoc(input: DocUploadInput): ApolloResponse<UploadSupportingDocMutation.Data>
 }
@@ -30,16 +30,16 @@ class GraphQLServiceImpl(
         FetchPolicy.NetworkFirst
     ).execute()
 
-    override suspend fun getUserLands(walletAddress: String) =
-        apolloClient.query(GetUserLandQuery(walletAddress)).fetchPolicy(
+    override suspend fun getUserLands(email: String) =
+        apolloClient.query(GetUserLandQuery(email)).fetchPolicy(
             FetchPolicy.NetworkFirst
         ).execute()
 
     override suspend fun chargeMpesa(input: PayWithMpesaInput) =
         apolloClient.mutation(ChargeMpesaMutation(input)).execute()
 
-    override fun paymentUpdate(walletAddress: String) = apolloClient.subscription(
-        PaymentUpdateSubscription(walletAddress)
+    override fun paymentUpdate(email: String) = apolloClient.subscription(
+        PaymentUpdateSubscription(email)
     ).toFlow()
 
     override suspend fun uploadLandTitle(input: DocUploadInput) = apolloClient.mutation(
