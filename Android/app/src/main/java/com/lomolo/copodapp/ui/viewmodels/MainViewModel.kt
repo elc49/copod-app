@@ -147,6 +147,7 @@ class MainViewModel(
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.d(TAG, e.message ?: "Something went wrong")
+                logOut()
                 InitializeSdk.Error(e.message)
             }
         }
