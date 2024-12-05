@@ -57,6 +57,41 @@ func (q *Queries) GetTitleByEmail(ctx context.Context, email string) (Title, err
 	return i, err
 }
 
+const getTitlesByEmail = `-- name: GetTitlesByEmail :many
+SELECT id, title, verification, email, created_at, updated_at FROM titles
+WHERE email = $1
+`
+
+func (q *Queries) GetTitlesByEmail(ctx context.Context, email string) ([]Title, error) {
+	rows, err := q.db.QueryContext(ctx, getTitlesByEmail, email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Title{}
+	for rows.Next() {
+		var i Title
+		if err := rows.Scan(
+			&i.ID,
+			&i.Title,
+			&i.Verification,
+			&i.Email,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateTitleByEmail = `-- name: UpdateTitleByEmail :one
 UPDATE titles SET title = $1, verification = $2
 WHERE email = $3

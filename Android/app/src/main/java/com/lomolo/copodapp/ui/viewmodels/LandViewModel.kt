@@ -12,6 +12,7 @@ import com.lomolo.copodapp.network.IGraphQL
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 interface GetUserLands {
@@ -34,7 +35,8 @@ class LandViewModel(
             gettingUserLands = GetUserLands.Loading
             viewModelScope.launch {
                 gettingUserLands = try {
-                    graphqlService.getUserLands(email)
+                    val res = graphqlService.getUserLands(email).dataOrThrow()
+                    _lands.update { res.getUserLands }
                     GetUserLands.Success
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")

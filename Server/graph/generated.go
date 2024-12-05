@@ -143,7 +143,7 @@ type PaymentResolver interface {
 }
 type QueryResolver interface {
 	GetLocalLands(ctx context.Context) ([]*model.Land, error)
-	GetUserLands(ctx context.Context, email string) ([]*model.Land, error)
+	GetUserLands(ctx context.Context, email string) ([]*model.Title, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
 	GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error)
@@ -2416,9 +2416,9 @@ func (ec *executionContext) _Query_getUserLands(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Land)
+	res := resTmp.([]*model.Title)
 	fc.Result = res
-	return ec.marshalNLand2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLandᚄ(ctx, field.Selections, res)
+	return ec.marshalNTitle2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitleᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getUserLands(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2430,25 +2430,17 @@ func (ec *executionContext) fieldContext_Query_getUserLands(ctx context.Context,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Land_id(ctx, field)
+				return ec.fieldContext_Title_id(ctx, field)
 			case "title":
-				return ec.fieldContext_Land_title(ctx, field)
-			case "size":
-				return ec.fieldContext_Land_size(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Land_symbol(ctx, field)
-			case "town":
-				return ec.fieldContext_Land_town(ctx, field)
-			case "titleDocument":
-				return ec.fieldContext_Land_titleDocument(ctx, field)
+				return ec.fieldContext_Title_title(ctx, field)
 			case "verified":
-				return ec.fieldContext_Land_verified(ctx, field)
+				return ec.fieldContext_Title_verified(ctx, field)
 			case "created_at":
-				return ec.fieldContext_Land_created_at(ctx, field)
+				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_Land_updated_at(ctx, field)
+				return ec.fieldContext_Title_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Land", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
 		},
 	}
 	defer func() {
@@ -7009,6 +7001,50 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 
 func (ec *executionContext) marshalNTitle2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v model.Title) graphql.Marshaler {
 	return ec._Title(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNTitle2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitleᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Title) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v *model.Title) graphql.Marshaler {

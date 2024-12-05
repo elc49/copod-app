@@ -1,5 +1,5 @@
-subscription PaymentUpdate($walletAddress: String!) {
-    paymentUpdate(walletAddress: $walletAddress) {
+subscription PaymentUpdate($email: String!) {
+    paymentUpdate(email: $email) {
         referenceId
         status
     }

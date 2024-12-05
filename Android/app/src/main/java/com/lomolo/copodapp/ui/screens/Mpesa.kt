@@ -69,7 +69,6 @@ fun MpesaScreen(
     val mpesa by viewModel.mpesa.collectAsState()
     val keyboardController = LocalSoftwareKeyboardController.current
     val userInfo = mainViewModel.userInfo
-    val credentials = mainViewModel.credentials
     val deviceDetails by mainViewModel.deviceDetails.collectAsState()
     val isPhoneValid = viewModel.isValidPhone(mpesa, deviceDetails)
     val context = LocalContext.current
@@ -111,7 +110,7 @@ fun MpesaScreen(
                     ),
                     keyboardActions = KeyboardActions(onDone = {
                         keyboardController?.hide()
-                        viewModel.chargeMpesa(userInfo?.email!!, credentials!!.address, deviceDetails)
+                        viewModel.chargeMpesa(userInfo?.email!!, deviceDetails)
                     }),
                     leadingIcon = {
                         Row(
@@ -137,7 +136,7 @@ fun MpesaScreen(
                     },
                 )
                 Button(
-                    onClick = { viewModel.chargeMpesa(userInfo?.email!!, credentials!!.address, deviceDetails) },
+                    onClick = { viewModel.chargeMpesa(userInfo?.email!!, deviceDetails) },
                     contentPadding = PaddingValues(16.dp),
                     modifier = Modifier.fillMaxWidth(),
                     shape = MaterialTheme.shapes.extraSmall,

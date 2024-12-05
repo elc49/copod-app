@@ -1,9 +1,21 @@
+input CreateUserInput {
+  email: String!
+
+  firstname: String!
+
+  lastname: String!
+
+  govtid: String!
+
+  verification: Verification!
+
+  supportDocId: UUID!
+}
+
 input DocUploadInput {
   url: String!
 
   email: String!
-
-  walletAddress: String!
 }
 
 type Land {
@@ -32,6 +44,10 @@ type Mutation {
   uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
 
   chargeMpesa(input: PayWithMpesaInput!): String
+
+  updateTitleVerificationById(input: UpdateTitleVerificationInput!): Title!
+
+  createUser(input: CreateUserInput!): User!
 }
 
 enum PaidFor {
@@ -47,8 +63,6 @@ input PayWithMpesaInput {
 
   email: String!
 
-  walletAddress: String!
-
   currency: String!
 
   paymentFor: UUID!
@@ -61,7 +75,13 @@ type Payment {
 
   status: String!
 
-  wallet_address: String!
+  email: String!
+
+  title: Title
+
+  title_id: UUID!
+
+  supportingDoc: SupportingDoc
 
   created_at: Time!
 
@@ -72,30 +92,48 @@ enum PaymentReason {
   LAND_REGISTRY
 }
 
+enum PaymentStatus {
+  success
+
+  failed
+
+  pending
+
+  timeout
+}
+
 type PaymentUpdate {
   referenceId: String!
 
   status: String!
 
-  walletAddress: String!
+  email: String!
 }
 
 type Query {
   getLocalLands: [Land!]!
 
-  getUserLands(walletAddress: String!): [Land!]!
+  getUserLands(email: String!): [Title!]!
 
-  hasPendingLandRecords(walletAddress: String!): Boolean!
+  getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
+
+  getPaymentDetailsById(id: UUID!): Payment!
+
+  getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
+
+  getSupportingDocById(id: UUID!): SupportingDoc!
 }
 
 type Subscription {
-  paymentUpdate(walletAddress: String!): PaymentUpdate!
+  paymentUpdate(email: String!): PaymentUpdate!
 }
 
 type SupportingDoc {
   id: UUID!
 
   govt_id: String!
+
+  email: String!
 
   verified: Verification!
 
@@ -120,6 +158,12 @@ type Title {
 
 scalar UUID
 
+input UpdateTitleVerificationInput {
+  id: UUID!
+
+  verification: Verification!
+}
+
 type User {
   id: UUID!
 
@@ -127,9 +171,9 @@ type User {
 
   lastname: String
 
-  email: String!
+  govt_id: String!
 
-  wallet_address: String!
+  email: String!
 
   created_at: Time!
 
