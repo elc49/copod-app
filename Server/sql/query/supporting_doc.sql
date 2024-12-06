@@ -1,6 +1,6 @@
 -- name: CreateSupportDoc :one
 INSERT INTO support_docs (
-  email, govt_id
+  email, url
 ) VALUES (
   $1, $2
 ) RETURNING *;
@@ -17,7 +17,7 @@ WHERE verification = $1;
 SELECT * FROM support_docs
 WHERE id = $1;
 
--- name: UpdateUserSupportDocById :one
+-- name: UpdateSupportDocVerificationById :one
 UPDATE support_docs SET verification = $1
 WHERE id = $2
 RETURNING *;

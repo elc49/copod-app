@@ -20,7 +20,7 @@ import (
 func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
 	args := sql.CreateTitleParams{
 		Email: input.Email,
-		Title: input.URL,
+		Url:   input.URL,
 	}
 
 	return r.titleController.CreateTitle(ctx, args)
@@ -29,8 +29,8 @@ func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocU
 // UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
 func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
 	args := sql.CreateSupportDocParams{
-		Email:  input.Email,
-		GovtID: input.URL,
+		Email: input.Email,
+		Url:   input.URL,
 	}
 
 	return r.supportDocController.CreateSupportingDoc(ctx, args)
@@ -68,18 +68,17 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		Email:     input.Email,
 		Firstname: input.Firstname,
 		Lastname:  input.Lastname,
-		GovtID:    input.Govtid,
 	}
 	u, err := r.userController.CreateUser(ctx, args)
 	if err != nil {
 		return nil, err
 	}
 
-	uargs := sql.UpdateUserSupportDocByIdParams{
+	uargs := sql.UpdateSupportDocVerificationByIdParams{
 		ID:           input.SupportDocID,
 		Verification: input.Verification.String(),
 	}
-	if _, err = r.supportDocController.UpdateUserSupportDocById(ctx, uargs); err != nil {
+	if _, err = r.supportDocController.UpdateSupportDocVerificationById(ctx, uargs); err != nil {
 		return nil, err
 	}
 
@@ -89,11 +88,6 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 // Title is the resolver for the title field.
 func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
 	return r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
-}
-
-// GetLocalLands is the resolver for the getLocalLands field.
-func (r *queryResolver) GetLocalLands(ctx context.Context) ([]*model.Land, error) {
-	return make([]*model.Land, 0), nil
 }
 
 // GetUserLands is the resolver for the getUserLands field.

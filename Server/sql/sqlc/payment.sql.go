@@ -103,18 +103,20 @@ func (q *Queries) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (Paym
 }
 
 const getPaymentTitleByID = `-- name: GetPaymentTitleByID :one
-SELECT id, title, verification, email, created_at, updated_at FROM titles
+SELECT id, url, title, verification, email, support_doc_id, created_at, updated_at FROM title_deeds
 WHERE id = $1
 `
 
-func (q *Queries) GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (Title, error) {
+func (q *Queries) GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error) {
 	row := q.db.QueryRowContext(ctx, getPaymentTitleByID, id)
-	var i Title
+	var i TitleDeed
 	err := row.Scan(
 		&i.ID,
+		&i.Url,
 		&i.Title,
 		&i.Verification,
 		&i.Email,
+		&i.SupportDocID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

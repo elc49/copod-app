@@ -12,7 +12,7 @@ var userController *User
 
 type UserController interface {
 	CreateUser(context.Context, sql.CreateUserParams) (*model.User, error)
-	UpdateUserSupportDocById(context.Context, sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error)
+	UpdateSupportDocVerificationById(context.Context, sql.UpdateSupportDocVerificationByIdParams) (*model.SupportingDoc, error)
 }
 
 type User struct {
@@ -34,6 +34,6 @@ func (c *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*mode
 	return c.r.CreateUser(ctx, args)
 }
 
-func (c *User) UpdateUserSupportDocById(ctx context.Context, args sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error) {
-	return c.r.UpdateUserSupportDocById(ctx, args)
+func (c *User) UpdateSupportDocVerificationById(ctx context.Context, args sql.UpdateSupportDocVerificationByIdParams) (*model.SupportingDoc, error) {
+	return c.r.UpdateSupportDocVerificationById(ctx, args)
 }

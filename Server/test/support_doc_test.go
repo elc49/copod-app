@@ -13,28 +13,22 @@ import (
 func Test_SupportDoc_Controller(t *testing.T) {
 	sc := controller.GetSupportingDocController()
 	ctx := context.Background()
-	var s *model.SupportingDoc
 	var err error
 
 	t.Run("create_support_doc", func(t *testing.T) {
-		args := sql.CreateSupportDocParams{
-			GovtID: docUri,
-			Email:  email,
-		}
-		s, err = sc.CreateSupportingDoc(ctx, args)
 
 		assert.Nil(t, err)
-		assert.Equal(t, s.GovtID, docUri)
+		assert.Equal(t, supportdoc.URL, docUri)
 	})
 
 	t.Run("should_only_be_one_supporting_doc", func(t *testing.T) {
 		e, err := sc.CreateSupportingDoc(ctx, sql.CreateSupportDocParams{
-			GovtID: docUri,
-			Email:  email,
+			Url:   docUri,
+			Email: email,
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, s.ID, e.ID)
+		assert.Equal(t, supportdoc.ID, e.ID)
 	})
 
 	t.Run("get_support_docs_by_verification", func(t *testing.T) {
@@ -45,18 +39,18 @@ func Test_SupportDoc_Controller(t *testing.T) {
 	})
 
 	t.Run("get_supporting_doc_by_id", func(t *testing.T) {
-		doc, err := sc.GetSupportingDocByID(ctx, s.ID)
+		doc, err := sc.GetSupportingDocByID(ctx, supportdoc.ID)
 
 		assert.Nil(t, err)
-		assert.Equal(t, doc.GovtID, docUri)
+		assert.Equal(t, doc.URL, docUri)
 	})
 
 	t.Run("should_update_supporting_doc_by_email", func(t *testing.T) {
-		args := sql.UpdateUserSupportDocByIdParams{
+		args := sql.UpdateSupportDocVerificationByIdParams{
 			Verification: model.VerificationVerified.String(),
-			ID:           s.ID,
+			ID:           supportdoc.ID,
 		}
-		doc, err := sc.UpdateUserSupportDocById(ctx, args)
+		doc, err := sc.UpdateSupportDocVerificationById(ctx, args)
 
 		assert.Nil(t, err)
 		assert.Equal(t, doc.Verified, model.VerificationVerified)
