@@ -15,16 +15,19 @@ func Test_Title_Controller(t *testing.T) {
 	var title *model.Title
 	var err error
 	tc := controller.GetTitleController()
+	titleNo := "title/403d/rix4/q"
 
 	t.Run("create_title", func(t *testing.T) {
 		args := sql.CreateTitleParams{
-			Title: docUri,
-			Email: email,
+			Url:          docUri,
+			Email:        email,
+			Title:        titleNo,
+			SupportDocID: supportdoc.ID,
 		}
 		title, err = tc.CreateTitle(ctx, args)
 
 		assert.Nil(t, err)
-		assert.Equal(t, title.Title, docUri)
+		assert.Equal(t, title.URL, docUri)
 	})
 
 	t.Run("update_title_verification", func(t *testing.T) {

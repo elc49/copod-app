@@ -25,18 +25,20 @@ type Payment struct {
 
 type SupportDoc struct {
 	ID           uuid.UUID `json:"id"`
-	GovtID       string    `json:"govt_id"`
+	Url          string    `json:"url"`
 	Verification string    `json:"verification"`
 	Email        string    `json:"email"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-type Title struct {
+type TitleDeed struct {
 	ID           uuid.UUID `json:"id"`
+	Url          string    `json:"url"`
 	Title        string    `json:"title"`
 	Verification string    `json:"verification"`
 	Email        string    `json:"email"`
+	SupportDocID uuid.UUID `json:"support_doc_id"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 }
@@ -45,7 +47,6 @@ type User struct {
 	ID        uuid.UUID `json:"id"`
 	Firstname string    `json:"firstname"`
 	Lastname  string    `json:"lastname"`
-	GovtID    string    `json:"govt_id"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

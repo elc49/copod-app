@@ -15,9 +15,10 @@ var (
 	email           = RandomEmailAddress()
 	superUserGovtId = RandomGovtID()
 
-	docUri    = "https://doc.io/title"
-	q         *sqlc.Queries
-	superUser *model.User
+	docUri     = "https://doc.io/title"
+	q          *sqlc.Queries
+	superUser  *model.User
+	supportdoc *model.SupportingDoc
 )
 
 func init() {
@@ -43,7 +44,6 @@ func init() {
 		Email:     email,
 		Firstname: "John",
 		Lastname:  "Doe",
-		GovtID:    "4903",
 	})
 	if err != nil {
 		logrus.WithError(err).Fatalln("test: init: CreateUser")
@@ -58,4 +58,13 @@ func init() {
 	// SupportingDoc
 	sc := controller.SupportingDoc{}
 	sc.Init(q)
+	args := sqlc.CreateSupportDocParams{
+		Url:   docUri,
+		Email: email,
+	}
+	s, sErr := sc.CreateSupportingDoc(context.Background(), args)
+	supportdoc = s
+	if sErr != nil {
+		logrus.WithError(err).Fatalln("test: init: create master support doc")
+	}
 }

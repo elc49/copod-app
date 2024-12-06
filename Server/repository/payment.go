@@ -80,7 +80,7 @@ func (r *Payment) GetPaymentTitleByID(ctx context.Context, titleID uuid.UUID) (*
 
 	return &model.Title{
 		ID:        t.ID,
-		Title:     t.Title,
+		URL:       t.Url,
 		Verified:  model.Verification(t.Verification),
 		CreatedAt: t.CreatedAt,
 		UpdatedAt: t.UpdatedAt,

@@ -29,24 +29,12 @@ enum PaymentReason {
   LAND_REGISTRY
 }
 
-# Land
-type Land {
-  id: UUID!
-  title: String!
-  size: Int!
-  symbol: String!
-  town: String
-  titleDocument: String!
-  verified: Verification!
-  created_at: Time!
-  updated_at: Time!
-}
-
 # Title
 type Title {
   id: UUID!
-  title: String!
+  url: String!
   verified: Verification!
+  support_doc_id: UUID!
   created_at: Time!
   updated_at: Time!
 }
@@ -54,7 +42,7 @@ type Title {
 # SupportingDoc
 type SupportingDoc {
   id: UUID!
-  govt_id: String!
+  url: String!
   email: String!
   verified: Verification!
   created_at: Time!
@@ -66,7 +54,6 @@ type User {
   id: UUID!
   firstname: String
   lastname: String
-  govt_id: String!
   email: String!
   created_at: Time!
   updated_at: Time!
@@ -114,13 +101,12 @@ input CreateUserInput {
   email: String!
   firstname: String!
   lastname: String!
-  govtid: String!
+  supportDocUrl: String!
   verification: Verification!
   supportDocId: UUID!
 }
 
 type Query {
-  getLocalLands: [Land!]!
   getUserLands(email: String!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!

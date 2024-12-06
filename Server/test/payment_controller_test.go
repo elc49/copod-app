@@ -21,8 +21,9 @@ func Test_Payment_Controller(t *testing.T) {
 	t.Run("create_payment", func(t *testing.T) {
 		tc := controller.GetTitleController()
 		args := sql.CreateTitleParams{
-			Title: docUri,
-			Email: email,
+			Url:          docUri,
+			Email:        email,
+			SupportDocID: supportdoc.ID,
 		}
 		title, err := tc.CreateTitle(ctx, args)
 		p, err = pc.CreatePayment(ctx, sql.CreatePaymentParams{

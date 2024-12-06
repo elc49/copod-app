@@ -30,7 +30,7 @@ func (r *SupportingDoc) CreateSupportDoc(ctx context.Context, args sql.CreateSup
 
 	return &model.SupportingDoc{
 		ID:        s.ID,
-		GovtID:    s.GovtID,
+		URL:       s.Url,
 		CreatedAt: s.CreatedAt,
 		UpdatedAt: s.UpdatedAt,
 	}, nil
@@ -48,23 +48,23 @@ func (r *SupportingDoc) GetSupportDocByEmail(ctx context.Context, email string) 
 
 	return &model.SupportingDoc{
 		ID:        s.ID,
-		GovtID:    s.GovtID,
+		URL:       s.Url,
 		Verified:  model.Verification(s.Verification),
 		CreatedAt: s.CreatedAt,
 		UpdatedAt: s.UpdatedAt,
 	}, nil
 }
 
-func (r *SupportingDoc) UpdateUserSupportDocById(ctx context.Context, args sql.UpdateUserSupportDocByIdParams) (*model.SupportingDoc, error) {
-	u, err := r.sql.UpdateUserSupportDocById(ctx, args)
+func (r *SupportingDoc) UpdateSupportDocVerificationById(ctx context.Context, args sql.UpdateSupportDocVerificationByIdParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateSupportDocVerificationById(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateUserSupportDocById")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocVerificationById")
 		return nil, err
 	}
 
 	return &model.SupportingDoc{
 		ID:        u.ID,
-		GovtID:    u.GovtID,
+		URL:       u.Url,
 		Verified:  model.Verification(u.Verification),
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,
@@ -83,7 +83,7 @@ func (r *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, ver
 		doc := &model.SupportingDoc{
 			ID:        item.ID,
 			Email:     item.Email,
-			GovtID:    item.GovtID,
+			URL:       item.Url,
 			Verified:  model.Verification(item.Verification),
 			CreatedAt: item.CreatedAt,
 			UpdatedAt: item.UpdatedAt,
@@ -104,7 +104,7 @@ func (r *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 
 	return &model.SupportingDoc{
 		ID:        d.ID,
-		GovtID:    d.GovtID,
+		URL:       d.Url,
 		Verified:  model.Verification(d.Verification),
 		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,

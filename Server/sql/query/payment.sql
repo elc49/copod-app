@@ -16,7 +16,7 @@ WHERE reference_id = $2
 RETURNING *;
 
 -- name: GetPaymentTitleByID :one
-SELECT * FROM titles
+SELECT * FROM title_deeds
 WHERE id = $1;
 
 -- name: GetPaymentsByStatus :many

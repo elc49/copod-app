@@ -1,24 +1,19 @@
 -- name: CreateTitle :one
-INSERT INTO titles (
-  title, email
+INSERT INTO title_deeds (
+  url, title, email, support_doc_id
 ) VALUES (
-  $1, $2
+  $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: GetTitleByEmail :one
-SELECT * FROM titles
+SELECT * FROM title_deeds
 WHERE email = $1 LIMIT 1;
 
--- name: UpdateTitleByEmail :one
-UPDATE titles SET title = $1, verification = $2
-WHERE email = $3
-RETURNING *;
-
 -- name: UpdateTitleVerificationById :one
-UPDATE titles SET verification = $1
+UPDATE title_deeds SET verification = $1
 WHERE id = $2
 RETURNING *;
 
 -- name: GetTitlesByEmail :many
-SELECT * FROM titles
+SELECT * FROM title_deeds
 WHERE email = $1;

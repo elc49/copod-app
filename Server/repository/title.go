@@ -29,7 +29,7 @@ func (r *Title) CreateTitle(ctx context.Context, args sql.CreateTitleParams) (*m
 
 	return &model.Title{
 		ID:        t.ID,
-		Title:     t.Title,
+		URL:       t.Url,
 		CreatedAt: t.CreatedAt,
 		UpdatedAt: t.UpdatedAt,
 	}, nil
@@ -47,26 +47,10 @@ func (r *Title) GetTitleByEmail(ctx context.Context, email string) (*model.Title
 
 	return &model.Title{
 		ID:        t.ID,
-		Title:     t.Title,
+		URL:       t.Url,
 		Verified:  model.Verification(t.Verification),
 		CreatedAt: t.CreatedAt,
 		UpdatedAt: t.UpdatedAt,
-	}, nil
-}
-
-func (r *Title) UpdateTitleByEmail(ctx context.Context, args sql.UpdateTitleByEmailParams) (*model.Title, error) {
-	u, err := r.sql.UpdateTitleByEmail(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleByEmail")
-		return nil, err
-	}
-
-	return &model.Title{
-		ID:        u.ID,
-		Title:     u.Title,
-		Verified:  model.Verification(u.Verification),
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
 	}, nil
 }
 
@@ -96,7 +80,7 @@ func (r *Title) GetTitlesByEmail(ctx context.Context, email string) ([]*model.Ti
 	for _, item := range t {
 		title := &model.Title{
 			ID:        item.ID,
-			Title:     item.Title,
+			URL:       item.Url,
 			CreatedAt: item.CreatedAt,
 			UpdatedAt: item.UpdatedAt,
 		}

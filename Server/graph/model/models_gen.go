@@ -12,29 +12,17 @@ import (
 )
 
 type CreateUserInput struct {
-	Email        string       `json:"email"`
-	Firstname    string       `json:"firstname"`
-	Lastname     string       `json:"lastname"`
-	Govtid       string       `json:"govtid"`
-	Verification Verification `json:"verification"`
-	SupportDocID uuid.UUID    `json:"supportDocId"`
+	Email         string       `json:"email"`
+	Firstname     string       `json:"firstname"`
+	Lastname      string       `json:"lastname"`
+	SupportDocURL string       `json:"supportDocUrl"`
+	Verification  Verification `json:"verification"`
+	SupportDocID  uuid.UUID    `json:"supportDocId"`
 }
 
 type DocUploadInput struct {
 	URL   string `json:"url"`
 	Email string `json:"email"`
-}
-
-type Land struct {
-	ID            uuid.UUID    `json:"id"`
-	Title         string       `json:"title"`
-	Size          int          `json:"size"`
-	Symbol        string       `json:"symbol"`
-	Town          *string      `json:"town,omitempty"`
-	TitleDocument string       `json:"titleDocument"`
-	Verified      Verification `json:"verified"`
-	CreatedAt     time.Time    `json:"created_at"`
-	UpdatedAt     time.Time    `json:"updated_at"`
 }
 
 type Mutation struct {
@@ -74,7 +62,7 @@ type Subscription struct {
 
 type SupportingDoc struct {
 	ID        uuid.UUID    `json:"id"`
-	GovtID    string       `json:"govt_id"`
+	URL       string       `json:"url"`
 	Email     string       `json:"email"`
 	Verified  Verification `json:"verified"`
 	CreatedAt time.Time    `json:"created_at"`
@@ -82,11 +70,12 @@ type SupportingDoc struct {
 }
 
 type Title struct {
-	ID        uuid.UUID    `json:"id"`
-	Title     string       `json:"title"`
-	Verified  Verification `json:"verified"`
-	CreatedAt time.Time    `json:"created_at"`
-	UpdatedAt time.Time    `json:"updated_at"`
+	ID           uuid.UUID    `json:"id"`
+	URL          string       `json:"url"`
+	Verified     Verification `json:"verified"`
+	SupportDocID uuid.UUID    `json:"support_doc_id"`
+	CreatedAt    time.Time    `json:"created_at"`
+	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
 type UpdateTitleVerificationInput struct {
@@ -98,7 +87,6 @@ type User struct {
 	ID        uuid.UUID `json:"id"`
 	Firstname *string   `json:"firstname,omitempty"`
 	Lastname  *string   `json:"lastname,omitempty"`
-	GovtID    string    `json:"govt_id"`
 	Email     string    `json:"email"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`

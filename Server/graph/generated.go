@@ -52,18 +52,6 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	Land struct {
-		CreatedAt     func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Size          func(childComplexity int) int
-		Symbol        func(childComplexity int) int
-		Title         func(childComplexity int) int
-		TitleDocument func(childComplexity int) int
-		Town          func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		Verified      func(childComplexity int) int
-	}
-
 	Mutation struct {
 		ChargeMpesa                 func(childComplexity int, input model.PayWithMpesaInput) int
 		CreateUser                  func(childComplexity int, input model.CreateUserInput) int
@@ -91,7 +79,6 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetLocalLands                   func(childComplexity int) int
 		GetPaymentDetailsByID           func(childComplexity int, id uuid.UUID) int
 		GetPaymentsByStatus             func(childComplexity int, status model.PaymentStatus) int
 		GetSupportingDocByID            func(childComplexity int, id uuid.UUID) int
@@ -106,25 +93,25 @@ type ComplexityRoot struct {
 	SupportingDoc struct {
 		CreatedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
-		GovtID    func(childComplexity int) int
 		ID        func(childComplexity int) int
+		URL       func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 		Verified  func(childComplexity int) int
 	}
 
 	Title struct {
-		CreatedAt func(childComplexity int) int
-		ID        func(childComplexity int) int
-		Title     func(childComplexity int) int
-		UpdatedAt func(childComplexity int) int
-		Verified  func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		ID           func(childComplexity int) int
+		SupportDocID func(childComplexity int) int
+		URL          func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
+		Verified     func(childComplexity int) int
 	}
 
 	User struct {
 		CreatedAt func(childComplexity int) int
 		Email     func(childComplexity int) int
 		Firstname func(childComplexity int) int
-		GovtID    func(childComplexity int) int
 		ID        func(childComplexity int) int
 		Lastname  func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
@@ -142,7 +129,6 @@ type PaymentResolver interface {
 	Title(ctx context.Context, obj *model.Payment) (*model.Title, error)
 }
 type QueryResolver interface {
-	GetLocalLands(ctx context.Context) ([]*model.Land, error)
 	GetUserLands(ctx context.Context, email string) ([]*model.Title, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
@@ -171,69 +157,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
-
-	case "Land.created_at":
-		if e.complexity.Land.CreatedAt == nil {
-			break
-		}
-
-		return e.complexity.Land.CreatedAt(childComplexity), true
-
-	case "Land.id":
-		if e.complexity.Land.ID == nil {
-			break
-		}
-
-		return e.complexity.Land.ID(childComplexity), true
-
-	case "Land.size":
-		if e.complexity.Land.Size == nil {
-			break
-		}
-
-		return e.complexity.Land.Size(childComplexity), true
-
-	case "Land.symbol":
-		if e.complexity.Land.Symbol == nil {
-			break
-		}
-
-		return e.complexity.Land.Symbol(childComplexity), true
-
-	case "Land.title":
-		if e.complexity.Land.Title == nil {
-			break
-		}
-
-		return e.complexity.Land.Title(childComplexity), true
-
-	case "Land.titleDocument":
-		if e.complexity.Land.TitleDocument == nil {
-			break
-		}
-
-		return e.complexity.Land.TitleDocument(childComplexity), true
-
-	case "Land.town":
-		if e.complexity.Land.Town == nil {
-			break
-		}
-
-		return e.complexity.Land.Town(childComplexity), true
-
-	case "Land.updated_at":
-		if e.complexity.Land.UpdatedAt == nil {
-			break
-		}
-
-		return e.complexity.Land.UpdatedAt(childComplexity), true
-
-	case "Land.verified":
-		if e.complexity.Land.Verified == nil {
-			break
-		}
-
-		return e.complexity.Land.Verified(childComplexity), true
 
 	case "Mutation.chargeMpesa":
 		if e.complexity.Mutation.ChargeMpesa == nil {
@@ -379,13 +302,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PaymentUpdate.Status(childComplexity), true
 
-	case "Query.getLocalLands":
-		if e.complexity.Query.GetLocalLands == nil {
-			break
-		}
-
-		return e.complexity.Query.GetLocalLands(childComplexity), true
-
 	case "Query.getPaymentDetailsById":
 		if e.complexity.Query.GetPaymentDetailsByID == nil {
 			break
@@ -472,19 +388,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SupportingDoc.Email(childComplexity), true
 
-	case "SupportingDoc.govt_id":
-		if e.complexity.SupportingDoc.GovtID == nil {
-			break
-		}
-
-		return e.complexity.SupportingDoc.GovtID(childComplexity), true
-
 	case "SupportingDoc.id":
 		if e.complexity.SupportingDoc.ID == nil {
 			break
 		}
 
 		return e.complexity.SupportingDoc.ID(childComplexity), true
+
+	case "SupportingDoc.url":
+		if e.complexity.SupportingDoc.URL == nil {
+			break
+		}
+
+		return e.complexity.SupportingDoc.URL(childComplexity), true
 
 	case "SupportingDoc.updated_at":
 		if e.complexity.SupportingDoc.UpdatedAt == nil {
@@ -514,12 +430,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Title.ID(childComplexity), true
 
-	case "Title.title":
-		if e.complexity.Title.Title == nil {
+	case "Title.support_doc_id":
+		if e.complexity.Title.SupportDocID == nil {
 			break
 		}
 
-		return e.complexity.Title.Title(childComplexity), true
+		return e.complexity.Title.SupportDocID(childComplexity), true
+
+	case "Title.url":
+		if e.complexity.Title.URL == nil {
+			break
+		}
+
+		return e.complexity.Title.URL(childComplexity), true
 
 	case "Title.updated_at":
 		if e.complexity.Title.UpdatedAt == nil {
@@ -555,13 +478,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.Firstname(childComplexity), true
-
-	case "User.govt_id":
-		if e.complexity.User.GovtID == nil {
-			break
-		}
-
-		return e.complexity.User.GovtID(childComplexity), true
 
 	case "User.id":
 		if e.complexity.User.ID == nil {
@@ -1059,399 +975,6 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _Land_id(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(uuid.UUID)
-	fc.Result = res
-	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type UUID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_title(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_title(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_size(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_size(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Size, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_symbol(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_symbol(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Symbol, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_town(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_town(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Town, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_town(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_titleDocument(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_titleDocument(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TitleDocument, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_titleDocument(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_verified(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_verified(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Verified, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.Verification)
-	fc.Result = res
-	return ec.marshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_verified(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Verification does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_created_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_created_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Land_updated_at(ctx context.Context, field graphql.CollectedField, obj *model.Land) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Land_updated_at(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Land_updated_at(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Land",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_uploadLandTitle(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_uploadLandTitle(ctx, field)
 	if err != nil {
@@ -1493,10 +1016,12 @@ func (ec *executionContext) fieldContext_Mutation_uploadLandTitle(ctx context.Co
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Title_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Title_title(ctx, field)
+			case "url":
+				return ec.fieldContext_Title_url(ctx, field)
 			case "verified":
 				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
@@ -1560,8 +1085,8 @@ func (ec *executionContext) fieldContext_Mutation_uploadSupportingDoc(ctx contex
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_SupportingDoc_id(ctx, field)
-			case "govt_id":
-				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "url":
+				return ec.fieldContext_SupportingDoc_url(ctx, field)
 			case "email":
 				return ec.fieldContext_SupportingDoc_email(ctx, field)
 			case "verified":
@@ -1681,10 +1206,12 @@ func (ec *executionContext) fieldContext_Mutation_updateTitleVerificationById(ct
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Title_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Title_title(ctx, field)
+			case "url":
+				return ec.fieldContext_Title_url(ctx, field)
 			case "verified":
 				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
@@ -1752,8 +1279,6 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 				return ec.fieldContext_User_firstname(ctx, field)
 			case "lastname":
 				return ec.fieldContext_User_lastname(ctx, field)
-			case "govt_id":
-				return ec.fieldContext_User_govt_id(ctx, field)
 			case "email":
 				return ec.fieldContext_User_email(ctx, field)
 			case "created_at":
@@ -1992,10 +1517,12 @@ func (ec *executionContext) fieldContext_Payment_title(_ context.Context, field 
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Title_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Title_title(ctx, field)
+			case "url":
+				return ec.fieldContext_Title_url(ctx, field)
 			case "verified":
 				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
@@ -2089,8 +1616,8 @@ func (ec *executionContext) fieldContext_Payment_supportingDoc(_ context.Context
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_SupportingDoc_id(ctx, field)
-			case "govt_id":
-				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "url":
+				return ec.fieldContext_SupportingDoc_url(ctx, field)
 			case "email":
 				return ec.fieldContext_SupportingDoc_email(ctx, field)
 			case "verified":
@@ -2326,70 +1853,6 @@ func (ec *executionContext) fieldContext_PaymentUpdate_email(_ context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getLocalLands(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getLocalLands(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetLocalLands(rctx)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Land)
-	fc.Result = res
-	return ec.marshalNLand2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLandᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getLocalLands(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Land_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Land_title(ctx, field)
-			case "size":
-				return ec.fieldContext_Land_size(ctx, field)
-			case "symbol":
-				return ec.fieldContext_Land_symbol(ctx, field)
-			case "town":
-				return ec.fieldContext_Land_town(ctx, field)
-			case "titleDocument":
-				return ec.fieldContext_Land_titleDocument(ctx, field)
-			case "verified":
-				return ec.fieldContext_Land_verified(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Land_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Land_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Land", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Query_getUserLands(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_getUserLands(ctx, field)
 	if err != nil {
@@ -2431,10 +1894,12 @@ func (ec *executionContext) fieldContext_Query_getUserLands(ctx context.Context,
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Title_id(ctx, field)
-			case "title":
-				return ec.fieldContext_Title_title(ctx, field)
+			case "url":
+				return ec.fieldContext_Title_url(ctx, field)
 			case "verified":
 				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
@@ -2648,8 +2113,8 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocsByVerification(c
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_SupportingDoc_id(ctx, field)
-			case "govt_id":
-				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "url":
+				return ec.fieldContext_SupportingDoc_url(ctx, field)
 			case "email":
 				return ec.fieldContext_SupportingDoc_email(ctx, field)
 			case "verified":
@@ -2717,8 +2182,8 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocById(ctx context.
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_SupportingDoc_id(ctx, field)
-			case "govt_id":
-				return ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+			case "url":
+				return ec.fieldContext_SupportingDoc_url(ctx, field)
 			case "email":
 				return ec.fieldContext_SupportingDoc_email(ctx, field)
 			case "verified":
@@ -2995,8 +2460,8 @@ func (ec *executionContext) fieldContext_SupportingDoc_id(_ context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _SupportingDoc_govt_id(ctx context.Context, field graphql.CollectedField, obj *model.SupportingDoc) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_SupportingDoc_govt_id(ctx, field)
+func (ec *executionContext) _SupportingDoc_url(ctx context.Context, field graphql.CollectedField, obj *model.SupportingDoc) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_SupportingDoc_url(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3009,7 +2474,7 @@ func (ec *executionContext) _SupportingDoc_govt_id(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.GovtID, nil
+		return obj.URL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3026,7 +2491,7 @@ func (ec *executionContext) _SupportingDoc_govt_id(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_SupportingDoc_govt_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_SupportingDoc_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "SupportingDoc",
 		Field:      field,
@@ -3259,8 +2724,8 @@ func (ec *executionContext) fieldContext_Title_id(_ context.Context, field graph
 	return fc, nil
 }
 
-func (ec *executionContext) _Title_title(ctx context.Context, field graphql.CollectedField, obj *model.Title) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Title_title(ctx, field)
+func (ec *executionContext) _Title_url(ctx context.Context, field graphql.CollectedField, obj *model.Title) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Title_url(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3273,7 +2738,7 @@ func (ec *executionContext) _Title_title(ctx context.Context, field graphql.Coll
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Title, nil
+		return obj.URL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3290,7 +2755,7 @@ func (ec *executionContext) _Title_title(ctx context.Context, field graphql.Coll
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Title_title(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Title_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Title",
 		Field:      field,
@@ -3342,6 +2807,50 @@ func (ec *executionContext) fieldContext_Title_verified(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Verification does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Title_support_doc_id(ctx context.Context, field graphql.CollectedField, obj *model.Title) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Title_support_doc_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SupportDocID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(uuid.UUID)
+	fc.Result = res
+	return ec.marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Title_support_doc_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Title",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type UUID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3549,50 +3058,6 @@ func (ec *executionContext) _User_lastname(ctx context.Context, field graphql.Co
 }
 
 func (ec *executionContext) fieldContext_User_lastname(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "User",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _User_govt_id(ctx context.Context, field graphql.CollectedField, obj *model.User) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_User_govt_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.GovtID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_User_govt_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "User",
 		Field:      field,
@@ -5517,7 +4982,7 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "firstname", "lastname", "govtid", "verification", "supportDocId"}
+	fieldsInOrder := [...]string{"email", "firstname", "lastname", "supportDocUrl", "verification", "supportDocId"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5545,13 +5010,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Lastname = data
-		case "govtid":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("govtid"))
+		case "supportDocUrl":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportDocUrl"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Govtid = data
+			it.SupportDocURL = data
 		case "verification":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
 			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
@@ -5702,82 +5167,6 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationInput(ctx conte
 // endregion ************************** interface.gotpl ***************************
 
 // region    **************************** object.gotpl ****************************
-
-var landImplementors = []string{"Land"}
-
-func (ec *executionContext) _Land(ctx context.Context, sel ast.SelectionSet, obj *model.Land) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, landImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Land")
-		case "id":
-			out.Values[i] = ec._Land_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "title":
-			out.Values[i] = ec._Land_title(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "size":
-			out.Values[i] = ec._Land_size(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "symbol":
-			out.Values[i] = ec._Land_symbol(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "town":
-			out.Values[i] = ec._Land_town(ctx, field, obj)
-		case "titleDocument":
-			out.Values[i] = ec._Land_titleDocument(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "verified":
-			out.Values[i] = ec._Land_verified(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "created_at":
-			out.Values[i] = ec._Land_created_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updated_at":
-			out.Values[i] = ec._Land_updated_at(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
 
 var mutationImplementors = []string{"Mutation"}
 
@@ -6025,28 +5414,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getLocalLands":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getLocalLands(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "getUserLands":
 			field := field
 
@@ -6224,8 +5591,8 @@ func (ec *executionContext) _SupportingDoc(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "govt_id":
-			out.Values[i] = ec._SupportingDoc_govt_id(ctx, field, obj)
+		case "url":
+			out.Values[i] = ec._SupportingDoc_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6288,13 +5655,18 @@ func (ec *executionContext) _Title(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "title":
-			out.Values[i] = ec._Title_title(ctx, field, obj)
+		case "url":
+			out.Values[i] = ec._Title_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "verified":
 			out.Values[i] = ec._Title_verified(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "support_doc_id":
+			out.Values[i] = ec._Title_support_doc_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6351,11 +5723,6 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._User_firstname(ctx, field, obj)
 		case "lastname":
 			out.Values[i] = ec._User_lastname(ctx, field, obj)
-		case "govt_id":
-			out.Values[i] = ec._User_govt_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "email":
 			out.Values[i] = ec._User_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6743,75 +6110,6 @@ func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcop
 func (ec *executionContext) unmarshalNDocUploadInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDocUploadInput(ctx context.Context, v interface{}) (model.DocUploadInput, error) {
 	res, err := ec.unmarshalInputDocUploadInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
-	res, err := graphql.UnmarshalInt(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	res := graphql.MarshalInt(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) marshalNLand2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLandᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Land) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNLand2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLand(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNLand2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐLand(ctx context.Context, sel ast.SelectionSet, v *model.Land) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Land(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNPayWithMpesaInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayWithMpesaInput(ctx context.Context, v interface{}) (model.PayWithMpesaInput, error) {
