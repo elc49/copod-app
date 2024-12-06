@@ -18,8 +18,8 @@ struct LandDetails {
 contract Land is ERC721, Ownable {
     using Math for uint256;
 
-    // Land titles to details- title no. are unique
-    LandDetails land;
+    // Land details
+    LandDetails private land;
 
     // Events
     event GrantSize(address owner, uint256 size);
@@ -36,33 +36,8 @@ contract Land is ERC721, Ownable {
     }
 
     // Get land
-    // Real-time details
     function getLand() public view returns (LandDetails memory) {
         return land;
-    }
-
-    // Grant from land space
-    // TODO: should cover requested size
-    function grantSize(uint256 size_, address owner_) public returns (bool) {
-        require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
-        (bool success, uint256 result) =  land.size.trySub(size_);
-        require(success, TrySubtract(size_));
-        // Update new land size
-        land.size = result;
-        emit GrantSize(owner_, size_);
-        return true;
-    }
-
-    // Reclaim granted land space
-    // Caller - land owner
-    function reclaimSize(uint256 size_, address owner_) public returns (bool) {
-        require(owner_ == ownerOf(land.tokenId), OwnableUnauthorizedAccount(owner_));
-        (bool success, uint256 result) = land.size.tryAdd(size_);
-        require(success, TryAdd(size_));
-        // Update new land size
-        land.size = result;
-        emit ReclaimSize(owner_, size_);
-        return true;
     }
 }
 

@@ -55,39 +55,4 @@ contract Registry {
     function getLandERC721Contract(string memory titleNo_) public view returns (address) {
         return lands[titleNo_];
     }
-
-    // Grant usage rights
-    // TODO: should be authorized/authenticated by owner/tenant
-    function grantLandUsageRights(string memory titleNo_, uint256 size_, uint256 duration_, uint256 cost_, address tenant_, address owner_) public {
-        // Get land details
-        require(lands[titleNo_] != address(0), NoTokenizedLand(titleNo_));
-        Land l = Land(lands[titleNo_]);
-        LandDetails memory land = l.getLand();
-
-        // Validate caller
-        require(owner_ == land.owner, NotAuthorized(owner_));
-
-        // Validate land space
-        require(size_ <= land.size, UnavailableLandSpace(titleNo_, size_));
-
-        // Grant usage size
-        (bool success) = l.grantSize(size_, owner_);
-        require(success, GrantSize(size_));
-
-        usage[tenant_][titleNo_] = UsageRight(size_, duration_, payable(tenant_), cost_, titleNo_);
-        emit GrantLandUsageRights(titleNo_, size_, duration_, tenant_);
-    }
-
-    // Prove usage rights
-    function claimLandUsageRights(address tenant_, string memory titleNo_) public view returns (bool) {
-        UsageRight memory u = usage[tenant_][titleNo_];
-        return u.duration > block.timestamp;
-    }
-
-    // Reclaim back rights - only callable by land owner
-    // TODO: only callable past duration
-    function reclaimUsageRights(address tenant_, string memory titleNo_) public {
-        // TODO: reclaim back rights- size
-        emit ReclaimUsageRights(32, tenant_, titleNo_);
-    }
 }
