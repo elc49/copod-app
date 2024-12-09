@@ -163,9 +163,7 @@ class MainViewModel(
             viewModelScope.launch {
                 gettingDeviceDetails = try {
                     val res = restApiService.getIpinfo()
-                    _deviceDetails.update {
-                        res
-                    }
+                    _deviceDetails.emit(res)
                     GetDeviceDetails.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
