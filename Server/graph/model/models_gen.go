@@ -20,12 +20,31 @@ type CreateUserInput struct {
 	SupportDocID  uuid.UUID    `json:"supportDocId"`
 }
 
+type DisplayPicture struct {
+	ID        uuid.UUID    `json:"id"`
+	URL       string       `json:"url"`
+	Email     string       `json:"email"`
+	Verified  Verification `json:"verified"`
+	CreatedAt time.Time    `json:"created_at"`
+	UpdatedAt time.Time    `json:"updated_at"`
+}
+
 type DocUploadInput struct {
 	URL   string `json:"url"`
 	Email string `json:"email"`
 }
 
 type Mutation struct {
+}
+
+type Onboarding struct {
+	ID               uuid.UUID    `json:"id"`
+	TitleID          uuid.UUID    `json:"titleId"`
+	SupportDocID     uuid.UUID    `json:"supportDocId"`
+	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
+	Verification     Verification `json:"verification"`
+	CreatedAt        time.Time    `json:"created_at"`
+	UpdatedAt        time.Time    `json:"updated_at"`
 }
 
 type PayWithMpesaInput struct {

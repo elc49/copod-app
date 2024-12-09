@@ -108,6 +108,12 @@ func (s *Server) MountController() {
 	// Payment
 	pc := controller.Payment{}
 	pc.Init(s.sql)
+	// Onboarding
+	oc := controller.Onboarding{}
+	oc.Init(s.sql)
+	// Display picture
+	dc := controller.DisplayPicture{}
+	dc.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {

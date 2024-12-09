@@ -10,6 +10,27 @@ import (
 	"github.com/google/uuid"
 )
 
+type DisplayPicture struct {
+	ID           uuid.UUID `json:"id"`
+	Url          string    `json:"url"`
+	Verification string    `json:"verification"`
+	Email        string    `json:"email"`
+	SupportDocID uuid.UUID `json:"support_doc_id"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
+}
+
+type Onboarding struct {
+	ID               uuid.UUID `json:"id"`
+	TitleID          uuid.UUID `json:"title_id"`
+	SupportDocID     uuid.UUID `json:"support_doc_id"`
+	DisplayPictureID uuid.UUID `json:"display_picture_id"`
+	Email            string    `json:"email"`
+	Verification     string    `json:"verification"`
+	CreatedAt        time.Time `json:"created_at"`
+	UpdatedAt        time.Time `json:"updated_at"`
+}
+
 type Payment struct {
 	ID          uuid.UUID     `json:"id"`
 	Email       string        `json:"email"`

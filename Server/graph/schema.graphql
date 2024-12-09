@@ -72,6 +72,27 @@ type Payment {
   updated_at: Time!
 }
 
+# Onboarding
+type Onboarding {
+  id: UUID!
+  titleId: UUID!
+  supportDocId: UUID!
+  displayPictureId: UUID!
+  verification: Verification!
+  created_at: Time!
+  updated_at: Time!
+}
+
+# DisplayPicture
+type DisplayPicture {
+  id: UUID!
+  url: String!
+  email: String!
+  verified: Verification!
+  created_at: Time!
+  updated_at: Time!
+}
+
 # Payment update
 type PaymentUpdate {
   referenceId: String!

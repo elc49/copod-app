@@ -11,10 +11,13 @@ import (
 )
 
 type Querier interface {
+	CreateDisplayPicture(ctx context.Context, arg CreateDisplayPictureParams) (DisplayPicture, error)
+	CreateOnboarding(ctx context.Context, arg CreateOnboardingParams) (Onboarding, error)
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
 	CreateSupportDoc(ctx context.Context, arg CreateSupportDocParams) (SupportDoc, error)
 	CreateTitle(ctx context.Context, arg CreateTitleParams) (TitleDeed, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
+	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (DisplayPicture, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (Payment, error)
 	GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error)
@@ -24,6 +27,7 @@ type Querier interface {
 	GetSupportingDocsByVerification(ctx context.Context, verification string) ([]SupportDoc, error)
 	GetTitleByEmail(ctx context.Context, email string) (TitleDeed, error)
 	GetTitlesByEmail(ctx context.Context, email string) ([]TitleDeed, error)
+	UpdateDisplayPictureByID(ctx context.Context, arg UpdateDisplayPictureByIDParams) (DisplayPicture, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
 	UpdateSupportDocVerificationById(ctx context.Context, arg UpdateSupportDocVerificationByIdParams) (SupportDoc, error)
 	UpdateTitleVerificationById(ctx context.Context, arg UpdateTitleVerificationByIdParams) (TitleDeed, error)

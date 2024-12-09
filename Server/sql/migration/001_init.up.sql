@@ -31,6 +31,27 @@ CREATE TABLE IF NOT EXISTS title_deeds(
 CREATE INDEX IF NOT EXISTS idx_title_email ON title_deeds(email);
 CREATE INDEX IF NOT EXISTS idx_land_title ON title_deeds(title);
 
+CREATE TABLE IF NOT EXISTS display_pictures(
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  url TEXT NOT NULL,
+  verification TEXT NOT NULL DEFAULT 'ONBOARDING',
+  email TEXT NOT NULL,
+  support_doc_id UUID NOT NULL REFERENCES support_docs(id) ON DELETE CASCADE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS onboardings(
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title_id UUID NOT NULL REFERENCES title_deeds(id) ON DELETE CASCADE,
+  support_doc_id UUID NOT NULL REFERENCES support_docs(id) ON DELETE CASCADE,
+  display_picture_id UUID NOT NULL REFERENCES display_pictures(id) ON DELETE CASCADE,
+  email TEXT NOT NULL,
+  verification TEXT NOT NULL DEFAULT 'ONBOARDING',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_onboarding_email ON onboardings(email);
 
 CREATE TABLE IF NOT EXISTS payments(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

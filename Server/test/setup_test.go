@@ -67,4 +67,10 @@ func init() {
 	if sErr != nil {
 		logrus.WithError(err).Fatalln("test: init: create master support doc")
 	}
+	// Onboarding
+	oc := controller.Onboarding{}
+	oc.Init(q)
+	// Display picture
+	dc := controller.DisplayPicture{}
+	dc.Init(q)
 }
