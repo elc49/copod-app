@@ -5,7 +5,6 @@ import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.ChargeMpesaMutation
-import com.lomolo.copodapp.GetLocalLandsQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
 import com.lomolo.copodapp.UploadLandTitleMutation
@@ -15,7 +14,6 @@ import com.lomolo.copodapp.type.PayWithMpesaInput
 import kotlinx.coroutines.flow.Flow
 
 interface IGraphQL {
-    suspend fun getLocalLands(): ApolloResponse<GetLocalLandsQuery.Data>
     suspend fun getUserLands(email: String): ApolloResponse<GetUserLandQuery.Data>
     suspend fun chargeMpesa(input: PayWithMpesaInput): ApolloResponse<ChargeMpesaMutation.Data>
     fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
@@ -26,10 +24,6 @@ interface IGraphQL {
 class GraphQLServiceImpl(
     private val apolloClient: ApolloClient
 ) : IGraphQL {
-    override suspend fun getLocalLands() = apolloClient.query(GetLocalLandsQuery()).fetchPolicy(
-        FetchPolicy.NetworkFirst
-    ).execute()
-
     override suspend fun getUserLands(email: String) =
         apolloClient.query(GetUserLandQuery(email)).fetchPolicy(
             FetchPolicy.NetworkFirst

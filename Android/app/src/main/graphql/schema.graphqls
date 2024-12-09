@@ -5,7 +5,7 @@ input CreateUserInput {
 
   lastname: String!
 
-  govtid: String!
+  supportDocUrl: String!
 
   verification: Verification!
 
@@ -16,26 +16,6 @@ input DocUploadInput {
   url: String!
 
   email: String!
-}
-
-type Land {
-  id: UUID!
-
-  title: String!
-
-  size: Int!
-
-  symbol: String!
-
-  town: String
-
-  titleDocument: String!
-
-  verified: Verification!
-
-  created_at: Time!
-
-  updated_at: Time!
 }
 
 type Mutation {
@@ -111,8 +91,6 @@ type PaymentUpdate {
 }
 
 type Query {
-  getLocalLands: [Land!]!
-
   getUserLands(email: String!): [Title!]!
 
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
@@ -131,7 +109,7 @@ type Subscription {
 type SupportingDoc {
   id: UUID!
 
-  govt_id: String!
+  url: String!
 
   email: String!
 
@@ -147,9 +125,11 @@ scalar Time
 type Title {
   id: UUID!
 
-  title: String!
+  url: String!
 
   verified: Verification!
+
+  support_doc_id: UUID!
 
   created_at: Time!
 
@@ -170,8 +150,6 @@ type User {
   firstname: String
 
   lastname: String
-
-  govt_id: String!
 
   email: String!
 

@@ -84,6 +84,7 @@ func (c *ipClient) GetIpinfo(ctx context.Context, ip string) (*Ipinfo, error) {
 	ipinfo.Gps = secondaryIpinfo.Location
 
 	go func() {
+		ctx := context.Background()
 		if err := c.cache.Set(ctx, copodCache.IpCacheKey(ip), ipinfo, time.Hour*24); err != nil {
 			c.log.WithError(err).WithFields(logrus.Fields{"ipinfo": ipinfo}).Errorf("ip: cache ipinfo")
 			return

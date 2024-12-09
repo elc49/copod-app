@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -27,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.BottomNavBar
-import com.lomolo.copodapp.ui.common.LandCard
 import com.lomolo.copodapp.ui.common.NoLands
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
@@ -82,8 +80,8 @@ fun ExploreMarketsScreen(
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            items(lands) {
-                                LandCard(land = it)
+                            items(0) {
+                                //LandCard(land = it)
                             }
                         }
                     }

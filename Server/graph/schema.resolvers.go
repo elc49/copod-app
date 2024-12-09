@@ -23,7 +23,13 @@ func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocU
 		Url:   input.URL,
 	}
 
-	return r.titleController.CreateTitle(ctx, args)
+	title, err := r.titleController.CreateTitle(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UploadLandTitle")
+		return nil, err
+	}
+
+	return title, nil
 }
 
 // UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
@@ -33,7 +39,13 @@ func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.
 		Url:   input.URL,
 	}
 
-	return r.supportDocController.CreateSupportingDoc(ctx, args)
+	doc, err := r.supportDocController.CreateSupportingDoc(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: CreateSupportingDoc")
+		return nil, err
+	}
+
+	return doc, nil
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
@@ -59,7 +71,14 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 		ID:           input.ID,
 		Verification: input.Verification.String(),
 	}
-	return r.titleController.UpdateTitleVerificationById(ctx, args)
+
+	title, err := r.titleController.UpdateTitleVerificationById(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateTitleVerificationById")
+		return nil, err
+	}
+
+	return title, nil
 }
 
 // CreateUser is the resolver for the createUser field.
@@ -87,32 +106,68 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 
 // Title is the resolver for the title field.
 func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
-	return r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
+	title, err := r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"title_id": obj.TitleID}).Errorf("resolver: Title for payment")
+		return nil, err
+	}
+
+	return title, nil
 }
 
 // GetUserLands is the resolver for the getUserLands field.
 func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Title, error) {
-	return r.titleController.GetTitlesByEmail(ctx, email)
+	lands, err := r.titleController.GetTitlesByEmail(ctx, email)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("resolver: GetUserLands")
+		return nil, err
+	}
+
+	return lands, nil
 }
 
 // GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.
 func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error) {
-	return r.paymentController.GetPaymentsByStatus(ctx, status.String())
+	payments, err := r.paymentController.GetPaymentsByStatus(ctx, status.String())
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"status": status.String()}).Errorf("resolver: GetPaymentsByStatus")
+		return nil, err
+	}
+
+	return payments, nil
 }
 
 // GetPaymentDetailsByID is the resolver for the getPaymentDetailsById field.
 func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
-	return r.paymentController.GetPaymentDetailsByID(ctx, id)
+	payment, err := r.paymentController.GetPaymentDetailsByID(ctx, id)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("resolver: GetPaymentDetailsByID")
+		return nil, err
+	}
+
+	return payment, nil
 }
 
 // GetSupportingDocsByVerification is the resolver for the getSupportingDocsByVerification field.
 func (r *queryResolver) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
-	return r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
+	docs, err := r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"verification": verification}).Errorf("resolver: GetSupportingDocsByVerification")
+		return nil, err
+	}
+
+	return docs, nil
 }
 
 // GetSupportingDocByID is the resolver for the getSupportingDocById field.
 func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
-	return r.supportDocController.GetSupportingDocByID(ctx, id)
+	doc, err := r.supportDocController.GetSupportingDocByID(ctx, id)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("resolver: GetSupportingDocByID")
+		return nil, err
+	}
+
+	return doc, nil
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

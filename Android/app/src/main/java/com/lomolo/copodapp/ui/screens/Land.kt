@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
@@ -106,8 +104,8 @@ fun LandScreen(
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            items(lands) {
-                                LandCard(land = it)
+                            items(0) {
+                                //LandCard(land = it)
                             }
                         }
                     }
@@ -136,7 +134,7 @@ fun LandScreen(
 @Composable
 private fun LandCard(
     modifier: Modifier = Modifier,
-    land: GetUserLandQuery.GetUserLand,
+    land: List<Any>,
 ) {
     OutlinedCard(
         modifier = modifier
@@ -146,7 +144,7 @@ private fun LandCard(
     ) {
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
-                .data(land.title)
+                .data("")
                 .crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.loading_img),

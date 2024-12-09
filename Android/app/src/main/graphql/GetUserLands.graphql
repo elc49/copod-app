@@ -1,6 +1,6 @@
 query GetUserLand($email: String!) {
     getUserLands(email: $email) {
         id
-        title
+        url
     }
 }

@@ -31,8 +31,8 @@ val appModule = module {
     single<IRestFul> { getRestService(get()) }
     single<Moshi> { getJsonAdapter() }
 
-    viewModel { MainViewModel(get(), get()) }
-    viewModel { MarketViewModel(get()) }
+    viewModel { MainViewModel(get(), get(), get()) }
+    viewModel { MarketViewModel() }
     viewModel { RegisterLandViewModel(get(), get(), get()) }
     viewModel { LandViewModel(get()) }
     viewModel { MpesaViewModel(get(), get(), get()) }

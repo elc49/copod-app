@@ -24,13 +24,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.lomolo.copodapp.GetLocalLandsQuery
 import com.lomolo.copodapp.R
 
 @Composable
 fun LandCard(
     modifier: Modifier = Modifier,
-    land: GetLocalLandsQuery.GetLocalLand,
+    land: List<Any>,
 ) {
     OutlinedCard(
         modifier.wrapContentHeight()
@@ -52,13 +51,13 @@ fun LandCard(
             Row {
                 Column {
                     Text(
-                        land.title,
+                        "",
                         fontWeight = FontWeight.Bold,
                     )
                 }
                 Spacer(Modifier.weight(1f))
                 Text(
-                    "${land.size} ${land.symbol}",
+                    "${land.size} ${""}",
                     style = MaterialTheme.typography.titleLarge,
                 )
             }

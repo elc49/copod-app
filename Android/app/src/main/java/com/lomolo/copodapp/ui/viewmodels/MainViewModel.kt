@@ -7,6 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.cache.normalized.apolloStore
 import com.lomolo.copodapp.model.DeviceDetails
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
@@ -42,6 +44,7 @@ interface GetDeviceDetails {
 class MainViewModel(
     private val web3Auth: IWeb3Auth,
     private val restApiService: IRestFul,
+    private val apolloClient: ApolloClient,
 ) : ViewModel() {
     var credentials: Credentials? by mutableStateOf(null)
         private set
@@ -119,6 +122,7 @@ class MainViewModel(
             try {
                 web3Auth.logout().await()
                 initialize()
+                apolloClient.apolloStore.clearAll()
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
