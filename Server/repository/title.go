@@ -54,10 +54,10 @@ func (r *Title) GetTitleByEmail(ctx context.Context, email string) (*model.Title
 	}, nil
 }
 
-func (r *Title) UpdateTitleVerificationById(ctx context.Context, args sql.UpdateTitleVerificationByIdParams) (*model.Title, error) {
-	u, err := r.sql.UpdateTitleVerificationById(ctx, args)
+func (r *Title) UpdateTitleByID(ctx context.Context, args sql.UpdateTitleByIDParams) (*model.Title, error) {
+	u, err := r.sql.UpdateTitleByID(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleVerificationById")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleByID")
 		return nil, err
 	}
 

@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -15,38 +16,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
-
-// UploadLandTitle is the resolver for the uploadLandTitle field.
-func (r *mutationResolver) UploadLandTitle(ctx context.Context, input model.DocUploadInput) (*model.Title, error) {
-	args := sql.CreateTitleParams{
-		Email: input.Email,
-		Url:   input.URL,
-	}
-
-	title, err := r.titleController.CreateTitle(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UploadLandTitle")
-		return nil, err
-	}
-
-	return title, nil
-}
-
-// UploadSupportingDoc is the resolver for the uploadSupportingDoc field.
-func (r *mutationResolver) UploadSupportingDoc(ctx context.Context, input model.DocUploadInput) (*model.SupportingDoc, error) {
-	args := sql.CreateSupportDocParams{
-		Email: input.Email,
-		Url:   input.URL,
-	}
-
-	doc, err := r.supportDocController.CreateSupportingDoc(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: CreateSupportingDoc")
-		return nil, err
-	}
-
-	return doc, nil
-}
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
 func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
@@ -67,14 +36,14 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 
 // UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
 func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error) {
-	args := sql.UpdateTitleVerificationByIdParams{
+	args := sql.UpdateTitleByIDParams{
 		ID:           input.ID,
 		Verification: input.Verification.String(),
 	}
 
-	title, err := r.titleController.UpdateTitleVerificationById(ctx, args)
+	title, err := r.titleController.UpdateTitleByID(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateTitleVerificationById")
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateTitleByID")
 		return nil, err
 	}
 
@@ -93,26 +62,25 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		return nil, err
 	}
 
-	uargs := sql.UpdateSupportDocVerificationByIdParams{
+	uargs := sql.UpdateSupportDocByIDParams{
 		ID:           input.SupportDocID,
 		Verification: input.Verification.String(),
 	}
-	if _, err = r.supportDocController.UpdateSupportDocVerificationById(ctx, uargs); err != nil {
+	if _, err = r.supportDocController.UpdateSupportDocByID(ctx, uargs); err != nil {
 		return nil, err
 	}
 
 	return u, err
 }
 
-// Title is the resolver for the title field.
-func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
-	title, err := r.paymentController.GetPaymentTitleByID(ctx, obj.TitleID)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"title_id": obj.TitleID}).Errorf("resolver: Title for payment")
-		return nil, err
-	}
+// CreateOnboarding is the resolver for the createOnboarding field.
+func (r *mutationResolver) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
+	return r.onboardingController.CreateOnboarding(ctx, input)
+}
 
-	return title, nil
+// UpdateOnboardingStatus is the resolver for the updateOnboardingStatus field.
+func (r *mutationResolver) UpdateOnboardingStatus(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
+	panic(fmt.Errorf("not implemented: UpdateOnboardingStatus - updateOnboardingStatus"))
 }
 
 // GetUserLands is the resolver for the getUserLands field.
@@ -170,6 +138,11 @@ func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 	return doc, nil
 }
 
+// GetOnboardingByVerification is the resolver for the getOnboardingByVerification field.
+func (r *queryResolver) GetOnboardingByVerification(ctx context.Context, verification model.Verification) ([]*model.Onboarding, error) {
+	panic(fmt.Errorf("not implemented: GetOnboardingByVerification - getOnboardingByVerification"))
+}
+
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)
@@ -195,9 +168,6 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
-// Payment returns PaymentResolver implementation.
-func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
-
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
@@ -205,6 +175,25 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
-type paymentResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
+	onboarding, err := r.paymentController.GetPaymentOnboardingByID(ctx, obj.OnboardingID)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"title_id": obj.OnboardingID}).Errorf("resolver: Title for payment")
+		return nil, err
+	}
+
+	return onboarding, nil
+}
+func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
+type paymentResolver struct{ *Resolver }
+*/

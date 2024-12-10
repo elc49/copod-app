@@ -57,13 +57,13 @@ func (q *Queries) GetSupportDocByEmail(ctx context.Context, email string) (Suppo
 	return i, err
 }
 
-const getSupportingDocById = `-- name: GetSupportingDocById :one
+const getSupportDocByID = `-- name: GetSupportDocByID :one
 SELECT id, url, verification, email, created_at, updated_at FROM support_docs
 WHERE id = $1
 `
 
-func (q *Queries) GetSupportingDocById(ctx context.Context, id uuid.UUID) (SupportDoc, error) {
-	row := q.db.QueryRowContext(ctx, getSupportingDocById, id)
+func (q *Queries) GetSupportDocByID(ctx context.Context, id uuid.UUID) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, getSupportDocByID, id)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,
@@ -111,19 +111,20 @@ func (q *Queries) GetSupportingDocsByVerification(ctx context.Context, verificat
 	return items, nil
 }
 
-const updateSupportDocVerificationById = `-- name: UpdateSupportDocVerificationById :one
-UPDATE support_docs SET verification = $1
-WHERE id = $2
+const updateSupportDocByID = `-- name: UpdateSupportDocByID :one
+UPDATE support_docs SET url = $1, verification = $2
+WHERE id = $3
 RETURNING id, url, verification, email, created_at, updated_at
 `
 
-type UpdateSupportDocVerificationByIdParams struct {
+type UpdateSupportDocByIDParams struct {
+	Url          string    `json:"url"`
 	Verification string    `json:"verification"`
 	ID           uuid.UUID `json:"id"`
 }
 
-func (q *Queries) UpdateSupportDocVerificationById(ctx context.Context, arg UpdateSupportDocVerificationByIdParams) (SupportDoc, error) {
-	row := q.db.QueryRowContext(ctx, updateSupportDocVerificationById, arg.Verification, arg.ID)
+func (q *Queries) UpdateSupportDocByID(ctx context.Context, arg UpdateSupportDocByIDParams) (SupportDoc, error) {
+	row := q.db.QueryRowContext(ctx, updateSupportDocByID, arg.Url, arg.Verification, arg.ID)
 	var i SupportDoc
 	err := row.Scan(
 		&i.ID,

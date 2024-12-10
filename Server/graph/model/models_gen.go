@@ -11,6 +11,13 @@ import (
 	"github.com/google/uuid"
 )
 
+type CreateOnboardingInput struct {
+	Email             string `json:"email"`
+	TitleURL          string `json:"titleUrl"`
+	SupportdocURL     string `json:"supportdocUrl"`
+	DisplayPictureURL string `json:"displayPictureUrl"`
+}
+
 type CreateUserInput struct {
 	Email         string       `json:"email"`
 	Firstname     string       `json:"firstname"`
@@ -60,8 +67,8 @@ type Payment struct {
 	ReferenceID   string         `json:"reference_id"`
 	Status        string         `json:"status"`
 	Email         string         `json:"email"`
-	Title         *Title         `json:"title,omitempty"`
-	TitleID       uuid.UUID      `json:"title_id"`
+	Onboarding    *Onboarding    `json:"onboarding,omitempty"`
+	OnboardingID  uuid.UUID      `json:"onboarding_id"`
 	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`
@@ -95,6 +102,11 @@ type Title struct {
 	SupportDocID uuid.UUID    `json:"support_doc_id"`
 	CreatedAt    time.Time    `json:"created_at"`
 	UpdatedAt    time.Time    `json:"updated_at"`
+}
+
+type UpdateOnboardingStatusInput struct {
+	OnboardingID uuid.UUID    `json:"onboardingId"`
+	Status       Verification `json:"status"`
 }
 
 type UpdateTitleVerificationInput struct {

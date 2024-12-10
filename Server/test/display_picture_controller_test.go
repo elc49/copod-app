@@ -37,8 +37,9 @@ func Test_Display_Picture_Controller(t *testing.T) {
 
 	t.Run("update_display_picture_by_id", func(t *testing.T) {
 		dp, err := dc.UpdateDisplayPictureByID(ctx, sql.UpdateDisplayPictureByIDParams{
-			ID:  displayPicture.ID,
-			Url: docUri,
+			ID:           displayPicture.ID,
+			Url:          docUri,
+			Verification: model.VerificationOnboarding.String(),
 		})
 
 		assert.Nil(t, err)

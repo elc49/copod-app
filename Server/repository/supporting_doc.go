@@ -55,10 +55,10 @@ func (r *SupportingDoc) GetSupportDocByEmail(ctx context.Context, email string) 
 	}, nil
 }
 
-func (r *SupportingDoc) UpdateSupportDocVerificationById(ctx context.Context, args sql.UpdateSupportDocVerificationByIdParams) (*model.SupportingDoc, error) {
-	u, err := r.sql.UpdateSupportDocVerificationById(ctx, args)
+func (r *SupportingDoc) UpdateSupportDocByID(ctx context.Context, args sql.UpdateSupportDocByIDParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateSupportDocByID(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocVerificationById")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocByID")
 		return nil, err
 	}
 
@@ -96,9 +96,9 @@ func (r *SupportingDoc) GetSupportingDocsByVerification(ctx context.Context, ver
 }
 
 func (r *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
-	d, err := r.sql.GetSupportingDocById(ctx, id)
+	d, err := r.sql.GetSupportDocByID(ctx, id)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetSupportingDocById")
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetSupportDocByID")
 		return nil, err
 	}
 

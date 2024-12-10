@@ -65,8 +65,8 @@ type Payment {
   reference_id: String!
   status: String!
   email: String!
-  title: Title
-  title_id: UUID!
+  onboarding: Onboarding
+  onboarding_id: UUID!
   supportingDoc: SupportingDoc
   created_at: Time!
   updated_at: Time!
@@ -127,20 +127,33 @@ input CreateUserInput {
   supportDocId: UUID!
 }
 
+input CreateOnboardingInput {
+  email: String!
+  titleUrl: String!
+  supportdocUrl: String!
+  displayPictureUrl: String!
+}
+
+input UpdateOnboardingStatusInput {
+  onboardingId: UUID!
+  status: Verification!
+}
+
 type Query {
   getUserLands(email: String!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
   getSupportingDocById(id: UUID!): SupportingDoc!
+  getOnboardingByVerification(verification: Verification!): [Onboarding!]!
 }
 
 type Mutation {
-  uploadLandTitle(input: DocUploadInput!): Title!
-  uploadSupportingDoc(input: DocUploadInput!): SupportingDoc!
   chargeMpesa(input: PayWithMpesaInput!): String
   updateTitleVerificationById(input: UpdateTitleVerificationInput!): Title!
   createUser(input: CreateUserInput!): User!
+  createOnboarding(input: CreateOnboardingInput!): Onboarding!
+  updateOnboardingStatus(input: UpdateOnboardingStatusInput!): Onboarding!
 }
 
 type Subscription {

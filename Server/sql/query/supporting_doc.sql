@@ -13,11 +13,11 @@ WHERE email = $1 LIMIT 1;
 SELECT * FROM support_docs
 WHERE verification = $1;
 
--- name: GetSupportingDocById :one
+-- name: GetSupportDocByID :one
 SELECT * FROM support_docs
 WHERE id = $1;
 
--- name: UpdateSupportDocVerificationById :one
-UPDATE support_docs SET verification = $1
-WHERE id = $2
+-- name: UpdateSupportDocByID :one
+UPDATE support_docs SET url = $1, verification = $2
+WHERE id = $3
 RETURNING *;

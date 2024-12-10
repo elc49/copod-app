@@ -5,40 +5,42 @@ import (
 	"testing"
 
 	"github.com/elc49/copod/controller"
-	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/elc49/copod/graph/model"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_Onboarding_Controller(t *testing.T) {
 	ctx := context.Background()
-	tc := controller.GetTitleController()
 	oc := controller.GetOnboardingController()
-	dc := controller.GetDisplayPictureController()
-	titleNo := "tuos/490s/39"
 
-	title, err := tc.CreateTitle(ctx, sql.CreateTitleParams{
-		Url:          docUri,
-		Email:        email,
-		Title:        titleNo,
-		SupportDocID: supportdoc.ID,
-	})
-	assert.Nil(t, err)
-
-	display, err := dc.CreateDisplayPicture(ctx, sql.CreateDisplayPictureParams{
-		Email:        email,
-		Url:          docUri,
-		SupportDocID: supportdoc.ID,
-	})
-	assert.Nil(t, err)
-
-	t.Run("create_onboarding", func(t *testing.T) {
-		o, err := oc.CreateOnboarding(ctx, sql.CreateOnboardingParams{
-			TitleID:          title.ID,
-			DisplayPictureID: display.ID,
-			SupportDocID:     supportdoc.ID,
+	t.Run("create_new_onboarding", func(t *testing.T) {
+		o, err := oc.CreateOnboarding(ctx, model.CreateOnboardingInput{
+			TitleURL:          "https://title.url",
+			DisplayPictureURL: "https://dp.url",
+			SupportdocURL:     "https://supp.doc",
+			Email:             email,
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, title.ID, o.TitleID)
+		assert.Equal(t, o.Verification, model.VerificationOnboarding)
+	})
+
+	t.Run("update_existing_onboarding", func(t *testing.T) {
+		o, err := oc.CreateOnboarding(ctx, model.CreateOnboardingInput{
+			TitleURL:          "https://title.url",
+			DisplayPictureURL: "https://dp.url",
+			SupportdocURL:     "https://supp.doc",
+			Email:             email,
+		})
+
+		assert.Nil(t, err)
+		assert.NotNil(t, o)
+	})
+
+	t.Run("get_onboardings_by_verification_and_payment_status", func(t *testing.T) {
+		obs, err := oc.GetOnboardingByVerificationAndPaymentStatus(ctx, model.VerificationOnboarding, model.PaymentStatusSuccess)
+
+		assert.Nil(t, err)
+		assert.True(t, len(obs) == 0)
 	})
 }

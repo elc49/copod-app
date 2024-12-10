@@ -5,6 +5,7 @@
 package sql
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,27 +22,28 @@ type DisplayPicture struct {
 }
 
 type Onboarding struct {
-	ID               uuid.UUID `json:"id"`
-	TitleID          uuid.UUID `json:"title_id"`
-	SupportDocID     uuid.UUID `json:"support_doc_id"`
-	DisplayPictureID uuid.UUID `json:"display_picture_id"`
-	Email            string    `json:"email"`
-	Verification     string    `json:"verification"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID               uuid.UUID      `json:"id"`
+	TitleID          uuid.UUID      `json:"title_id"`
+	SupportDocID     uuid.UUID      `json:"support_doc_id"`
+	DisplayPictureID uuid.UUID      `json:"display_picture_id"`
+	Email            string         `json:"email"`
+	Verification     string         `json:"verification"`
+	PaymentStatus    sql.NullString `json:"payment_status"`
+	CreatedAt        time.Time      `json:"created_at"`
+	UpdatedAt        time.Time      `json:"updated_at"`
 }
 
 type Payment struct {
-	ID          uuid.UUID     `json:"id"`
-	Email       string        `json:"email"`
-	Amount      int32         `json:"amount"`
-	Currency    string        `json:"currency"`
-	Reason      string        `json:"reason"`
-	Status      string        `json:"status"`
-	ReferenceID string        `json:"reference_id"`
-	TitleID     uuid.NullUUID `json:"title_id"`
-	CreatedAt   time.Time     `json:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at"`
+	ID           uuid.UUID     `json:"id"`
+	Email        string        `json:"email"`
+	Amount       int32         `json:"amount"`
+	Currency     string        `json:"currency"`
+	Reason       string        `json:"reason"`
+	Status       string        `json:"status"`
+	ReferenceID  string        `json:"reference_id"`
+	OnboardingID uuid.NullUUID `json:"onboarding_id"`
+	CreatedAt    time.Time     `json:"created_at"`
+	UpdatedAt    time.Time     `json:"updated_at"`
 }
 
 type SupportDoc struct {
@@ -54,14 +56,14 @@ type SupportDoc struct {
 }
 
 type TitleDeed struct {
-	ID           uuid.UUID `json:"id"`
-	Url          string    `json:"url"`
-	Title        string    `json:"title"`
-	Verification string    `json:"verification"`
-	Email        string    `json:"email"`
-	SupportDocID uuid.UUID `json:"support_doc_id"`
-	CreatedAt    time.Time `json:"created_at"`
-	UpdatedAt    time.Time `json:"updated_at"`
+	ID           uuid.UUID      `json:"id"`
+	Url          string         `json:"url"`
+	Title        sql.NullString `json:"title"`
+	Verification string         `json:"verification"`
+	Email        string         `json:"email"`
+	SupportDocID uuid.UUID      `json:"support_doc_id"`
+	CreatedAt    time.Time      `json:"created_at"`
+	UpdatedAt    time.Time      `json:"updated_at"`
 }
 
 type User struct {

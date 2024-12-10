@@ -13,26 +13,20 @@ import (
 
 const createTitle = `-- name: CreateTitle :one
 INSERT INTO title_deeds (
-  url, title, email, support_doc_id
+  url, email, support_doc_id
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3
 ) RETURNING id, url, title, verification, email, support_doc_id, created_at, updated_at
 `
 
 type CreateTitleParams struct {
 	Url          string    `json:"url"`
-	Title        string    `json:"title"`
 	Email        string    `json:"email"`
 	SupportDocID uuid.UUID `json:"support_doc_id"`
 }
 
 func (q *Queries) CreateTitle(ctx context.Context, arg CreateTitleParams) (TitleDeed, error) {
-	row := q.db.QueryRowContext(ctx, createTitle,
-		arg.Url,
-		arg.Title,
-		arg.Email,
-		arg.SupportDocID,
-	)
+	row := q.db.QueryRowContext(ctx, createTitle, arg.Url, arg.Email, arg.SupportDocID)
 	var i TitleDeed
 	err := row.Scan(
 		&i.ID,
@@ -105,19 +99,20 @@ func (q *Queries) GetTitlesByEmail(ctx context.Context, email string) ([]TitleDe
 	return items, nil
 }
 
-const updateTitleVerificationById = `-- name: UpdateTitleVerificationById :one
-UPDATE title_deeds SET verification = $1
-WHERE id = $2
+const updateTitleByID = `-- name: UpdateTitleByID :one
+UPDATE title_deeds SET url = $1, verification = $2
+WHERE id = $3
 RETURNING id, url, title, verification, email, support_doc_id, created_at, updated_at
 `
 
-type UpdateTitleVerificationByIdParams struct {
+type UpdateTitleByIDParams struct {
+	Url          string    `json:"url"`
 	Verification string    `json:"verification"`
 	ID           uuid.UUID `json:"id"`
 }
 
-func (q *Queries) UpdateTitleVerificationById(ctx context.Context, arg UpdateTitleVerificationByIdParams) (TitleDeed, error) {
-	row := q.db.QueryRowContext(ctx, updateTitleVerificationById, arg.Verification, arg.ID)
+func (q *Queries) UpdateTitleByID(ctx context.Context, arg UpdateTitleByIDParams) (TitleDeed, error) {
+	row := q.db.QueryRowContext(ctx, updateTitleByID, arg.Url, arg.Verification, arg.ID)
 	var i TitleDeed
 	err := row.Scan(
 		&i.ID,

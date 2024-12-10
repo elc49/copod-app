@@ -61,18 +61,19 @@ func (q *Queries) GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (Disp
 }
 
 const updateDisplayPictureByID = `-- name: UpdateDisplayPictureByID :one
-UPDATE display_pictures SET url = $1
-WHERE id = $2
+UPDATE display_pictures SET url = $1, verification = $2
+WHERE id = $3
 RETURNING id, url, verification, email, support_doc_id, created_at, updated_at
 `
 
 type UpdateDisplayPictureByIDParams struct {
-	Url string    `json:"url"`
-	ID  uuid.UUID `json:"id"`
+	Url          string    `json:"url"`
+	Verification string    `json:"verification"`
+	ID           uuid.UUID `json:"id"`
 }
 
 func (q *Queries) UpdateDisplayPictureByID(ctx context.Context, arg UpdateDisplayPictureByIDParams) (DisplayPicture, error) {
-	row := q.db.QueryRowContext(ctx, updateDisplayPictureByID, arg.Url, arg.ID)
+	row := q.db.QueryRowContext(ctx, updateDisplayPictureByID, arg.Url, arg.Verification, arg.ID)
 	var i DisplayPicture
 	err := row.Scan(
 		&i.ID,

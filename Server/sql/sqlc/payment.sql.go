@@ -13,20 +13,20 @@ import (
 
 const createPayment = `-- name: CreatePayment :one
 INSERT INTO payments (
-  email, amount, currency, reason, status, reference_id, title_id
+  email, amount, currency, reason, status, reference_id, onboarding_id
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7
-) RETURNING id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at
+) RETURNING id, email, amount, currency, reason, status, reference_id, onboarding_id, created_at, updated_at
 `
 
 type CreatePaymentParams struct {
-	Email       string        `json:"email"`
-	Amount      int32         `json:"amount"`
-	Currency    string        `json:"currency"`
-	Reason      string        `json:"reason"`
-	Status      string        `json:"status"`
-	ReferenceID string        `json:"reference_id"`
-	TitleID     uuid.NullUUID `json:"title_id"`
+	Email        string        `json:"email"`
+	Amount       int32         `json:"amount"`
+	Currency     string        `json:"currency"`
+	Reason       string        `json:"reason"`
+	Status       string        `json:"status"`
+	ReferenceID  string        `json:"reference_id"`
+	OnboardingID uuid.NullUUID `json:"onboarding_id"`
 }
 
 func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error) {
@@ -37,7 +37,7 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		arg.Reason,
 		arg.Status,
 		arg.ReferenceID,
-		arg.TitleID,
+		arg.OnboardingID,
 	)
 	var i Payment
 	err := row.Scan(
@@ -48,7 +48,7 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 		&i.Reason,
 		&i.Status,
 		&i.ReferenceID,
-		&i.TitleID,
+		&i.OnboardingID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -56,7 +56,7 @@ func (q *Queries) CreatePayment(ctx context.Context, arg CreatePaymentParams) (P
 }
 
 const getPaymentByReferenceID = `-- name: GetPaymentByReferenceID :one
-SELECT id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at FROM payments
+SELECT id, email, amount, currency, reason, status, reference_id, onboarding_id, created_at, updated_at FROM payments
 WHERE reference_id = $1
 LIMIT 1
 `
@@ -72,7 +72,7 @@ func (q *Queries) GetPaymentByReferenceID(ctx context.Context, referenceID strin
 		&i.Reason,
 		&i.Status,
 		&i.ReferenceID,
-		&i.TitleID,
+		&i.OnboardingID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -80,7 +80,7 @@ func (q *Queries) GetPaymentByReferenceID(ctx context.Context, referenceID strin
 }
 
 const getPaymentDetailsByID = `-- name: GetPaymentDetailsByID :one
-SELECT id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at FROM payments
+SELECT id, email, amount, currency, reason, status, reference_id, onboarding_id, created_at, updated_at FROM payments
 WHERE id = $1
 `
 
@@ -95,28 +95,29 @@ func (q *Queries) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (Paym
 		&i.Reason,
 		&i.Status,
 		&i.ReferenceID,
-		&i.TitleID,
+		&i.OnboardingID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
 	return i, err
 }
 
-const getPaymentTitleByID = `-- name: GetPaymentTitleByID :one
-SELECT id, url, title, verification, email, support_doc_id, created_at, updated_at FROM title_deeds
+const getPaymentOnboardingByID = `-- name: GetPaymentOnboardingByID :one
+SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
 WHERE id = $1
 `
 
-func (q *Queries) GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error) {
-	row := q.db.QueryRowContext(ctx, getPaymentTitleByID, id)
-	var i TitleDeed
+func (q *Queries) GetPaymentOnboardingByID(ctx context.Context, id uuid.UUID) (Onboarding, error) {
+	row := q.db.QueryRowContext(ctx, getPaymentOnboardingByID, id)
+	var i Onboarding
 	err := row.Scan(
 		&i.ID,
-		&i.Url,
-		&i.Title,
-		&i.Verification,
-		&i.Email,
+		&i.TitleID,
 		&i.SupportDocID,
+		&i.DisplayPictureID,
+		&i.Email,
+		&i.Verification,
+		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -124,7 +125,7 @@ func (q *Queries) GetPaymentTitleByID(ctx context.Context, id uuid.UUID) (TitleD
 }
 
 const getPaymentsByStatus = `-- name: GetPaymentsByStatus :many
-SELECT id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at FROM payments
+SELECT id, email, amount, currency, reason, status, reference_id, onboarding_id, created_at, updated_at FROM payments
 WHERE status = $1
 `
 
@@ -145,7 +146,7 @@ func (q *Queries) GetPaymentsByStatus(ctx context.Context, status string) ([]Pay
 			&i.Reason,
 			&i.Status,
 			&i.ReferenceID,
-			&i.TitleID,
+			&i.OnboardingID,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -165,7 +166,7 @@ func (q *Queries) GetPaymentsByStatus(ctx context.Context, status string) ([]Pay
 const updatePaymentStatus = `-- name: UpdatePaymentStatus :one
 UPDATE payments SET status = $1
 WHERE reference_id = $2
-RETURNING id, email, amount, currency, reason, status, reference_id, title_id, created_at, updated_at
+RETURNING id, email, amount, currency, reason, status, reference_id, onboarding_id, created_at, updated_at
 `
 
 type UpdatePaymentStatusParams struct {
@@ -184,7 +185,7 @@ func (q *Queries) UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStat
 		&i.Reason,
 		&i.Status,
 		&i.ReferenceID,
-		&i.TitleID,
+		&i.OnboardingID,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

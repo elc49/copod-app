@@ -21,7 +21,7 @@ CREATE INDEX IF NOT EXISTS idx_support_docs_email ON support_docs(email);
 CREATE TABLE IF NOT EXISTS title_deeds(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   url TEXT NOT NULL,
-  title TEXT NOT NULL,
+  title TEXT,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
   email TEXT NOT NULL,
   support_doc_id UUID NOT NULL REFERENCES support_docs(id) ON DELETE CASCADE,
@@ -29,7 +29,6 @@ CREATE TABLE IF NOT EXISTS title_deeds(
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_title_email ON title_deeds(email);
-CREATE INDEX IF NOT EXISTS idx_land_title ON title_deeds(title);
 
 CREATE TABLE IF NOT EXISTS display_pictures(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -48,6 +47,7 @@ CREATE TABLE IF NOT EXISTS onboardings(
   display_picture_id UUID NOT NULL REFERENCES display_pictures(id) ON DELETE CASCADE,
   email TEXT NOT NULL,
   verification TEXT NOT NULL DEFAULT 'ONBOARDING',
+  payment_status TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -61,9 +61,9 @@ CREATE TABLE IF NOT EXISTS payments(
   reason TEXT NOT NULL,
   status TEXT NOT NULL,
   reference_id TEXT NOT NULL,
-  title_id UUID REFERENCES title_deeds(id),
+  onboarding_id UUID REFERENCES onboardings(id),
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_reference_id ON payments(reference_id);
-CREATE INDEX IF NOT EXISTS idx_title_id ON payments(title_id);
+CREATE INDEX IF NOT EXISTS idx_onboarding_id ON payments(onboarding_id);

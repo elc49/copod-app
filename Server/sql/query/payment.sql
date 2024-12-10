@@ -1,6 +1,6 @@
 -- name: CreatePayment :one
 INSERT INTO payments (
-  email, amount, currency, reason, status, reference_id, title_id
+  email, amount, currency, reason, status, reference_id, onboarding_id
 ) VALUES (
   $1, $2, $3, $4, $5, $6, $7
 ) RETURNING *;
@@ -15,8 +15,8 @@ UPDATE payments SET status = $1
 WHERE reference_id = $2
 RETURNING *;
 
--- name: GetPaymentTitleByID :one
-SELECT * FROM title_deeds
+-- name: GetPaymentOnboardingByID :one
+SELECT * FROM onboardings
 WHERE id = $1;
 
 -- name: GetPaymentsByStatus :many

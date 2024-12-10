@@ -14,26 +14,26 @@ import (
 func Test_Payment_Controller(t *testing.T) {
 	ctx := context.Background()
 	pc := controller.GetPaymentController()
+	oc := controller.GetOnboardingController()
 	refId := RandomStringByLength(10)
 	var p *model.Payment
 	var err error
 
 	t.Run("create_payment", func(t *testing.T) {
-		tc := controller.GetTitleController()
-		args := sql.CreateTitleParams{
-			Url:          docUri,
-			Email:        email,
-			SupportDocID: supportdoc.ID,
-		}
-		title, err := tc.CreateTitle(ctx, args)
+		ob, err := oc.CreateOnboarding(ctx, model.CreateOnboardingInput{
+			TitleURL:          "https://title.url",
+			DisplayPictureURL: "https://dp.url",
+			SupportdocURL:     "https://supp.doc",
+			Email:             email,
+		})
 		p, err = pc.CreatePayment(ctx, sql.CreatePaymentParams{
-			Email:       email,
-			ReferenceID: refId,
-			Status:      "pay_offline",
-			Reason:      model.PaymentReasonLandRegistry.String(),
-			Amount:      1500,
-			Currency:    "KES",
-			TitleID:     uuid.NullUUID{UUID: title.ID, Valid: true},
+			Email:        email,
+			ReferenceID:  refId,
+			Status:       "pay_offline",
+			Reason:       model.PaymentReasonLandRegistry.String(),
+			Amount:       1500,
+			Currency:     "KES",
+			OnboardingID: uuid.NullUUID{UUID: ob.ID, Valid: true},
 		})
 
 		assert.Nil(t, err)
@@ -59,11 +59,11 @@ func Test_Payment_Controller(t *testing.T) {
 	})
 
 	t.Run("get_payment_title", func(t *testing.T) {
-		title, err := pc.GetPaymentTitleByID(ctx, p.TitleID)
+		title, err := pc.GetPaymentOnboardingByID(ctx, p.OnboardingID)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, title)
-		assert.Equal(t, title.ID, p.TitleID)
+		assert.Equal(t, title.ID, p.OnboardingID)
 	})
 
 	t.Run("get_payment_by_status", func(t *testing.T) {

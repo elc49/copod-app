@@ -15,7 +15,7 @@ type PaymentController interface {
 	CreatePayment(context.Context, sql.CreatePaymentParams) (*model.Payment, error)
 	GetPaymentByReferenceID(context.Context, string) (*model.Payment, error)
 	UpdatePaymentStatus(context.Context, sql.UpdatePaymentStatusParams) (*model.Payment, error)
-	GetPaymentTitleByID(context.Context, uuid.UUID) (*model.Title, error)
+	GetPaymentOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
 	GetPaymentsByStatus(context.Context, string) ([]*model.Payment, error)
 	GetPaymentDetailsByID(context.Context, uuid.UUID) (*model.Payment, error)
 }
@@ -47,8 +47,8 @@ func (c *Payment) UpdatePaymentStatus(ctx context.Context, args sql.UpdatePaymen
 	return c.r.UpdatePaymentStatus(ctx, args)
 }
 
-func (c *Payment) GetPaymentTitleByID(ctx context.Context, titleID uuid.UUID) (*model.Title, error) {
-	return c.r.GetPaymentTitleByID(ctx, titleID)
+func (c *Payment) GetPaymentOnboardingByID(ctx context.Context, onboardingID uuid.UUID) (*model.Onboarding, error) {
+	return c.r.GetPaymentOnboardingByID(ctx, onboardingID)
 }
 
 func (c *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*model.Payment, error) {

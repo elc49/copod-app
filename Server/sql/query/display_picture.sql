@@ -10,6 +10,6 @@ SELECT * FROM display_pictures
 WHERE id = $1;
 
 -- name: UpdateDisplayPictureByID :one
-UPDATE display_pictures SET url = $1
-WHERE id = $2
+UPDATE display_pictures SET url = $1, verification = $2
+WHERE id = $3
 RETURNING *;

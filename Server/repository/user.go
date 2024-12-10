@@ -34,10 +34,10 @@ func (r *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*mode
 	}, nil
 }
 
-func (r *User) UpdateSupportDocVerificationById(ctx context.Context, args sql.UpdateSupportDocVerificationByIdParams) (*model.SupportingDoc, error) {
-	u, err := r.sql.UpdateSupportDocVerificationById(ctx, args)
+func (r *User) UpdateSupportDocByID(ctx context.Context, args sql.UpdateSupportDocByIDParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateSupportDocByID(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocVerificationById")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocByID")
 		return nil, err
 	}
 

@@ -7,6 +7,7 @@ package sql
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -16,7 +17,7 @@ INSERT INTO onboardings (
   title_id, support_doc_id, display_picture_id, email
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING id, title_id, support_doc_id, display_picture_id, email, verification, created_at, updated_at
+) RETURNING id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at
 `
 
 type CreateOnboardingParams struct {
@@ -41,6 +42,105 @@ func (q *Queries) CreateOnboarding(ctx context.Context, arg CreateOnboardingPara
 		&i.DisplayPictureID,
 		&i.Email,
 		&i.Verification,
+		&i.PaymentStatus,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getOnboardingByEmailAndVerification = `-- name: GetOnboardingByEmailAndVerification :one
+SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+WHERE email = $1 AND verification = $2
+`
+
+type GetOnboardingByEmailAndVerificationParams struct {
+	Email        string `json:"email"`
+	Verification string `json:"verification"`
+}
+
+func (q *Queries) GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error) {
+	row := q.db.QueryRowContext(ctx, getOnboardingByEmailAndVerification, arg.Email, arg.Verification)
+	var i Onboarding
+	err := row.Scan(
+		&i.ID,
+		&i.TitleID,
+		&i.SupportDocID,
+		&i.DisplayPictureID,
+		&i.Email,
+		&i.Verification,
+		&i.PaymentStatus,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getOnboardingByVerificationAndPaymentStatus = `-- name: GetOnboardingByVerificationAndPaymentStatus :many
+SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+WHERE verification = $1 AND payment_status = $2
+`
+
+type GetOnboardingByVerificationAndPaymentStatusParams struct {
+	Verification  string         `json:"verification"`
+	PaymentStatus sql.NullString `json:"payment_status"`
+}
+
+func (q *Queries) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, arg GetOnboardingByVerificationAndPaymentStatusParams) ([]Onboarding, error) {
+	rows, err := q.db.QueryContext(ctx, getOnboardingByVerificationAndPaymentStatus, arg.Verification, arg.PaymentStatus)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Onboarding{}
+	for rows.Next() {
+		var i Onboarding
+		if err := rows.Scan(
+			&i.ID,
+			&i.TitleID,
+			&i.SupportDocID,
+			&i.DisplayPictureID,
+			&i.Email,
+			&i.Verification,
+			&i.PaymentStatus,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const updateOnboardingVerificationByID = `-- name: UpdateOnboardingVerificationByID :one
+UPDATE onboardings SET verification = $1
+WHERE id = $2
+RETURNING id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at
+`
+
+type UpdateOnboardingVerificationByIDParams struct {
+	Verification string    `json:"verification"`
+	ID           uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error) {
+	row := q.db.QueryRowContext(ctx, updateOnboardingVerificationByID, arg.Verification, arg.ID)
+	var i Onboarding
+	err := row.Scan(
+		&i.ID,
+		&i.TitleID,
+		&i.SupportDocID,
+		&i.DisplayPictureID,
+		&i.Email,
+		&i.Verification,
+		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

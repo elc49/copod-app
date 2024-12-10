@@ -28,12 +28,12 @@ func (r *Payment) CreatePayment(ctx context.Context, args sql.CreatePaymentParam
 	}
 
 	return &model.Payment{
-		ID:          p.ID,
-		TitleID:     p.TitleID.UUID,
-		ReferenceID: p.ReferenceID,
-		Status:      p.Status,
-		CreatedAt:   p.CreatedAt,
-		UpdatedAt:   p.UpdatedAt,
+		ID:           p.ID,
+		OnboardingID: p.OnboardingID.UUID,
+		ReferenceID:  p.ReferenceID,
+		Status:       p.Status,
+		CreatedAt:    p.CreatedAt,
+		UpdatedAt:    p.UpdatedAt,
 	}, nil
 }
 
@@ -45,12 +45,12 @@ func (r *Payment) GetPaymentByReferenceID(ctx context.Context, referenceID strin
 	}
 
 	return &model.Payment{
-		ID:          p.ID,
-		Status:      p.Status,
-		ReferenceID: p.ReferenceID,
-		TitleID:     p.TitleID.UUID,
-		CreatedAt:   p.CreatedAt,
-		UpdatedAt:   p.UpdatedAt,
+		ID:           p.ID,
+		Status:       p.Status,
+		ReferenceID:  p.ReferenceID,
+		OnboardingID: p.OnboardingID.UUID,
+		CreatedAt:    p.CreatedAt,
+		UpdatedAt:    p.UpdatedAt,
 	}, nil
 }
 
@@ -62,28 +62,27 @@ func (r *Payment) UpdatePaymentStatus(ctx context.Context, args sql.UpdatePaymen
 	}
 
 	return &model.Payment{
-		ID:          u.ID,
-		Status:      u.Status,
-		ReferenceID: u.ReferenceID,
-		TitleID:     u.TitleID.UUID,
-		CreatedAt:   u.CreatedAt,
-		UpdatedAt:   u.UpdatedAt,
+		ID:           u.ID,
+		Status:       u.Status,
+		ReferenceID:  u.ReferenceID,
+		OnboardingID: u.OnboardingID.UUID,
+		CreatedAt:    u.CreatedAt,
+		UpdatedAt:    u.UpdatedAt,
 	}, nil
 }
 
-func (r *Payment) GetPaymentTitleByID(ctx context.Context, titleID uuid.UUID) (*model.Title, error) {
-	t, err := r.sql.GetPaymentTitleByID(ctx, titleID)
+func (r *Payment) GetPaymentOnboardingByID(ctx context.Context, onboardingID uuid.UUID) (*model.Onboarding, error) {
+	t, err := r.sql.GetPaymentOnboardingByID(ctx, onboardingID)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"title_id": titleID}).Errorf("repository: GetPaymentTitleByID")
+		r.log.WithError(err).WithFields(logrus.Fields{"onboarding_id": onboardingID}).Errorf("repository: GetPaymentOnboardingByID")
 		return nil, err
 	}
 
-	return &model.Title{
-		ID:        t.ID,
-		URL:       t.Url,
-		Verified:  model.Verification(t.Verification),
-		CreatedAt: t.CreatedAt,
-		UpdatedAt: t.UpdatedAt,
+	return &model.Onboarding{
+		ID:           t.ID,
+		Verification: model.Verification(t.Verification),
+		CreatedAt:    t.CreatedAt,
+		UpdatedAt:    t.UpdatedAt,
 	}, nil
 }
 
@@ -97,13 +96,13 @@ func (r *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*mo
 
 	for _, i := range p {
 		payment := &model.Payment{
-			ID:          i.ID,
-			Status:      i.Status,
-			Email:       i.Email,
-			ReferenceID: i.ReferenceID,
-			TitleID:     i.TitleID.UUID,
-			CreatedAt:   i.CreatedAt,
-			UpdatedAt:   i.UpdatedAt,
+			ID:           i.ID,
+			Status:       i.Status,
+			Email:        i.Email,
+			ReferenceID:  i.ReferenceID,
+			OnboardingID: i.OnboardingID.UUID,
+			CreatedAt:    i.CreatedAt,
+			UpdatedAt:    i.UpdatedAt,
 		}
 
 		payments = append(payments, payment)
@@ -120,11 +119,11 @@ func (r *Payment) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*mod
 	}
 
 	return &model.Payment{
-		ID:          p.ID,
-		Status:      p.Status,
-		ReferenceID: p.ReferenceID,
-		TitleID:     p.TitleID.UUID,
-		CreatedAt:   p.CreatedAt,
-		UpdatedAt:   p.UpdatedAt,
+		ID:           p.ID,
+		Status:       p.Status,
+		ReferenceID:  p.ReferenceID,
+		OnboardingID: p.OnboardingID.UUID,
+		CreatedAt:    p.CreatedAt,
+		UpdatedAt:    p.UpdatedAt,
 	}, nil
 }
