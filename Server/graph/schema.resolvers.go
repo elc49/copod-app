@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	db "database/sql"
 	"fmt"
 
 	"github.com/elc49/copod/cache"
@@ -140,7 +141,11 @@ func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 
 // GetOnboardingByVerificationAndPaymentStatus is the resolver for the getOnboardingByVerificationAndPaymentStatus field.
 func (r *queryResolver) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, input model.GetOnboardingByVerificationAndPaymentStatusInput) ([]*model.Onboarding, error) {
-	return r.onboardingController.GetOnboardingByVerificationAndPaymentStatus(ctx, input.Verification, input.PaymentStatus)
+	args := sql.GetOnboardingByVerificationAndPaymentStatusParams{
+		Verification:  input.Verification.String(),
+		PaymentStatus: db.NullString{String: input.PaymentStatus.String(), Valid: true},
+	}
+	return r.onboardingController.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

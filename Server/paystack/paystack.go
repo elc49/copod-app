@@ -105,13 +105,13 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 	go func() {
 		ctx := context.Background()
 		args := sql.CreatePaymentParams{
-			Email:       input.Email,
-			ReferenceID: chargeResponse.Data.Reference,
-			Status:      chargeResponse.Data.Status,
-			Reason:      input.Reason,
-			Amount:      int32(input.Amount),
-			Currency:    input.Currency,
-			TitleID:     uuid.NullUUID{UUID: paymentFor, Valid: true},
+			Email:        input.Email,
+			ReferenceID:  chargeResponse.Data.Reference,
+			Status:       chargeResponse.Data.Status,
+			Reason:       input.Reason,
+			Amount:       int32(input.Amount),
+			Currency:     input.Currency,
+			OnboardingID: uuid.NullUUID{UUID: paymentFor, Valid: true},
 		}
 		_, err := controller.GetPaymentController().CreatePayment(ctx, args)
 		if err != nil {
