@@ -14,7 +14,7 @@ var onboardingController *Onboarding
 
 type OnboardingController interface {
 	CreateOnboarding(context.Context, model.CreateOnboardingInput) (*model.Onboarding, error)
-	GetOnboardingByVerificationAndPaymentStatus(context.Context, model.Verification, model.PaymentStatus) ([]*model.Onboarding, error)
+	GetOnboardingByVerificationAndPaymentStatus(context.Context, sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -133,6 +133,6 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 	}
 }
 
-func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, verification model.Verification, status model.PaymentStatus) ([]*model.Onboarding, error) {
-	return o.r.GetOnboardingByVerificationAndPaymentStatus(ctx, verification, status)
+func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
+	return o.r.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
 }

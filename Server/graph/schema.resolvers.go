@@ -138,9 +138,9 @@ func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 	return doc, nil
 }
 
-// GetOnboardingByVerification is the resolver for the getOnboardingByVerification field.
-func (r *queryResolver) GetOnboardingByVerification(ctx context.Context, verification model.Verification) ([]*model.Onboarding, error) {
-	panic(fmt.Errorf("not implemented: GetOnboardingByVerification - getOnboardingByVerification"))
+// GetOnboardingByVerificationAndPaymentStatus is the resolver for the getOnboardingByVerificationAndPaymentStatus field.
+func (r *queryResolver) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, input model.GetOnboardingByVerificationAndPaymentStatusInput) ([]*model.Onboarding, error) {
+	return r.onboardingController.GetOnboardingByVerificationAndPaymentStatus(ctx, input.Verification, input.PaymentStatus)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
@@ -177,23 +177,3 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//    it when you're done.
-//  - You have helper methods in this file. Move them out to keep these resolver files clean.
-/*
-	func (r *paymentResolver) Title(ctx context.Context, obj *model.Payment) (*model.Title, error) {
-	onboarding, err := r.paymentController.GetPaymentOnboardingByID(ctx, obj.OnboardingID)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"title_id": obj.OnboardingID}).Errorf("resolver: Title for payment")
-		return nil, err
-	}
-
-	return onboarding, nil
-}
-func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
-type paymentResolver struct{ *Resolver }
-*/

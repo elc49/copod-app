@@ -73,7 +73,27 @@ func (o *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args 
 	}, nil
 }
 
-func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, verification model.Verification, status model.PaymentStatus) ([]*model.Onboarding, error) {
+func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
 	var onboardings []*model.Onboarding
+	obs, err := o.sql.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
+	if err != nil {
+		o.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByVerificationAndPaymentStatus")
+		return nil, err
+	}
+
+	for _, item := range obs {
+		ob := &model.Onboarding{
+			ID:               item.ID,
+			TitleID:          item.TitleID,
+			DisplayPictureID: item.DisplayPictureID,
+			SupportDocID:     item.SupportDocID,
+			Verification:     model.Verification(item.Verification),
+			CreatedAt:        item.CreatedAt,
+			UpdatedAt:        item.UpdatedAt,
+		}
+
+		onboardings = append(onboardings, ob)
+	}
+
 	return onboardings, nil
 }

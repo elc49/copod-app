@@ -97,12 +97,12 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetOnboardingByVerification     func(childComplexity int, verification model.Verification) int
-		GetPaymentDetailsByID           func(childComplexity int, id uuid.UUID) int
-		GetPaymentsByStatus             func(childComplexity int, status model.PaymentStatus) int
-		GetSupportingDocByID            func(childComplexity int, id uuid.UUID) int
-		GetSupportingDocsByVerification func(childComplexity int, verification model.Verification) int
-		GetUserLands                    func(childComplexity int, email string) int
+		GetOnboardingByVerificationAndPaymentStatus func(childComplexity int, input model.GetOnboardingByVerificationAndPaymentStatusInput) int
+		GetPaymentDetailsByID                       func(childComplexity int, id uuid.UUID) int
+		GetPaymentsByStatus                         func(childComplexity int, status model.PaymentStatus) int
+		GetSupportingDocByID                        func(childComplexity int, id uuid.UUID) int
+		GetSupportingDocsByVerification             func(childComplexity int, verification model.Verification) int
+		GetUserLands                                func(childComplexity int, email string) int
 	}
 
 	Subscription struct {
@@ -150,7 +150,7 @@ type QueryResolver interface {
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
 	GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error)
 	GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error)
-	GetOnboardingByVerification(ctx context.Context, verification model.Verification) ([]*model.Onboarding, error)
+	GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, input model.GetOnboardingByVerificationAndPaymentStatusInput) ([]*model.Onboarding, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
@@ -410,17 +410,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PaymentUpdate.Status(childComplexity), true
 
-	case "Query.getOnboardingByVerification":
-		if e.complexity.Query.GetOnboardingByVerification == nil {
+	case "Query.getOnboardingByVerificationAndPaymentStatus":
+		if e.complexity.Query.GetOnboardingByVerificationAndPaymentStatus == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getOnboardingByVerification_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getOnboardingByVerificationAndPaymentStatus_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetOnboardingByVerification(childComplexity, args["verification"].(model.Verification)), true
+		return e.complexity.Query.GetOnboardingByVerificationAndPaymentStatus(childComplexity, args["input"].(model.GetOnboardingByVerificationAndPaymentStatusInput)), true
 
 	case "Query.getPaymentDetailsById":
 		if e.complexity.Query.GetPaymentDetailsByID == nil {
@@ -631,6 +631,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOnboardingInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputDocUploadInput,
+		ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateOnboardingStatusInput,
 		ec.unmarshalInputUpdateTitleVerificationInput,
@@ -905,26 +906,26 @@ func (ec *executionContext) field_Query___type_argsName(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getOnboardingByVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getOnboardingByVerificationAndPaymentStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getOnboardingByVerification_argsVerification(ctx, rawArgs)
+	arg0, err := ec.field_Query_getOnboardingByVerificationAndPaymentStatus_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["verification"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getOnboardingByVerification_argsVerification(
+func (ec *executionContext) field_Query_getOnboardingByVerificationAndPaymentStatus_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (model.Verification, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
-	if tmp, ok := rawArgs["verification"]; ok {
-		return ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, tmp)
+) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNGetOnboardingByVerificationAndPaymentStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByVerificationAndPaymentStatusInput(ctx, tmp)
 	}
 
-	var zeroVal model.Verification
+	var zeroVal model.GetOnboardingByVerificationAndPaymentStatusInput
 	return zeroVal, nil
 }
 
@@ -2933,8 +2934,8 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocById(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getOnboardingByVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getOnboardingByVerification(ctx, field)
+func (ec *executionContext) _Query_getOnboardingByVerificationAndPaymentStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getOnboardingByVerificationAndPaymentStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2947,7 +2948,7 @@ func (ec *executionContext) _Query_getOnboardingByVerification(ctx context.Conte
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOnboardingByVerification(rctx, fc.Args["verification"].(model.Verification))
+		return ec.resolvers.Query().GetOnboardingByVerificationAndPaymentStatus(rctx, fc.Args["input"].(model.GetOnboardingByVerificationAndPaymentStatusInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2964,7 +2965,7 @@ func (ec *executionContext) _Query_getOnboardingByVerification(ctx context.Conte
 	return ec.marshalNOnboarding2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboardingᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getOnboardingByVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getOnboardingByVerificationAndPaymentStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2997,7 +2998,7 @@ func (ec *executionContext) fieldContext_Query_getOnboardingByVerification(ctx c
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getOnboardingByVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getOnboardingByVerificationAndPaymentStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5913,6 +5914,40 @@ func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, ob
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, obj interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
+	var it model.GetOnboardingByVerificationAndPaymentStatusInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"verification", "paymentStatus"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		case "paymentStatus":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentStatus"))
+			data, err := ec.unmarshalNPaymentStatus2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentStatus(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PaymentStatus = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context, obj interface{}) (model.PayWithMpesaInput, error) {
 	var it model.PayWithMpesaInput
 	asMap := map[string]interface{}{}
@@ -6502,7 +6537,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getOnboardingByVerification":
+		case "getOnboardingByVerificationAndPaymentStatus":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -6511,7 +6546,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getOnboardingByVerification(ctx, field)
+				res = ec._Query_getOnboardingByVerificationAndPaymentStatus(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7109,6 +7144,11 @@ func (ec *executionContext) unmarshalNCreateOnboardingInput2githubᚗcomᚋelc49
 
 func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
 	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGetOnboardingByVerificationAndPaymentStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, v interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
+	res, err := ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

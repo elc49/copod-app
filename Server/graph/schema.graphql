@@ -139,13 +139,18 @@ input UpdateOnboardingStatusInput {
   status: Verification!
 }
 
+input GetOnboardingByVerificationAndPaymentStatusInput {
+  verification: Verification!
+  paymentStatus: PaymentStatus!
+}
+
 type Query {
   getUserLands(email: String!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
   getSupportingDocById(id: UUID!): SupportingDoc!
-  getOnboardingByVerification(verification: Verification!): [Onboarding!]!
+  getOnboardingByVerificationAndPaymentStatus(input: GetOnboardingByVerificationAndPaymentStatusInput!): [Onboarding!]!
 }
 
 type Mutation {

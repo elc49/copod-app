@@ -41,6 +41,11 @@ type DocUploadInput struct {
 	Email string `json:"email"`
 }
 
+type GetOnboardingByVerificationAndPaymentStatusInput struct {
+	Verification  Verification  `json:"verification"`
+	PaymentStatus PaymentStatus `json:"paymentStatus"`
+}
+
 type Mutation struct {
 }
 
