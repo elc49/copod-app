@@ -36,11 +36,6 @@ type DisplayPicture struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
-type DocUploadInput struct {
-	URL   string `json:"url"`
-	Email string `json:"email"`
-}
-
 type GetOnboardingByVerificationAndPaymentStatusInput struct {
 	Verification  Verification  `json:"verification"`
 	PaymentStatus PaymentStatus `json:"paymentStatus"`
@@ -112,11 +107,6 @@ type Title struct {
 type UpdateOnboardingStatusInput struct {
 	OnboardingID uuid.UUID    `json:"onboardingId"`
 	Status       Verification `json:"status"`
-}
-
-type UpdateTitleVerificationInput struct {
-	ID           uuid.UUID    `json:"id"`
-	Verification Verification `json:"verification"`
 }
 
 type User struct {

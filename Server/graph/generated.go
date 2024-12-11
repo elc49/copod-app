@@ -61,11 +61,10 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChargeMpesa                 func(childComplexity int, input model.PayWithMpesaInput) int
-		CreateOnboarding            func(childComplexity int, input model.CreateOnboardingInput) int
-		CreateUser                  func(childComplexity int, input model.CreateUserInput) int
-		UpdateOnboardingStatus      func(childComplexity int, input model.UpdateOnboardingStatusInput) int
-		UpdateTitleVerificationByID func(childComplexity int, input model.UpdateTitleVerificationInput) int
+		ChargeMpesa            func(childComplexity int, input model.PayWithMpesaInput) int
+		CreateOnboarding       func(childComplexity int, input model.CreateOnboardingInput) int
+		CreateUser             func(childComplexity int, input model.CreateUserInput) int
+		UpdateOnboardingStatus func(childComplexity int, input model.UpdateOnboardingStatusInput) int
 	}
 
 	Onboarding struct {
@@ -139,7 +138,6 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
-	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error)
 	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
 	CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error)
 	UpdateOnboardingStatus(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error)
@@ -264,18 +262,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateOnboardingStatus(childComplexity, args["input"].(model.UpdateOnboardingStatusInput)), true
-
-	case "Mutation.updateTitleVerificationById":
-		if e.complexity.Mutation.UpdateTitleVerificationByID == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateTitleVerificationById_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateTitleVerificationByID(childComplexity, args["input"].(model.UpdateTitleVerificationInput)), true
 
 	case "Onboarding.created_at":
 		if e.complexity.Onboarding.CreatedAt == nil {
@@ -630,11 +616,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateOnboardingInput,
 		ec.unmarshalInputCreateUserInput,
-		ec.unmarshalInputDocUploadInput,
 		ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateOnboardingStatusInput,
-		ec.unmarshalInputUpdateTitleVerificationInput,
 	)
 	first := true
 
@@ -857,29 +841,6 @@ func (ec *executionContext) field_Mutation_updateOnboardingStatus_argsInput(
 	}
 
 	var zeroVal model.UpdateOnboardingStatusInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_updateTitleVerificationById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_updateTitleVerificationById_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_updateTitleVerificationById_argsInput(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (model.UpdateTitleVerificationInput, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateTitleVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationInput(ctx, tmp)
-	}
-
-	var zeroVal model.UpdateTitleVerificationInput
 	return zeroVal, nil
 }
 
@@ -1431,75 +1392,6 @@ func (ec *executionContext) fieldContext_Mutation_chargeMpesa(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_chargeMpesa_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_updateTitleVerificationById(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateTitleVerificationByID(rctx, fc.Args["input"].(model.UpdateTitleVerificationInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.Title)
-	fc.Result = res
-	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Title_id(ctx, field)
-			case "url":
-				return ec.fieldContext_Title_url(ctx, field)
-			case "verified":
-				return ec.fieldContext_Title_verified(ctx, field)
-			case "support_doc_id":
-				return ec.fieldContext_Title_support_doc_id(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Title_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Title_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_updateTitleVerificationById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5880,40 +5772,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputDocUploadInput(ctx context.Context, obj interface{}) (model.DocUploadInput, error) {
-	var it model.DocUploadInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"url", "email"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "url":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.URL = data
-		case "email":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Email = data
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, obj interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
 	var it model.GetOnboardingByVerificationAndPaymentStatusInput
 	asMap := map[string]interface{}{}
@@ -6037,40 +5895,6 @@ func (ec *executionContext) unmarshalInputUpdateOnboardingStatusInput(ctx contex
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateTitleVerificationInput(ctx context.Context, obj interface{}) (model.UpdateTitleVerificationInput, error) {
-	var it model.UpdateTitleVerificationInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"id", "verification"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "id":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ID = data
-		case "verification":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
-			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Verification = data
-		}
-	}
-
-	return it, nil
-}
-
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -6166,13 +5990,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_chargeMpesa(ctx, field)
 			})
-		case "updateTitleVerificationById":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_updateTitleVerificationById(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
@@ -7395,10 +7212,6 @@ func (ec *executionContext) marshalNTime2timeᚐTime(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalNTitle2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx context.Context, sel ast.SelectionSet, v model.Title) graphql.Marshaler {
-	return ec._Title(ctx, sel, &v)
-}
-
 func (ec *executionContext) marshalNTitle2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitleᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Title) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -7470,11 +7283,6 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 
 func (ec *executionContext) unmarshalNUpdateOnboardingStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateOnboardingStatusInput(ctx context.Context, v interface{}) (model.UpdateOnboardingStatusInput, error) {
 	res, err := ec.unmarshalInputUpdateOnboardingStatusInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNUpdateTitleVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationInput(ctx context.Context, v interface{}) (model.UpdateTitleVerificationInput, error) {
-	res, err := ec.unmarshalInputUpdateTitleVerificationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

@@ -100,22 +100,12 @@ type PaymentUpdate {
   email: String!
 }
 
-input DocUploadInput {
-  url: String!
-  email: String!
-}
-
 input PayWithMpesaInput {
   reason: PaymentReason!
   phone: String!
   email: String!
   currency: String!
   paymentFor: UUID!
-}
-
-input UpdateTitleVerificationInput {
-  id: UUID!
-  verification: Verification!
 }
 
 input CreateUserInput {
@@ -155,7 +145,6 @@ type Query {
 
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
-  updateTitleVerificationById(input: UpdateTitleVerificationInput!): Title!
   createUser(input: CreateUserInput!): User!
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
   updateOnboardingStatus(input: UpdateOnboardingStatusInput!): Onboarding!

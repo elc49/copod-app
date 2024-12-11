@@ -94,9 +94,7 @@ fun UploadGovtIssuedId(
         image = idDoc,
         onNext = {
             if (image.isNotEmpty()) {
-                viewModel.saveSupportingDoc(userEmail) {
-                    if (it != null) onNext(it)
-                }
+                {}
             }
         },
         onGoBack = onGoBack,

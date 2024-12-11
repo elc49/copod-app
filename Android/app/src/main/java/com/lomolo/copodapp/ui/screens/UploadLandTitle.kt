@@ -89,9 +89,7 @@ fun UploadLandTitle(
         }
     }, image = landTitle, savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
         if (image.isNotEmpty()) {
-            viewModel.saveLandTitle(userEmail) {
-                onNavigateTo("${UploadGovtIssuedIdScreenDestination.route}/${it}")
-            }
+            {}
         }
     }, onGoBack = onGoBack, onSelectImage = {
         if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {

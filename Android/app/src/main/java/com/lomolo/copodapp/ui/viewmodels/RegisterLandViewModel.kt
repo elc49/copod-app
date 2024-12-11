@@ -7,10 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
-import com.lomolo.copodapp.type.DocUploadInput
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -98,40 +96,6 @@ class RegisterLandViewModel(
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     UploadingDoc.Error(e.message ?: "Something went wrong")
-                }
-            }
-        }
-    }
-
-    fun saveLandTitle(email: String, cb: (String) -> Unit) {
-        if (savingLandTitle !is SaveUpload.Loading) {
-            savingLandTitle = SaveUpload.Loading
-            viewModelScope.launch {
-                savingLandTitle = try {
-                    val res = graphqlApiService.uploadLandTitle(
-                        DocUploadInput(landTitle.value, email)
-                    ).dataOrThrow()
-                    SaveUpload.Success.also { cb(res.uploadLandTitle.id.toString()) }
-                } catch (e: ApolloException) {
-                    Log.d(TAG, e.message ?: "Something went wrong")
-                    SaveUpload.Error(e.message)
-                }
-            }
-        }
-    }
-
-    fun saveSupportingDoc(email: String, cb: (String?) -> Unit) {
-        if (savingSupportingDoc !is SaveUpload.Loading) {
-            savingSupportingDoc = SaveUpload.Loading
-            viewModelScope.launch {
-                savingSupportingDoc = try {
-                    graphqlApiService.uploadSupportingDoc(
-                        DocUploadInput(supportingDoc.value, email)
-                    ).dataOrThrow()
-                    SaveUpload.Success.also { cb(titleId) }
-                } catch (e: ApolloException) {
-                    Log.d(TAG, e.message ?: "Something went wrong")
-                    SaveUpload.Error(e.message)
                 }
             }
         }

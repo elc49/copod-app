@@ -35,22 +35,6 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 	return &res.Data.Reference, nil
 }
 
-// UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
-func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationInput) (*model.Title, error) {
-	args := sql.UpdateTitleByIDParams{
-		ID:           input.ID,
-		Verification: input.Verification.String(),
-	}
-
-	title, err := r.titleController.UpdateTitleByID(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateTitleByID")
-		return nil, err
-	}
-
-	return title, nil
-}
-
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
 	args := sql.CreateUserParams{
