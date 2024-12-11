@@ -25,20 +25,20 @@ import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import kotlinx.coroutines.launch
 
-object UploadGovtIssuedIdScreenDestination : Navigation {
+object UploadDisplayPictureDestination: Navigation {
     override val title = null
-    override val route = "register-govt-id"
+    override val route = "register-display-picture"
 }
 
 @Composable
-fun UploadGovtIssuedId(
+fun UploadDisplayPicture(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    onNext: () -> Unit,
+    onNext: (String) -> Unit,
     viewModel: OnboardingViewModel,
 ) {
-    val image by viewModel.supportingDoc.collectAsState()
-    val idDoc = when (viewModel.uploadingGovtId) {
+    val image by viewModel.displayPicture.collectAsState()
+    val displayPicture = when (viewModel.uploadingDp) {
         UploadingDoc.Loading -> {
             R.drawable.loading_img
         }
@@ -55,9 +55,10 @@ fun UploadGovtIssuedId(
             R.drawable.upload
         }
     }
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val pickGovtIdMedia = rememberLauncherForActivityResult(
+    val pickDisplayMedia = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickVisualMedia()
     ) {
         if (it != null) {
@@ -72,51 +73,41 @@ fun UploadGovtIssuedId(
                 }
             }
             if (stream != null) {
-                viewModel.uploadGovtIssuedId(fileName, stream)
+                viewModel.uploadDisplayPicture(fileName, stream)
             }
         }
     }
 
-    UploadDocument(
-        modifier = modifier,
-        title = @Composable {
-            Column {
-                Text(stringResource(R.string.govt_issued_id))
-                Text(
-                    stringResource(R.string.upload_govt_issued_id),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-            }
-        },
-        newUpload = image.isEmpty(),
-        image = idDoc,
-        onNext = {
-            if (image.isNotEmpty()) {
-                onNext()
-            }
-        },
-        onGoBack = onGoBack,
-        onSelectImage = {
-            if (viewModel.uploadingGovtId !is UploadingDoc.Loading) {
-                scope.launch {
-                    pickGovtIdMedia.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly,
-                        )
-                    )
-                }
-            }
-        },
-        savingDoc = viewModel.savingSupportingDoc is SaveUpload.Loading,
-        buttonText = @Composable {
+    UploadDocument(modifier = modifier, title = @Composable {
+        Column {
+            Text(stringResource(R.string.display_picture))
             Text(
-                stringResource(R.string.proceed),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowForward,
-                contentDescription = stringResource(R.string.proceed),
+                stringResource(R.string.picture_of_you),
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
-    )
+    }, image = displayPicture, newUpload = image.isEmpty(), savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
+        if (image.isNotEmpty()) {
+            {}
+        }
+    }, onGoBack = onGoBack, onSelectImage = {
+        if (viewModel.uploadingDp !is UploadingDoc.Loading) {
+            scope.launch {
+                pickDisplayMedia.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly,
+                    )
+                )
+            }
+        }
+    }, buttonText = @Composable {
+        Text(
+            stringResource(R.string.proceed),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Icon(
+            Icons.AutoMirrored.TwoTone.ArrowForward,
+            contentDescription = stringResource(R.string.proceed),
+        )
+    })
 }

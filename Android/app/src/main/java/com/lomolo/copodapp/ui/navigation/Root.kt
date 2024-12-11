@@ -32,6 +32,8 @@ import com.lomolo.copodapp.state.viewmodels.InitializeSdk
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.ui.screens.UploadDisplayPicture
+import com.lomolo.copodapp.ui.screens.UploadDisplayPictureDestination
 import org.koin.androidx.compose.navigation.koinNavViewModel
 
 interface Navigation {
@@ -133,9 +135,18 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 viewModel = onboardingViewModel,
-                onNext = { uploadId ->
-                    navHostController.navigate("${MpesaScreenDestination.route}/${uploadId}")
+                onNext = {
+                    navHostController.navigate(UploadDisplayPictureDestination.route)
                 },
+            )
+        }
+        composable(route = UploadDisplayPictureDestination.route) {
+            UploadDisplayPicture(
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                viewModel = onboardingViewModel,
+                onNext = {},
             )
         }
         composable(

@@ -35,4 +35,6 @@
     <string name="google_sign_in">Google Signin</string>
     <string name="land_title">Land title</string>
     <string name="your_lands">Your lands</string>
+    <string name="display_picture">Display picture</string>
+    <string name="picture_of_you">Picture of you</string>
 </resources>

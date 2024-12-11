@@ -40,10 +40,16 @@ class OnboardingViewModel(
     private val _supportingDoc: MutableStateFlow<String> = MutableStateFlow("")
     val supportingDoc: StateFlow<String> = _supportingDoc.asStateFlow()
 
+    private val _displayPicture: MutableStateFlow<String> = MutableStateFlow("")
+    val displayPicture: StateFlow<String> = _displayPicture.asStateFlow()
+
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
     var uploadingGovtId: UploadingDoc by mutableStateOf(UploadingDoc.Success)
+        private set
+
+    var uploadingDp: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
     var savingLandTitle: SaveUpload by mutableStateOf(SaveUpload.Success)
@@ -96,7 +102,29 @@ class OnboardingViewModel(
         }
     }
 
+    fun uploadDisplayPicture(fileName: String, stream: InputStream) {
+        if (uploadingDp !is UploadingDoc.Loading) {
+            uploadingDp = UploadingDoc.Loading
+            val request = stream.readBytes().toRequestBody()
+            val filePart = MultipartBody.Part.createFormData(
+                "file",
+                "$fileName}.jpg",
+                request,
+            )
+            viewModelScope.launch {
+                uploadingDp = try {
+                    val res = restApiService.uploadDoc(filePart)
+                    _displayPicture.update { res.imageUri }
+                    UploadingDoc.Success
+                } catch (e: Exception) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    UploadingDoc.Error(e.message ?: "Something went wrong")
+                }
+            }
+        }
+    }
+
     companion object {
-        private const val TAG = "RegisterLandViewModel"
+        private const val TAG = "OnboardingViewModel"
     }
 }
