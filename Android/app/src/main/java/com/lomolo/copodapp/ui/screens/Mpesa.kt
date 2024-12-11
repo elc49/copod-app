@@ -41,9 +41,9 @@ import coil.request.ImageRequest
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.ChargingMpesa
-import com.lomolo.copodapp.ui.viewmodels.MainViewModel
-import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
+import com.lomolo.copodapp.state.viewmodels.ChargingMpesa
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.util.Util
 
 object MpesaScreenDestination : Navigation {

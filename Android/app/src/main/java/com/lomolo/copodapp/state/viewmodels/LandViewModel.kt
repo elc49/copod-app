@@ -1,4 +1,4 @@
-package com.lomolo.copodapp.ui.viewmodels
+package com.lomolo.copodapp.state.viewmodels
 
 import android.util.Log
 import androidx.compose.runtime.getValue

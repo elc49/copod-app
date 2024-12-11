@@ -1,15 +1,13 @@
-package com.lomolo.copodapp.ui.viewmodels
+package com.lomolo.copodapp.state.viewmodels
 
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
-import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,10 +30,9 @@ interface SaveUpload {
     data class Error(val msg: String?) : SaveUpload
 }
 
-class RegisterLandViewModel(
+class OnboardingViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
-    savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
     private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
     val landTitle: StateFlow<String> = _landTitle.asStateFlow()
@@ -54,8 +51,6 @@ class RegisterLandViewModel(
 
     var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
         private set
-
-    private val titleId: String? = savedStateHandle[UploadGovtIssuedIdScreenDestination.LAND_TITLE_ID_ARG]
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
         if (uploadingLandDoc !is UploadingDoc.Loading) {

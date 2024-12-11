@@ -1,4 +1,4 @@
-package com.lomolo.copodapp.ui.viewmodels
+package com.lomolo.copodapp.state.viewmodels
 
 import android.net.Uri
 import android.util.Log
@@ -18,7 +18,6 @@ import com.web3auth.core.types.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.future.await
 import kotlinx.coroutines.launch
 import org.web3j.crypto.Credentials

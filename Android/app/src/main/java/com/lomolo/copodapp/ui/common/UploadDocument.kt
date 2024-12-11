@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,11 +37,12 @@ import com.lomolo.copodapp.R
 fun UploadDocument(
     modifier: Modifier = Modifier,
     onNext: () -> Unit,
-    title: @Composable () -> Unit,
+    title: @Composable (() -> Unit),
     onGoBack: () -> Unit,
     onSelectImage: () -> Unit,
     savingDoc: Boolean,
     image: Any,
+    newUpload: Boolean = true,
     buttonText: @Composable (RowScope.() -> Unit),
 ) {
     val context = LocalContext.current
@@ -56,6 +58,24 @@ fun UploadDocument(
                 )
             }
         })
+    }, bottomBar = {
+        BottomAppBar {
+            Button(
+                onClick = { if (!savingDoc) onNext() },
+                shape = MaterialTheme.shapes.extraSmall,
+                contentPadding = PaddingValues(16.dp),
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                when (savingDoc) {
+                    true -> CircularProgressIndicator(
+                        Modifier.size(20.dp),
+                        MaterialTheme.colorScheme.onPrimary,
+                    )
+
+                    false -> buttonText()
+                }
+            }
+        }
     }) { innerPadding ->
         Box(
             modifier
@@ -68,7 +88,7 @@ fun UploadDocument(
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
-                    contentScale = ContentScale.Fit,
+                    contentScale = if (!newUpload) ContentScale.Crop else ContentScale.Fit,
                     placeholder = painterResource(R.drawable.loading_img),
                     error = painterResource(R.drawable.ic_broken_image),
                     modifier = Modifier
@@ -77,22 +97,6 @@ fun UploadDocument(
                         .clickable { onSelectImage() },
                     contentDescription = stringResource(R.string.image),
                 )
-            }
-            Button(
-                onClick = { if (!savingDoc) onNext() },
-                shape = MaterialTheme.shapes.extraSmall,
-                contentPadding = PaddingValues(16.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.BottomCenter),
-            ) {
-                when(savingDoc) {
-                    true -> CircularProgressIndicator(
-                        Modifier.size(20.dp),
-                        MaterialTheme.colorScheme.onPrimary,
-                    )
-                    false -> buttonText()
-                }
             }
         }
     }

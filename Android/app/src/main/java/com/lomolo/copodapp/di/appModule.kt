@@ -10,11 +10,11 @@ import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.rest.getRestService
 import com.lomolo.copodapp.retrofit.getRestApiClient
-import com.lomolo.copodapp.ui.viewmodels.LandViewModel
-import com.lomolo.copodapp.ui.viewmodels.MainViewModel
-import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
-import com.lomolo.copodapp.ui.viewmodels.MpesaViewModel
-import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
+import com.lomolo.copodapp.state.viewmodels.LandViewModel
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.MarketViewModel
+import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.web3.getWeb3AuthImpl
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
@@ -33,7 +33,7 @@ val appModule = module {
 
     viewModel { MainViewModel(get(), get(), get()) }
     viewModel { MarketViewModel() }
-    viewModel { RegisterLandViewModel(get(), get(), get()) }
     viewModel { LandViewModel(get()) }
     viewModel { MpesaViewModel(get(), get(), get()) }
+    viewModel { OnboardingViewModel(get(), get()) }
 }

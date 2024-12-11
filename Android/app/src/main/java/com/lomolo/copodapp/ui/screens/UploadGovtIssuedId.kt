@@ -18,27 +18,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.state.viewmodels.SaveUpload
+import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
-import com.lomolo.copodapp.ui.viewmodels.SaveUpload
-import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
 object UploadGovtIssuedIdScreenDestination : Navigation {
     override val title = null
     override val route = "register-govt-id"
-    const val LAND_TITLE_ID_ARG = "titleId"
-    val routeWithArgs = "$route/{$LAND_TITLE_ID_ARG}"
 }
 
 @Composable
 fun UploadGovtIssuedId(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    userEmail: String,
     onNext: (String) -> Unit,
-    viewModel: RegisterLandViewModel,
+    viewModel: OnboardingViewModel,
 ) {
     val image by viewModel.supportingDoc.collectAsState()
     val idDoc = when (viewModel.uploadingGovtId) {
@@ -91,6 +88,7 @@ fun UploadGovtIssuedId(
                 )
             }
         },
+        newUpload = image.isEmpty(),
         image = idDoc,
         onNext = {
             if (image.isNotEmpty()) {

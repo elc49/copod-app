@@ -42,9 +42,9 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.GetUserLands
-import com.lomolo.copodapp.ui.viewmodels.LandViewModel
-import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.GetUserLands
+import com.lomolo.copodapp.state.viewmodels.LandViewModel
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.web3auth.core.types.UserInfo
 import org.koin.androidx.compose.koinViewModel
 

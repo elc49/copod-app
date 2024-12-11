@@ -18,11 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.RegisterLandViewModel
-import com.lomolo.copodapp.ui.viewmodels.SaveUpload
-import com.lomolo.copodapp.ui.viewmodels.UploadingDoc
+import com.lomolo.copodapp.state.viewmodels.SaveUpload
+import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
 object UploadLandTitleScreenDestination : Navigation {
@@ -35,8 +35,7 @@ fun UploadLandTitle(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
     onNavigateTo: (String) -> Unit,
-    userEmail: String,
-    viewModel: RegisterLandViewModel,
+    viewModel: OnboardingViewModel,
 ) {
     val image by viewModel.landTitle.collectAsState()
     val landTitle = when (viewModel.uploadingLandDoc) {
@@ -87,9 +86,9 @@ fun UploadLandTitle(
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
-    }, image = landTitle, savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
+    }, image = landTitle, newUpload = image.isEmpty(), savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
         if (image.isNotEmpty()) {
-            {}
+            onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
         }
     }, onGoBack = onGoBack, onSelectImage = {
         if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {

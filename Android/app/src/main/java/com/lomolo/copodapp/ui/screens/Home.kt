@@ -23,8 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.LoginSdk
-import com.lomolo.copodapp.ui.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.LoginSdk
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
 
 object HomeScreenDestination : Navigation {
     override val title = null

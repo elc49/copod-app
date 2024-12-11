@@ -29,9 +29,9 @@ import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.NoLands
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.ui.viewmodels.GetLocalLands
-import com.lomolo.copodapp.ui.viewmodels.MainViewModel
-import com.lomolo.copodapp.ui.viewmodels.MarketViewModel
+import com.lomolo.copodapp.state.viewmodels.GetLocalLands
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.MarketViewModel
 import org.koin.androidx.compose.koinViewModel
 
 object ExploreMarketsScreenDestination : Navigation {
