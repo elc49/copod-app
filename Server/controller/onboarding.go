@@ -92,7 +92,7 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 		return o.r.CreateOnboarding(ctx, oArgs)
 	case oErr == nil && onboarding != nil:
 		// Update existing with new incoming onboarding data
-		// Support doc
+		// Update Support doc
 		suArgs := sql.UpdateSupportDocByIDParams{
 			ID:           onboarding.SupportDocID,
 			Url:          input.SupportdocURL,
@@ -102,7 +102,7 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			return nil, err
 		}
 
-		// Title
+		// Update Title
 		tuArgs := sql.UpdateTitleByIDParams{
 			ID:           onboarding.TitleID,
 			Url:          input.TitleURL,
@@ -113,7 +113,7 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			return nil, err
 		}
 
-		// Display picture
+		// Update Display picture
 		udArgs := sql.UpdateDisplayPictureByIDParams{
 			ID:           onboarding.DisplayPictureID,
 			Url:          input.DisplayPictureURL,
