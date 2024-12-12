@@ -1,0 +1,6 @@
+query GetOnboardingByEmail($email: String!) {
+    getOnboardingByEmail(email: $email) {
+        id
+        verification
+    }
+}

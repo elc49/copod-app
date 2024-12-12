@@ -6,8 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.apollographql.apollo.exception.ApolloException
+import com.lomolo.copodapp.GetOnboardingByEmailQuery
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
+import com.lomolo.copodapp.repository.IWeb3Auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,9 +33,16 @@ interface SaveUpload {
     data class Error(val msg: String?) : SaveUpload
 }
 
+interface GetCurrentOnboarding {
+    data object Success: GetCurrentOnboarding
+    data object Loading: GetCurrentOnboarding
+    data class Error(val msg: String?): GetCurrentOnboarding
+}
+
 class OnboardingViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
+    private val web3Auth: IWeb3Auth,
 ) : ViewModel() {
     private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
     val landTitle: StateFlow<String> = _landTitle.asStateFlow()
@@ -42,6 +52,9 @@ class OnboardingViewModel(
 
     private val _displayPicture: MutableStateFlow<String> = MutableStateFlow("")
     val displayPicture: StateFlow<String> = _displayPicture.asStateFlow()
+
+    private val _currentOnboarding: MutableStateFlow<GetOnboardingByEmailQuery.GetOnboardingByEmail?> = MutableStateFlow(null)
+    val currentOnboarding: StateFlow<GetOnboardingByEmailQuery.GetOnboardingByEmail?> = _currentOnboarding.asStateFlow()
 
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
@@ -56,6 +69,9 @@ class OnboardingViewModel(
         private set
 
     var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
+        private set
+
+    var gettingCurrentOnboarding: GetCurrentOnboarding by mutableStateOf(GetCurrentOnboarding.Success)
         private set
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
@@ -119,6 +135,23 @@ class OnboardingViewModel(
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     UploadingDoc.Error(e.message ?: "Something went wrong")
+                }
+            }
+        }
+    }
+
+    fun getCurrentOnboarding() {
+        if (gettingCurrentOnboarding !is GetCurrentOnboarding.Loading) {
+            gettingCurrentOnboarding = GetCurrentOnboarding.Loading
+            viewModelScope.launch {
+                gettingCurrentOnboarding = try {
+                    val userInfo = web3Auth.getUserInfo()
+                    val res = graphqlApiService.getOnboardingByEmail(userInfo.email).dataOrThrow()
+                    _currentOnboarding.update { res.getOnboardingByEmail }
+                    GetCurrentOnboarding.Success
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    GetCurrentOnboarding.Error(e.message)
                 }
             }
         }

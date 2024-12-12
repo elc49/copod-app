@@ -113,6 +113,7 @@ fun NavigationHost(
             LandScreen(onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
+                onboardingViewModel = onboardingViewModel,
                 mainViewModel = mainViewModel,
                 onClickAddLand = {
                     navHostController.navigate(UploadLandTitleScreenDestination.route)

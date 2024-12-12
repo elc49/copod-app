@@ -5,6 +5,7 @@ import com.apollographql.apollo.api.ApolloResponse
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.ChargeMpesaMutation
+import com.lomolo.copodapp.GetOnboardingByEmailQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
 import com.lomolo.copodapp.type.PayWithMpesaInput
@@ -14,6 +15,7 @@ interface IGraphQL {
     suspend fun getUserLands(email: String): ApolloResponse<GetUserLandQuery.Data>
     suspend fun chargeMpesa(input: PayWithMpesaInput): ApolloResponse<ChargeMpesaMutation.Data>
     fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
+    suspend fun getOnboardingByEmail(email: String): ApolloResponse<GetOnboardingByEmailQuery.Data>
 }
 
 class GraphQLServiceImpl(
@@ -30,4 +32,9 @@ class GraphQLServiceImpl(
     override fun paymentUpdate(email: String) = apolloClient.subscription(
         PaymentUpdateSubscription(email)
     ).toFlow()
+
+    override suspend fun getOnboardingByEmail(email: String) =
+        apolloClient.query(GetOnboardingByEmailQuery(email)).fetchPolicy(
+            FetchPolicy.NetworkFirst
+        ).execute()
 }

@@ -39,12 +39,14 @@ import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.ui.common.BottomNavBar
-import com.lomolo.copodapp.ui.common.TopBar
-import com.lomolo.copodapp.ui.navigation.Navigation
+import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
 import com.lomolo.copodapp.state.viewmodels.GetUserLands
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.ui.common.BottomNavBar
+import com.lomolo.copodapp.ui.common.TopBar
+import com.lomolo.copodapp.ui.navigation.Navigation
 import com.web3auth.core.types.UserInfo
 import org.koin.androidx.compose.koinViewModel
 
@@ -61,14 +63,22 @@ fun LandScreen(
     onNavigateTo: (String) -> Unit,
     viewModel: LandViewModel = koinViewModel<LandViewModel>(),
     mainViewModel: MainViewModel,
+    onboardingViewModel: OnboardingViewModel,
     userInfo: UserInfo?,
     onClickAddLand: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.getUserLands(userInfo?.email!!)
+        onboardingViewModel.getCurrentOnboarding()
     }
+    val currentOnboarding by onboardingViewModel.currentOnboarding.collectAsState()
     val lands by viewModel.lands.collectAsState()
     var openDialog by remember { mutableStateOf(false) }
+    val loading = when {
+        viewModel.gettingUserLands is GetUserLands.Loading -> true
+        onboardingViewModel.gettingCurrentOnboarding is GetCurrentOnboarding.Loading -> true
+        else -> false
+    }
 
     Scaffold(topBar = {
         TopBar(
@@ -94,8 +104,15 @@ fun LandScreen(
                     signOut = { mainViewModel.logOut() },
                 )
             }
-            when (viewModel.gettingUserLands) {
-                GetUserLands.Success -> {
+            when {
+                currentOnboarding != null -> Column(
+                    Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(stringResource(R.string.waiting_submission))
+                }
+                currentOnboarding == null && viewModel.gettingUserLands is GetUserLands.Success -> {
                     if (lands.isEmpty()) {
                         NoLand(
                             onClickAddLand = onClickAddLand,
@@ -111,7 +128,7 @@ fun LandScreen(
                     }
                 }
 
-                GetUserLands.Loading -> Column(
+                loading -> Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -121,7 +138,7 @@ fun LandScreen(
                     )
                 }
 
-                is GetUserLands.Error -> Text(
+                viewModel.gettingUserLands is GetUserLands.Error -> Text(
                     "Something went wrong",
                     color = MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,

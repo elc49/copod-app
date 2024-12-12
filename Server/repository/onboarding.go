@@ -101,7 +101,9 @@ func (r *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Con
 
 func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
 	ob, err := r.sql.GetOnboardingByEmail(ctx, email)
-	if err != nil {
+	if err != nil && err == db.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
 		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
 		return nil, err
 	}
