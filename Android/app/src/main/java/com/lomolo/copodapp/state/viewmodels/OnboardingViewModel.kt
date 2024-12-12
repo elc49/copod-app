@@ -14,7 +14,6 @@ import com.lomolo.copodapp.repository.IWeb3Auth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -86,7 +85,7 @@ class OnboardingViewModel(
             viewModelScope.launch {
                 uploadingLandDoc = try {
                     val res = restApiService.uploadDoc(filePart)
-                    _landTitle.update { res.imageUri }
+                    _landTitle.emit(res.imageUri)
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -108,7 +107,7 @@ class OnboardingViewModel(
             viewModelScope.launch {
                 uploadingGovtId = try {
                     val res = restApiService.uploadDoc(filePart)
-                    _supportingDoc.update { res.imageUri }
+                    _supportingDoc.emit(res.imageUri)
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -130,7 +129,7 @@ class OnboardingViewModel(
             viewModelScope.launch {
                 uploadingDp = try {
                     val res = restApiService.uploadDoc(filePart)
-                    _displayPicture.update { res.imageUri }
+                    _displayPicture.emit(res.imageUri)
                     UploadingDoc.Success
                 } catch (e: Exception) {
                     Log.d(TAG, e.message ?: "Something went wrong")
@@ -147,7 +146,7 @@ class OnboardingViewModel(
                 gettingCurrentOnboarding = try {
                     val userInfo = web3Auth.getUserInfo()
                     val res = graphqlApiService.getOnboardingByEmail(userInfo.email).dataOrThrow()
-                    _currentOnboarding.update { res.getOnboardingByEmail }
+                    _currentOnboarding.emit(res.getOnboardingByEmail)
                     GetCurrentOnboarding.Success
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
