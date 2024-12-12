@@ -18,6 +18,7 @@ type Querier interface {
 	CreateTitle(ctx context.Context, arg CreateTitleParams) (TitleDeed, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (DisplayPicture, error)
+	GetOnboardingByEmail(ctx context.Context, email string) (Onboarding, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error)
 	GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, arg GetOnboardingByVerificationAndPaymentStatusParams) ([]Onboarding, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)

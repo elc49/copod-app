@@ -15,6 +15,8 @@ var onboardingController *Onboarding
 type OnboardingController interface {
 	CreateOnboarding(context.Context, model.CreateOnboardingInput) (*model.Onboarding, error)
 	GetOnboardingByVerificationAndPaymentStatus(context.Context, sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error)
+	GetOnboardingByEmail(context.Context, string) (*model.Onboarding, error)
+	UpdateOnboardingVerificationByID(context.Context, sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -23,24 +25,24 @@ type Onboarding struct {
 	log *logrus.Logger
 }
 
-func (o *Onboarding) Init(sql *sql.Queries) {
+func (c *Onboarding) Init(sql *sql.Queries) {
 	r := &repository.Onboarding{}
 	r.Init(sql)
-	o.r = r
-	onboardingController = o
-	o.sql = sql
-	o.log = logger.GetLogger()
+	c.r = r
+	onboardingController = c
+	c.sql = sql
+	c.log = logger.GetLogger()
 }
 
 func GetOnboardingController() OnboardingController {
 	return onboardingController
 }
 
-func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
+func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
 	var supportDoc *model.SupportingDoc
 	// Check existing pending onboarding
 	getArgs := sql.GetOnboardingByEmailAndVerificationParams{}
-	onboarding, oErr := o.r.GetOnboardingByEmailAndVerification(ctx, getArgs)
+	onboarding, oErr := c.r.GetOnboardingByEmailAndVerification(ctx, getArgs)
 	oArgs := sql.CreateOnboardingParams{
 		Email: input.Email,
 	}
@@ -53,8 +55,8 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			Email: input.Email,
 			Url:   input.SupportdocURL,
 		}
-		if s, sErr := o.sql.CreateSupportDoc(ctx, sArgs); sErr != nil {
-			o.log.WithError(sErr).WithFields(logrus.Fields{"args": sArgs}).Errorf("controller: CreateOnboarding: CreateSupportDoc")
+		if s, sErr := c.sql.CreateSupportDoc(ctx, sArgs); sErr != nil {
+			c.log.WithError(sErr).WithFields(logrus.Fields{"args": sArgs}).Errorf("controller: CreateOnboarding: CreateSupportDoc")
 			return nil, sErr
 		} else {
 			oArgs.SupportDocID = s.ID
@@ -69,8 +71,8 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			Email:        input.Email,
 			SupportDocID: supportDoc.ID,
 		}
-		if t, tErr := o.sql.CreateTitle(ctx, tArgs); tErr != nil {
-			o.log.WithError(tErr).WithFields(logrus.Fields{"args": tArgs}).Errorf("controller: CreateOnboarding: CreateTitle")
+		if t, tErr := c.sql.CreateTitle(ctx, tArgs); tErr != nil {
+			c.log.WithError(tErr).WithFields(logrus.Fields{"args": tArgs}).Errorf("controller: CreateOnboarding: CreateTitle")
 			return nil, tErr
 		} else {
 			oArgs.TitleID = t.ID
@@ -82,14 +84,14 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			SupportDocID: supportDoc.ID,
 			Url:          input.DisplayPictureURL,
 		}
-		if dp, dErr := o.sql.CreateDisplayPicture(ctx, dArgs); dErr != nil {
-			o.log.WithError(dErr).WithFields(logrus.Fields{"args": dArgs}).Errorf("controller: CreateOnboarding: CreateDisplayPicture")
+		if dp, dErr := c.sql.CreateDisplayPicture(ctx, dArgs); dErr != nil {
+			c.log.WithError(dErr).WithFields(logrus.Fields{"args": dArgs}).Errorf("controller: CreateOnboarding: CreateDisplayPicture")
 			return nil, dErr
 		} else {
 			oArgs.DisplayPictureID = dp.ID
 		}
 
-		return o.r.CreateOnboarding(ctx, oArgs)
+		return c.r.CreateOnboarding(ctx, oArgs)
 	case oErr == nil && onboarding != nil:
 		// Update existing with new incoming onboarding data
 		// Update Support doc
@@ -98,7 +100,7 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			Url:          input.SupportdocURL,
 			Verification: model.VerificationOnboarding.String(),
 		}
-		if _, err := o.sql.UpdateSupportDocByID(ctx, suArgs); err != nil {
+		if _, err := c.sql.UpdateSupportDocByID(ctx, suArgs); err != nil {
 			return nil, err
 		}
 
@@ -108,8 +110,8 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			Url:          input.TitleURL,
 			Verification: model.VerificationOnboarding.String(),
 		}
-		if _, err := o.sql.UpdateTitleByID(ctx, tuArgs); err != nil {
-			o.log.WithError(err).WithFields(logrus.Fields{"args": tuArgs}).Errorf("controller: CreateOnboarding: UpdateTitleByID")
+		if _, err := c.sql.UpdateTitleByID(ctx, tuArgs); err != nil {
+			c.log.WithError(err).WithFields(logrus.Fields{"args": tuArgs}).Errorf("controller: CreateOnboarding: UpdateTitleByID")
 			return nil, err
 		}
 
@@ -119,12 +121,12 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			Url:          input.DisplayPictureURL,
 			Verification: model.VerificationOnboarding.String(),
 		}
-		if _, err := o.sql.UpdateDisplayPictureByID(ctx, udArgs); err != nil {
-			o.log.WithError(err).WithFields(logrus.Fields{"args": udArgs}).Errorf("controller: CreateOnboarding: UpdateDisplayPictureByID")
+		if _, err := c.sql.UpdateDisplayPictureByID(ctx, udArgs); err != nil {
+			c.log.WithError(err).WithFields(logrus.Fields{"args": udArgs}).Errorf("controller: CreateOnboarding: UpdateDisplayPictureByID")
 			return nil, err
 		}
 
-		return o.r.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
+		return c.r.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
 			ID:           onboarding.ID,
 			Verification: model.VerificationOnboarding.String(),
 		})
@@ -133,6 +135,14 @@ func (o *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 	}
 }
 
-func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
-	return o.r.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
+func (c *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
+	return c.r.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
+}
+
+func (c *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	return c.r.GetOnboardingByEmail(ctx, email)
+}
+
+func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
+	return c.r.UpdateOnboardingVerificationByID(ctx, args)
 }

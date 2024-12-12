@@ -15,69 +15,70 @@ type Onboarding struct {
 	log *logrus.Logger
 }
 
-func (o *Onboarding) Init(sql *sql.Queries) {
-	o.sql = sql
-	o.log = logger.GetLogger()
+func (r *Onboarding) Init(sql *sql.Queries) {
+	r.sql = sql
+	r.log = logger.GetLogger()
 }
 
-func (o *Onboarding) CreateOnboarding(ctx context.Context, args sql.CreateOnboardingParams) (*model.Onboarding, error) {
-	r, err := o.sql.CreateOnboarding(ctx, args)
+func (r *Onboarding) CreateOnboarding(ctx context.Context, args sql.CreateOnboardingParams) (*model.Onboarding, error) {
+	o, err := r.sql.CreateOnboarding(ctx, args)
 	if err != nil {
-		o.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: CreateOnboarding")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: CreateOnboarding")
 		return nil, err
 	}
 
 	return &model.Onboarding{
-		ID:               r.ID,
-		TitleID:          r.TitleID,
-		SupportDocID:     r.SupportDocID,
-		DisplayPictureID: r.DisplayPictureID,
-		Verification:     model.Verification(r.Verification),
-		CreatedAt:        r.CreatedAt,
-		UpdatedAt:        r.UpdatedAt,
+		ID:               o.ID,
+		TitleID:          o.TitleID,
+		SupportDocID:     o.SupportDocID,
+		DisplayPictureID: o.DisplayPictureID,
+		Verification:     model.Verification(o.Verification),
+		CreatedAt:        o.CreatedAt,
+		UpdatedAt:        o.UpdatedAt,
 	}, nil
 }
 
-func (o *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
-	r, err := o.sql.GetOnboardingByEmailAndVerification(ctx, args)
+func (r *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
+	o, err := r.sql.GetOnboardingByEmailAndVerification(ctx, args)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		o.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByEmailAndVerification")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByEmailAndVerification")
 		return nil, err
 	default:
 		return &model.Onboarding{
-			ID:               r.ID,
-			TitleID:          r.TitleID,
-			SupportDocID:     r.SupportDocID,
-			DisplayPictureID: r.DisplayPictureID,
-			Verification:     model.Verification(r.Verification),
-			CreatedAt:        r.CreatedAt,
-			UpdatedAt:        r.UpdatedAt,
+			ID:               o.ID,
+			TitleID:          o.TitleID,
+			SupportDocID:     o.SupportDocID,
+			DisplayPictureID: o.DisplayPictureID,
+			Verification:     model.Verification(o.Verification),
+			CreatedAt:        o.CreatedAt,
+			UpdatedAt:        o.UpdatedAt,
 		}, nil
 	}
 }
 
-func (o *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
-	u, err := o.sql.UpdateOnboardingVerificationByID(ctx, args)
+func (r *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
+	u, err := r.sql.UpdateOnboardingVerificationByID(ctx, args)
 	if err != nil {
-		o.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateOnboardingVerificationByID")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateOnboardingVerificationByID")
 		return nil, err
 	}
 
 	return &model.Onboarding{
-		ID:        u.ID,
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
+		ID:           u.ID,
+		Verification: model.Verification(u.Verification),
+		CreatedAt:    u.CreatedAt,
+		UpdatedAt:    u.UpdatedAt,
 	}, nil
 }
 
-func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
+func (r *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
 	var onboardings []*model.Onboarding
-	obs, err := o.sql.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
+	obs, err := r.sql.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
 	if err != nil {
-		o.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByVerificationAndPaymentStatus")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByVerificationAndPaymentStatus")
 		return nil, err
 	}
 
@@ -96,4 +97,22 @@ func (o *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Con
 	}
 
 	return onboardings, nil
+}
+
+func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	ob, err := r.sql.GetOnboardingByEmail(ctx, email)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
+		return nil, err
+	}
+
+	return &model.Onboarding{
+		ID:               ob.ID,
+		TitleID:          ob.TitleID,
+		DisplayPictureID: ob.DisplayPictureID,
+		SupportDocID:     ob.SupportDocID,
+		Verification:     model.Verification(ob.Verification),
+		CreatedAt:        ob.CreatedAt,
+		UpdatedAt:        ob.UpdatedAt,
+	}, nil
 }

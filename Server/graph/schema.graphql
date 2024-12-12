@@ -126,7 +126,7 @@ input CreateOnboardingInput {
 
 input UpdateOnboardingStatusInput {
   onboardingId: UUID!
-  status: Verification!
+  verification: Verification!
 }
 
 input GetOnboardingByVerificationAndPaymentStatusInput {
@@ -141,13 +141,14 @@ type Query {
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
   getSupportingDocById(id: UUID!): SupportingDoc!
   getOnboardingByVerificationAndPaymentStatus(input: GetOnboardingByVerificationAndPaymentStatusInput!): [Onboarding!]!
+  getOnboardingByEmail(email: String!): Onboarding!
 }
 
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
   createUser(input: CreateUserInput!): User!
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
-  updateOnboardingStatus(input: UpdateOnboardingStatusInput!): Onboarding!
+  updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
 }
 
 type Subscription {

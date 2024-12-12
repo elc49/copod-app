@@ -14,6 +14,7 @@ import (
 func Test_Onboarding_Controller(t *testing.T) {
 	ctx := context.Background()
 	oc := controller.GetOnboardingController()
+	var ob *model.Onboarding
 
 	t.Run("create_new_onboarding", func(t *testing.T) {
 		o, err := oc.CreateOnboarding(ctx, model.CreateOnboardingInput{
@@ -22,6 +23,7 @@ func Test_Onboarding_Controller(t *testing.T) {
 			SupportdocURL:     "https://supp.doc",
 			Email:             email,
 		})
+		ob = o
 
 		assert.Nil(t, err)
 		assert.Equal(t, o.Verification, model.VerificationOnboarding)
@@ -47,5 +49,23 @@ func Test_Onboarding_Controller(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.True(t, len(obs) == 0)
+	})
+
+	t.Run("update_onboarding_verification_status", func(t *testing.T) {
+		o, err := oc.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
+			ID:           ob.ID,
+			Verification: model.VerificationRejected.String(),
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, o.Verification, model.VerificationRejected)
+		assert.NotEqual(t, ob.Verification, o.Verification)
+	})
+
+	t.Run("get_onboarding_by_email", func(t *testing.T) {
+		o, err := oc.GetOnboardingByEmail(ctx, email)
+
+		assert.Nil(t, err)
+		assert.Equal(t, o.ID.String(), ob.ID.String())
 	})
 }

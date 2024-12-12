@@ -49,6 +49,28 @@ func (q *Queries) CreateOnboarding(ctx context.Context, arg CreateOnboardingPara
 	return i, err
 }
 
+const getOnboardingByEmail = `-- name: GetOnboardingByEmail :one
+SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+WHERE email = $1 LIMIT 1
+`
+
+func (q *Queries) GetOnboardingByEmail(ctx context.Context, email string) (Onboarding, error) {
+	row := q.db.QueryRowContext(ctx, getOnboardingByEmail, email)
+	var i Onboarding
+	err := row.Scan(
+		&i.ID,
+		&i.TitleID,
+		&i.SupportDocID,
+		&i.DisplayPictureID,
+		&i.Email,
+		&i.Verification,
+		&i.PaymentStatus,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getOnboardingByEmailAndVerification = `-- name: GetOnboardingByEmailAndVerification :one
 SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
 WHERE email = $1 AND verification = $2

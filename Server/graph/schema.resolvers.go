@@ -63,64 +63,34 @@ func (r *mutationResolver) CreateOnboarding(ctx context.Context, input model.Cre
 	return r.onboardingController.CreateOnboarding(ctx, input)
 }
 
-// UpdateOnboardingStatus is the resolver for the updateOnboardingStatus field.
-func (r *mutationResolver) UpdateOnboardingStatus(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
-	panic(fmt.Errorf("not implemented: UpdateOnboardingStatus - updateOnboardingStatus"))
+// UpdateOnboardingVerification is the resolver for the updateOnboardingVerification field.
+func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
+	panic(fmt.Errorf("not implemented: UpdateOnboardingVerification - updateOnboardingVerification"))
 }
 
 // GetUserLands is the resolver for the getUserLands field.
 func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Title, error) {
-	lands, err := r.titleController.GetTitlesByEmail(ctx, email)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("resolver: GetUserLands")
-		return nil, err
-	}
-
-	return lands, nil
+	return r.titleController.GetTitlesByEmail(ctx, email)
 }
 
 // GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.
 func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error) {
-	payments, err := r.paymentController.GetPaymentsByStatus(ctx, status.String())
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"status": status.String()}).Errorf("resolver: GetPaymentsByStatus")
-		return nil, err
-	}
-
-	return payments, nil
+	return r.paymentController.GetPaymentsByStatus(ctx, status.String())
 }
 
 // GetPaymentDetailsByID is the resolver for the getPaymentDetailsById field.
 func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
-	payment, err := r.paymentController.GetPaymentDetailsByID(ctx, id)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("resolver: GetPaymentDetailsByID")
-		return nil, err
-	}
-
-	return payment, nil
+	return r.paymentController.GetPaymentDetailsByID(ctx, id)
 }
 
 // GetSupportingDocsByVerification is the resolver for the getSupportingDocsByVerification field.
 func (r *queryResolver) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
-	docs, err := r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"verification": verification}).Errorf("resolver: GetSupportingDocsByVerification")
-		return nil, err
-	}
-
-	return docs, nil
+	return r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
 }
 
 // GetSupportingDocByID is the resolver for the getSupportingDocById field.
 func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
-	doc, err := r.supportDocController.GetSupportingDocByID(ctx, id)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("resolver: GetSupportingDocByID")
-		return nil, err
-	}
-
-	return doc, nil
+	return r.supportDocController.GetSupportingDocByID(ctx, id)
 }
 
 // GetOnboardingByVerificationAndPaymentStatus is the resolver for the getOnboardingByVerificationAndPaymentStatus field.
@@ -130,6 +100,11 @@ func (r *queryResolver) GetOnboardingByVerificationAndPaymentStatus(ctx context.
 		PaymentStatus: db.NullString{String: input.PaymentStatus.String(), Valid: true},
 	}
 	return r.onboardingController.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
+}
+
+// GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
+func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	return r.onboardingController.GetOnboardingByEmail(ctx, email)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
@@ -166,3 +141,15 @@ func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionRes
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//  - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//    it when you're done.
+//  - You have helper methods in this file. Move them out to keep these resolver files clean.
+/*
+	func (r *mutationResolver) UpdateOnboardingStatus(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
+	panic(fmt.Errorf("not implemented: UpdateOnboardingStatus - updateOnboardingStatus"))
+}
+*/

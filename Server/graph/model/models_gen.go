@@ -106,7 +106,7 @@ type Title struct {
 
 type UpdateOnboardingStatusInput struct {
 	OnboardingID uuid.UUID    `json:"onboardingId"`
-	Status       Verification `json:"status"`
+	Verification Verification `json:"verification"`
 }
 
 type User struct {
