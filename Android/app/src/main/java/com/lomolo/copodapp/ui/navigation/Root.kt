@@ -147,7 +147,9 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 viewModel = onboardingViewModel,
-                onNext = {},
+                onNext = {
+                    onNavigateTo(it)
+                },
             )
         }
         composable(

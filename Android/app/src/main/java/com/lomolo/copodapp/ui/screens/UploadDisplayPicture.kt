@@ -18,14 +18,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.Onboarding
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
-import com.lomolo.copodapp.state.viewmodels.SaveUpload
 import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
 import kotlinx.coroutines.launch
 
-object UploadDisplayPictureDestination: Navigation {
+object UploadDisplayPictureDestination : Navigation {
     override val title = null
     override val route = "register-display-picture"
 }
@@ -78,36 +78,46 @@ fun UploadDisplayPicture(
         }
     }
 
-    UploadDocument(modifier = modifier, title = @Composable {
-        Column {
-            Text(stringResource(R.string.display_picture))
-            Text(
-                stringResource(R.string.picture_of_you),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-    }, image = displayPicture, newUpload = image.isEmpty(), savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
-        if (image.isNotEmpty()) {
-            {}
-        }
-    }, onGoBack = onGoBack, onSelectImage = {
-        if (viewModel.uploadingDp !is UploadingDoc.Loading) {
-            scope.launch {
-                pickDisplayMedia.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly,
-                    )
+    UploadDocument(modifier = modifier,
+        title = @Composable {
+            Column {
+                Text(stringResource(R.string.display_picture))
+                Text(
+                    stringResource(R.string.picture_of_you),
+                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
-        }
-    }, buttonText = @Composable {
-        Text(
-            stringResource(R.string.proceed),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Icon(
-            Icons.AutoMirrored.TwoTone.ArrowForward,
-            contentDescription = stringResource(R.string.proceed),
-        )
-    })
+        },
+        image = displayPicture,
+        newUpload = image.isEmpty(),
+        savingDoc = viewModel.uploadingDp is UploadingDoc.Loading || viewModel.onboarding is Onboarding.Loading,
+        onNext = {
+            if (image.isNotEmpty()) {
+                viewModel.createOnboarding {
+                    onNext(LandScreenDestination.route)
+                }
+            }
+        },
+        onGoBack = onGoBack,
+        onSelectImage = {
+            if (viewModel.uploadingDp !is UploadingDoc.Loading) {
+                scope.launch {
+                    pickDisplayMedia.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly,
+                        )
+                    )
+                }
+            }
+        },
+        buttonText = @Composable {
+            Text(
+                stringResource(R.string.proceed),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Icon(
+                Icons.AutoMirrored.TwoTone.ArrowForward,
+                contentDescription = stringResource(R.string.proceed),
+            )
+        })
 }

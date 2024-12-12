@@ -11,6 +11,8 @@ import com.lomolo.copodapp.GetOnboardingByEmailQuery
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
+import com.lomolo.copodapp.type.CreateOnboardingInput
+import com.web3auth.core.types.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,23 +28,25 @@ interface UploadingDoc {
     data class Error(val msg: String?) : UploadingDoc
 }
 
-interface SaveUpload {
-    data object Success : SaveUpload
-    data object Loading : SaveUpload
-    data class Error(val msg: String?) : SaveUpload
-}
-
 interface GetCurrentOnboarding {
     data object Success: GetCurrentOnboarding
     data object Loading: GetCurrentOnboarding
     data class Error(val msg: String?): GetCurrentOnboarding
 }
 
+interface Onboarding {
+    data object Success: Onboarding
+    data object Loading: Onboarding
+    data class Error(val msg: String?): Onboarding
+}
+
 class OnboardingViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
-    private val web3Auth: IWeb3Auth,
+    web3Auth: IWeb3Auth,
 ) : ViewModel() {
+    private val userInfo: UserInfo = web3Auth.getUserInfo()
+
     private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
     val landTitle: StateFlow<String> = _landTitle.asStateFlow()
 
@@ -64,13 +68,10 @@ class OnboardingViewModel(
     var uploadingDp: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
-    var savingLandTitle: SaveUpload by mutableStateOf(SaveUpload.Success)
-        private set
-
-    var savingSupportingDoc: SaveUpload by mutableStateOf(SaveUpload.Success)
-        private set
-
     var gettingCurrentOnboarding: GetCurrentOnboarding by mutableStateOf(GetCurrentOnboarding.Success)
+        private set
+
+    var onboarding: Onboarding by mutableStateOf(Onboarding.Success)
         private set
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
@@ -144,13 +145,34 @@ class OnboardingViewModel(
             gettingCurrentOnboarding = GetCurrentOnboarding.Loading
             viewModelScope.launch {
                 gettingCurrentOnboarding = try {
-                    val userInfo = web3Auth.getUserInfo()
                     val res = graphqlApiService.getOnboardingByEmail(userInfo.email).dataOrThrow()
                     _currentOnboarding.emit(res.getOnboardingByEmail)
                     GetCurrentOnboarding.Success
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     GetCurrentOnboarding.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun createOnboarding(cb: () -> Unit = {}) {
+        if (onboarding !is Onboarding.Loading) {
+            onboarding = Onboarding.Loading
+            viewModelScope.launch {
+                onboarding = try {
+                    graphqlApiService.createOnboarding(
+                        CreateOnboardingInput(
+                            email = userInfo.email,
+                            titleUrl = _landTitle.value,
+                            displayPictureUrl = _displayPicture.value,
+                            supportdocUrl = _supportingDoc.value
+                        )
+                    )
+                    Onboarding.Success.also { cb() }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    Onboarding.Error(e.message)
                 }
             }
         }

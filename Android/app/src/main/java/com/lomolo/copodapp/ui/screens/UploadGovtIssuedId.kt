@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
-import com.lomolo.copodapp.state.viewmodels.SaveUpload
 import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
@@ -107,7 +106,7 @@ fun UploadGovtIssuedId(
                 }
             }
         },
-        savingDoc = viewModel.savingSupportingDoc is SaveUpload.Loading,
+        savingDoc = viewModel.uploadingGovtId is UploadingDoc.Loading,
         buttonText = @Composable {
             Text(
                 stringResource(R.string.proceed),

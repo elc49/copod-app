@@ -19,10 +19,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import com.lomolo.copodapp.ui.common.UploadDocument
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.state.viewmodels.SaveUpload
-import com.lomolo.copodapp.state.viewmodels.UploadingDoc
 import kotlinx.coroutines.launch
 
 object UploadLandTitleScreenDestination : Navigation {
@@ -86,7 +85,7 @@ fun UploadLandTitle(
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
-    }, image = landTitle, newUpload = image.isEmpty(), savingDoc = viewModel.savingLandTitle is SaveUpload.Loading, onNext = {
+    }, image = landTitle, newUpload = image.isEmpty(), savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading, onNext = {
         if (image.isNotEmpty()) {
             onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
         }
