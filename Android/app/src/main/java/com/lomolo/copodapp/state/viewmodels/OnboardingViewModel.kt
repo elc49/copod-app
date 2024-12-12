@@ -12,7 +12,6 @@ import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.CreateOnboardingInput
-import com.web3auth.core.types.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -43,10 +42,8 @@ interface Onboarding {
 class OnboardingViewModel(
     private val restApiService: IRestFul,
     private val graphqlApiService: IGraphQL,
-    web3Auth: IWeb3Auth,
+    private val web3Auth: IWeb3Auth,
 ) : ViewModel() {
-    private val userInfo: UserInfo = web3Auth.getUserInfo()
-
     private val _landTitle: MutableStateFlow<String> = MutableStateFlow("")
     val landTitle: StateFlow<String> = _landTitle.asStateFlow()
 
@@ -145,6 +142,7 @@ class OnboardingViewModel(
             gettingCurrentOnboarding = GetCurrentOnboarding.Loading
             viewModelScope.launch {
                 gettingCurrentOnboarding = try {
+                    val userInfo = web3Auth.getUserInfo()
                     val res = graphqlApiService.getOnboardingByEmail(userInfo.email).dataOrThrow()
                     _currentOnboarding.emit(res.getOnboardingByEmail)
                     GetCurrentOnboarding.Success
@@ -161,6 +159,7 @@ class OnboardingViewModel(
             onboarding = Onboarding.Loading
             viewModelScope.launch {
                 onboarding = try {
+                    val userInfo = web3Auth.getUserInfo()
                     graphqlApiService.createOnboarding(
                         CreateOnboardingInput(
                             email = userInfo.email,
