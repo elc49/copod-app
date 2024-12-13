@@ -74,6 +74,7 @@ type Payment struct {
 	Email         string         `json:"email"`
 	Onboarding    *Onboarding    `json:"onboarding,omitempty"`
 	OnboardingID  uuid.UUID      `json:"onboarding_id"`
+	Verified      Verification   `json:"verified"`
 	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`

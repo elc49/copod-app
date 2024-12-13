@@ -20,6 +20,7 @@ type Querier interface {
 	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (DisplayPicture, error)
 	GetOnboardingByEmail(ctx context.Context, email string) (Onboarding, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error)
+	GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboarding, error)
 	GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, arg GetOnboardingByVerificationAndPaymentStatusParams) ([]Onboarding, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (Payment, error)

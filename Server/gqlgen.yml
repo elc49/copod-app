@@ -101,5 +101,5 @@ models:
 
   Payment:
     fields:
-      title:
+      onboarding:
         resolver: true

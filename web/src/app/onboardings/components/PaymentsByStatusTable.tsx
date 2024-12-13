@@ -32,19 +32,29 @@ export default function PaymentsByStatusTable(props: Props) {
         return <FailIcon />
     }
   }
+  const renderPaymentStatus = (status: string) => {
+    switch (status) {
+      case "success":
+        return <DoneIcon />
+      case "failed":
+        return <FailIcon />
+      default:
+        return <Tag>{status}</Tag>
+    }
+  }
   const columns = useMemo(() => {
     return [
       columnHelper.accessor("reference_id", {
         cell: info => (
           <div>{info.getValue()}</div>
         ),
-        header: () => <span>#</span>
-      }),
-      columnHelper.accessor("status", {
-        cell: info => <Tag textTransform="capitalize">{info.getValue()}</Tag>,
         header: () => <span>Payment</span>
       }),
-      columnHelper.accessor("title.verified", {
+      columnHelper.accessor("status", {
+        cell: info => renderPaymentStatus(info.getValue()),
+        header: () => <span>Status</span>
+      }),
+      columnHelper.accessor("onboarding.verification", {
         cell: info => renderStatusColumn(info.getValue()),
         header: () => <span>Verification</span>
       }),

@@ -21,3 +21,7 @@ WHERE verification = $1 AND payment_status = $2;
 -- name: GetOnboardingByEmail :one
 SELECT * FROM onboardings
 WHERE email = $1 LIMIT 1;
+
+-- name: GetOnboardingByID :one
+SELECT * FROM onboardings
+WHERE id = $1;

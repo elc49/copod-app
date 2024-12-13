@@ -4,14 +4,13 @@ export const GET_PAYMENTS_BY_STATUS = gql`
   query GetPaymentsByStatus($status: PaymentStatus!) {
     getPaymentsByStatus(status: $status) {
       id
-      title {
-        id
-        title
-        verified
-      }
       email
       status
-      title_id
+      onboarding {
+        verification
+      }
+      onboarding_id
+      verified
       reference_id
     }
   }

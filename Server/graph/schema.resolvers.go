@@ -71,6 +71,11 @@ func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, inp
 	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
 }
 
+// Onboarding is the resolver for the onboarding field.
+func (r *paymentResolver) Onboarding(ctx context.Context, obj *model.Payment) (*model.Onboarding, error) {
+	return r.onboardingController.GetOnboardingByID(ctx, obj.OnboardingID)
+}
+
 // GetUserLands is the resolver for the getUserLands field.
 func (r *queryResolver) GetUserLands(ctx context.Context, input model.GetUserLandsInput) ([]*model.Title, error) {
 	args := sql.GetTitlesByEmailAndVerificationParams{
@@ -139,6 +144,9 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Payment returns PaymentResolver implementation.
+func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
+
 // Query returns QueryResolver implementation.
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
@@ -146,5 +154,6 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type paymentResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }
