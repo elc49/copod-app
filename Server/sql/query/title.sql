@@ -17,3 +17,7 @@ RETURNING *;
 -- name: GetTitlesByEmailAndVerification :many
 SELECT * FROM title_deeds
 WHERE email = $1 AND verification = $2;
+
+-- name: GetTitleByID :one
+SELECT * FROM title_deeds
+WHERE id = $1;

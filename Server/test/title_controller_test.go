@@ -49,4 +49,11 @@ func Test_Title_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.True(t, len(titles) > 0)
 	})
+
+	t.Run("get_title_by_id", func(t *testing.T) {
+		tl, err := tc.GetTitleByID(ctx, title.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, tl.ID.String(), title.ID.String())
+	})
 }

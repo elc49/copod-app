@@ -71,6 +71,21 @@ func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, inp
 	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
 }
 
+// Title is the resolver for the title field.
+func (r *onboardingResolver) Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error) {
+	return r.titleController.GetTitleByID(ctx, obj.TitleID)
+}
+
+// SupportingDoc is the resolver for the supportingDoc field.
+func (r *onboardingResolver) SupportingDoc(ctx context.Context, obj *model.Onboarding) (*model.SupportingDoc, error) {
+	return r.supportDocController.GetSupportingDocByID(ctx, obj.SupportDocID)
+}
+
+// DisplayPicture is the resolver for the displayPicture field.
+func (r *onboardingResolver) DisplayPicture(ctx context.Context, obj *model.Onboarding) (*model.DisplayPicture, error) {
+	return r.displayPictureController.GetDisplayPictureByID(ctx, obj.DisplayPictureID)
+}
+
 // Onboarding is the resolver for the onboarding field.
 func (r *paymentResolver) Onboarding(ctx context.Context, obj *model.Payment) (*model.Onboarding, error) {
 	return r.onboardingController.GetOnboardingByID(ctx, obj.OnboardingID)
@@ -144,6 +159,9 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) 
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
+// Onboarding returns OnboardingResolver implementation.
+func (r *Resolver) Onboarding() OnboardingResolver { return &onboardingResolver{r} }
+
 // Payment returns PaymentResolver implementation.
 func (r *Resolver) Payment() PaymentResolver { return &paymentResolver{r} }
 
@@ -154,6 +172,7 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
 type mutationResolver struct{ *Resolver }
+type onboardingResolver struct{ *Resolver }
 type paymentResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type subscriptionResolver struct{ *Resolver }

@@ -84,9 +84,12 @@ export type MutationUpdateOnboardingVerificationArgs = {
 export type Onboarding = {
   __typename?: 'Onboarding';
   created_at: Scalars['Time']['output'];
+  displayPicture: DisplayPicture;
   displayPictureId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
   supportDocId: Scalars['UUID']['output'];
+  supportingDoc: SupportingDoc;
+  title: Title;
   titleId: Scalars['UUID']['output'];
   updated_at: Scalars['Time']['output'];
   verification: Verification;
