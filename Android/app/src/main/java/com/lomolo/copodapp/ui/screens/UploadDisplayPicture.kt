@@ -94,7 +94,7 @@ fun UploadDisplayPicture(
         onNext = {
             if (image.isNotEmpty()) {
                 viewModel.createOnboarding {
-                    onNext(LandScreenDestination.route)
+                    onNext(it)
                 }
             }
         },

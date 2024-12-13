@@ -154,27 +154,33 @@ class OnboardingViewModel(
         }
     }
 
-    fun createOnboarding(cb: () -> Unit = {}) {
+    fun createOnboarding(cb: (String) -> Unit = {}) {
         if (onboarding !is Onboarding.Loading) {
             onboarding = Onboarding.Loading
             viewModelScope.launch {
                 onboarding = try {
                     val userInfo = web3Auth.getUserInfo()
-                    graphqlApiService.createOnboarding(
+                    val res = graphqlApiService.createOnboarding(
                         CreateOnboardingInput(
                             email = userInfo.email,
                             titleUrl = _landTitle.value,
                             displayPictureUrl = _displayPicture.value,
                             supportdocUrl = _supportingDoc.value
                         )
-                    )
-                    Onboarding.Success.also { cb() }
+                    ).dataOrThrow()
+                    Onboarding.Success.also { cb(res.createOnboarding.id.toString()); reset() }
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     Onboarding.Error(e.message)
                 }
             }
         }
+    }
+
+    private fun reset() {
+        _landTitle.value = ""
+        _displayPicture.value = ""
+        _supportingDoc.value = ""
     }
 
     companion object {

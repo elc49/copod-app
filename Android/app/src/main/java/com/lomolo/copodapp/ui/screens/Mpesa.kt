@@ -49,8 +49,8 @@ import com.lomolo.copodapp.util.Util
 object MpesaScreenDestination : Navigation {
     override val title = R.string.mpesa
     override val route = "mpesa"
-    const val LAND_TITLE_ID_ARG = "uploadId"
-    val routeWithArgs = "$route/{$LAND_TITLE_ID_ARG}"
+    const val ONBOARDING_ID_ARG = "onboardingId"
+    val routeWithArgs = "$route/{$ONBOARDING_ID_ARG}"
 }
 
 @Composable
