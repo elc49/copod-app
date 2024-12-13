@@ -4,11 +4,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
@@ -147,14 +149,14 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 viewModel = onboardingViewModel,
-                onNext = {
-                    onNavigateTo(it)
+                onNext = { onboardingId ->
+                    navHostController.navigate("${MpesaScreenDestination.route}/${onboardingId}")
                 },
             )
         }
         composable(
             route = MpesaScreenDestination.routeWithArgs,
-            arguments = listOf(navArgument(MpesaScreenDestination.LAND_TITLE_ID_ARG) {
+            arguments = listOf(navArgument(MpesaScreenDestination.ONBOARDING_ID_ARG) {
                 type = NavType.StringType
             })
         ) {
@@ -170,7 +172,10 @@ fun NavigationHost(
                 mainViewModel = mainViewModel,
             )
         }
-        composable(route = SuccessScreenDestination.route) {
+        dialog(
+            route = SuccessScreenDestination.route,
+            dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
             SuccessScreen(
                 onNavigateTo = onNavigateTo,
             )

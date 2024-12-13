@@ -44,8 +44,8 @@ class MpesaViewModel(
     var chargingMpesa: ChargingMpesa by mutableStateOf(ChargingMpesa.Success)
         private set
 
-    private val uploadId: String = checkNotNull(
-        savedStateHandle[MpesaScreenDestination.LAND_TITLE_ID_ARG]
+    private val onboardingId: String = checkNotNull(
+        savedStateHandle[MpesaScreenDestination.ONBOARDING_ID_ARG]
     )
 
     fun setPhone(phone: String) {
@@ -73,7 +73,7 @@ class MpesaViewModel(
                         phone = phone,
                         email = email,
                         currency = deviceDetails.currency,
-                        paymentFor = uploadId,
+                        paymentFor = onboardingId,
                     )
                     graphqlApiService.chargeMpesa(input)
                     ChargingMpesa.Paying
