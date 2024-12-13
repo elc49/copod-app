@@ -42,6 +42,12 @@ input GetOnboardingByVerificationAndPaymentStatusInput {
   paymentStatus: PaymentStatus!
 }
 
+input GetUserLandsInput {
+  email: String!
+
+  verification: Verification!
+}
+
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
 
@@ -129,7 +135,7 @@ type PaymentUpdate {
 }
 
 type Query {
-  getUserLands(email: String!): [Title!]!
+  getUserLands(input: GetUserLandsInput!): [Title!]!
 
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
 

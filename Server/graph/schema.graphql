@@ -134,8 +134,13 @@ input GetOnboardingByVerificationAndPaymentStatusInput {
   paymentStatus: PaymentStatus!
 }
 
+input GetUserLandsInput {
+  email: String!
+  verification: Verification!
+}
+
 type Query {
-  getUserLands(email: String!): [Title!]!
+  getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getPaymentDetailsById(id: UUID!): Payment!
   getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!

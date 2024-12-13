@@ -13,7 +13,7 @@ var titleController *Title
 type TitleController interface {
 	CreateTitle(context.Context, sql.CreateTitleParams) (*model.Title, error)
 	UpdateTitleByID(context.Context, sql.UpdateTitleByIDParams) (*model.Title, error)
-	GetTitlesByEmail(context.Context, string) ([]*model.Title, error)
+	GetTitlesByEmailAndVerification(context.Context, sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error)
 }
 
 type Title struct {
@@ -39,6 +39,6 @@ func (c *Title) UpdateTitleByID(ctx context.Context, args sql.UpdateTitleByIDPar
 	return c.r.UpdateTitleByID(ctx, args)
 }
 
-func (c *Title) GetTitlesByEmail(ctx context.Context, email string) ([]*model.Title, error) {
-	return c.r.GetTitlesByEmail(ctx, email)
+func (c *Title) GetTitlesByEmailAndVerification(ctx context.Context, args sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error) {
+	return c.r.GetTitlesByEmailAndVerification(ctx, args)
 }

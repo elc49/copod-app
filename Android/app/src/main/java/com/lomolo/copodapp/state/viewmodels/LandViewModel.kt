@@ -9,6 +9,8 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.network.IGraphQL
+import com.lomolo.copodapp.type.GetUserLandsInput
+import com.lomolo.copodapp.type.Verification
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -35,7 +37,10 @@ class LandViewModel(
             gettingUserLands = GetUserLands.Loading
             viewModelScope.launch {
                 gettingUserLands = try {
-                    val res = graphqlService.getUserLands(email).dataOrThrow()
+                    val res = graphqlService.getUserLands(GetUserLandsInput(
+                        email = email,
+                        verification = Verification.VERIFIED,
+                    )).dataOrThrow()
                     _lands.update { res.getUserLands }
                     GetUserLands.Success
                 } catch (e: ApolloException) {

@@ -29,7 +29,7 @@ type Querier interface {
 	GetSupportDocByID(ctx context.Context, id uuid.UUID) (SupportDoc, error)
 	GetSupportingDocsByVerification(ctx context.Context, verification string) ([]SupportDoc, error)
 	GetTitleByEmail(ctx context.Context, email string) (TitleDeed, error)
-	GetTitlesByEmail(ctx context.Context, email string) ([]TitleDeed, error)
+	GetTitlesByEmailAndVerification(ctx context.Context, arg GetTitlesByEmailAndVerificationParams) ([]TitleDeed, error)
 	UpdateDisplayPictureByID(ctx context.Context, arg UpdateDisplayPictureByIDParams) (DisplayPicture, error)
 	UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)

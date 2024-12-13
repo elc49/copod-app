@@ -1,5 +1,5 @@
-query GetUserLand($email: String!) {
-    getUserLands(email: $email) {
+query GetUserLand($input: GetUserLandsInput!) {
+    getUserLands(input: $input) {
         id
         url
     }

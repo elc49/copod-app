@@ -69,11 +69,11 @@ func (r *Title) UpdateTitleByID(ctx context.Context, args sql.UpdateTitleByIDPar
 	}, nil
 }
 
-func (r *Title) GetTitlesByEmail(ctx context.Context, email string) ([]*model.Title, error) {
+func (r *Title) GetTitlesByEmailAndVerification(ctx context.Context, args sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error) {
 	var titles []*model.Title
-	t, err := r.sql.GetTitlesByEmail(ctx, email)
+	t, err := r.sql.GetTitlesByEmailAndVerification(ctx, args)
 	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetTitlesByEmail")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetTitlesByEmailAndVerification")
 		return nil, err
 	}
 

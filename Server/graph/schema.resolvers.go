@@ -72,8 +72,12 @@ func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, inp
 }
 
 // GetUserLands is the resolver for the getUserLands field.
-func (r *queryResolver) GetUserLands(ctx context.Context, email string) ([]*model.Title, error) {
-	return r.titleController.GetTitlesByEmail(ctx, email)
+func (r *queryResolver) GetUserLands(ctx context.Context, input model.GetUserLandsInput) ([]*model.Title, error) {
+	args := sql.GetTitlesByEmailAndVerificationParams{
+		Email:        input.Email,
+		Verification: input.Verification.String(),
+	}
+	return r.titleController.GetTitlesByEmailAndVerification(ctx, args)
 }
 
 // GetPaymentsByStatus is the resolver for the getPaymentsByStatus field.

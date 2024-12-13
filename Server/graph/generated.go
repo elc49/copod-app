@@ -102,7 +102,7 @@ type ComplexityRoot struct {
 		GetPaymentsByStatus                         func(childComplexity int, status model.PaymentStatus) int
 		GetSupportingDocByID                        func(childComplexity int, id uuid.UUID) int
 		GetSupportingDocsByVerification             func(childComplexity int, verification model.Verification) int
-		GetUserLands                                func(childComplexity int, email string) int
+		GetUserLands                                func(childComplexity int, input model.GetUserLandsInput) int
 	}
 
 	Subscription struct {
@@ -144,7 +144,7 @@ type MutationResolver interface {
 	UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error)
 }
 type QueryResolver interface {
-	GetUserLands(ctx context.Context, email string) ([]*model.Title, error)
+	GetUserLands(ctx context.Context, input model.GetUserLandsInput) ([]*model.Title, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
 	GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error)
@@ -480,7 +480,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.GetUserLands(childComplexity, args["email"].(string)), true
+		return e.complexity.Query.GetUserLands(childComplexity, args["input"].(model.GetUserLandsInput)), true
 
 	case "Subscription.paymentUpdate":
 		if e.complexity.Subscription.PaymentUpdate == nil {
@@ -631,6 +631,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateOnboardingInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput,
+		ec.unmarshalInputGetUserLandsInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateOnboardingStatusInput,
 	)
@@ -1022,23 +1023,23 @@ func (ec *executionContext) field_Query_getSupportingDocsByVerification_argsVeri
 func (ec *executionContext) field_Query_getUserLands_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getUserLands_argsEmail(ctx, rawArgs)
+	arg0, err := ec.field_Query_getUserLands_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["email"] = arg0
+	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getUserLands_argsEmail(
+func (ec *executionContext) field_Query_getUserLands_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-	if tmp, ok := rawArgs["email"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
+) (model.GetUserLandsInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetUserLandsInput(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal model.GetUserLandsInput
 	return zeroVal, nil
 }
 
@@ -2520,7 +2521,7 @@ func (ec *executionContext) _Query_getUserLands(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUserLands(rctx, fc.Args["email"].(string))
+		return ec.resolvers.Query().GetUserLands(rctx, fc.Args["input"].(model.GetUserLandsInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -5914,6 +5915,40 @@ func (ec *executionContext) unmarshalInputGetOnboardingByVerificationAndPaymentS
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGetUserLandsInput(ctx context.Context, obj interface{}) (model.GetUserLandsInput, error) {
+	var it model.GetUserLandsInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"email", "verification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context, obj interface{}) (model.PayWithMpesaInput, error) {
 	var it model.PayWithMpesaInput
 	asMap := map[string]interface{}{}
@@ -7096,6 +7131,11 @@ func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcop
 
 func (ec *executionContext) unmarshalNGetOnboardingByVerificationAndPaymentStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, v interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
 	res, err := ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetUserLandsInput(ctx context.Context, v interface{}) (model.GetUserLandsInput, error) {
+	res, err := ec.unmarshalInputGetUserLandsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 

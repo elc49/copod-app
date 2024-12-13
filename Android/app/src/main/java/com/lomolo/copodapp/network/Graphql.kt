@@ -10,11 +10,12 @@ import com.lomolo.copodapp.GetOnboardingByEmailQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
 import com.lomolo.copodapp.type.CreateOnboardingInput
+import com.lomolo.copodapp.type.GetUserLandsInput
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import kotlinx.coroutines.flow.Flow
 
 interface IGraphQL {
-    suspend fun getUserLands(email: String): ApolloResponse<GetUserLandQuery.Data>
+    suspend fun getUserLands(input: GetUserLandsInput): ApolloResponse<GetUserLandQuery.Data>
     suspend fun chargeMpesa(input: PayWithMpesaInput): ApolloResponse<ChargeMpesaMutation.Data>
     fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
     suspend fun getOnboardingByEmail(email: String): ApolloResponse<GetOnboardingByEmailQuery.Data>
@@ -24,8 +25,8 @@ interface IGraphQL {
 class GraphQLServiceImpl(
     private val apolloClient: ApolloClient
 ) : IGraphQL {
-    override suspend fun getUserLands(email: String) =
-        apolloClient.query(GetUserLandQuery(email)).fetchPolicy(
+    override suspend fun getUserLands(input: GetUserLandsInput) =
+        apolloClient.query(GetUserLandQuery(input)).fetchPolicy(
             FetchPolicy.NetworkFirst
         ).execute()
 

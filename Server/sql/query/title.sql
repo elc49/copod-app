@@ -14,6 +14,6 @@ UPDATE title_deeds SET url = $1, verification = $2
 WHERE id = $3
 RETURNING *;
 
--- name: GetTitlesByEmail :many
+-- name: GetTitlesByEmailAndVerification :many
 SELECT * FROM title_deeds
-WHERE email = $1;
+WHERE email = $1 AND verification = $2;

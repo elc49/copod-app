@@ -62,13 +62,18 @@ func (q *Queries) GetTitleByEmail(ctx context.Context, email string) (TitleDeed,
 	return i, err
 }
 
-const getTitlesByEmail = `-- name: GetTitlesByEmail :many
+const getTitlesByEmailAndVerification = `-- name: GetTitlesByEmailAndVerification :many
 SELECT id, url, title, verification, email, support_doc_id, created_at, updated_at FROM title_deeds
-WHERE email = $1
+WHERE email = $1 AND verification = $2
 `
 
-func (q *Queries) GetTitlesByEmail(ctx context.Context, email string) ([]TitleDeed, error) {
-	rows, err := q.db.QueryContext(ctx, getTitlesByEmail, email)
+type GetTitlesByEmailAndVerificationParams struct {
+	Email        string `json:"email"`
+	Verification string `json:"verification"`
+}
+
+func (q *Queries) GetTitlesByEmailAndVerification(ctx context.Context, arg GetTitlesByEmailAndVerificationParams) ([]TitleDeed, error) {
+	rows, err := q.db.QueryContext(ctx, getTitlesByEmailAndVerification, arg.Email, arg.Verification)
 	if err != nil {
 		return nil, err
 	}

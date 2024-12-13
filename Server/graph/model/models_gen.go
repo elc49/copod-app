@@ -41,6 +41,11 @@ type GetOnboardingByVerificationAndPaymentStatusInput struct {
 	PaymentStatus PaymentStatus `json:"paymentStatus"`
 }
 
+type GetUserLandsInput struct {
+	Email        string       `json:"email"`
+	Verification Verification `json:"verification"`
+}
+
 type Mutation struct {
 }
 
