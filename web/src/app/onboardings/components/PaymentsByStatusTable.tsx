@@ -25,6 +25,7 @@ const columnHelper = createColumnHelper<Payment>()
 
 export default function PaymentsByStatusTable(props: Props) {
   const { payments } = props
+  const router = useRouter()
   const renderStatusColumn = (status: string) => {
     switch (status) {
       case "ONBOARDING":
@@ -112,7 +113,6 @@ export default function PaymentsByStatusTable(props: Props) {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-  const router = useRouter()
 
   return (
     <Table.ScrollArea height="100%" rounded="md" borderWidth="1px">
@@ -137,7 +137,8 @@ export default function PaymentsByStatusTable(props: Props) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <Table.Row
-               key={row.id}
+                key={row.id}
+                onClick={() => router.push(`onboardings/title/${row.original.onboarding?.title.id}`)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell key={cell.id}>
