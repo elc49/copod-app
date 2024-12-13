@@ -40,8 +40,11 @@ func Test_Title_Controller(t *testing.T) {
 		assert.Equal(t, title.Verified, model.VerificationVerified)
 	})
 
-	t.Run("get_titles_by_email", func(t *testing.T) {
-		titles, err := tc.GetTitlesByEmail(ctx, email)
+	t.Run("get_onboarding_titles_by_email", func(t *testing.T) {
+		titles, err := tc.GetTitlesByEmailAndVerification(ctx, sql.GetTitlesByEmailAndVerificationParams{
+			Email:        email,
+			Verification: model.VerificationOnboarding.String(),
+		})
 
 		assert.Nil(t, err)
 		assert.True(t, len(titles) > 0)
