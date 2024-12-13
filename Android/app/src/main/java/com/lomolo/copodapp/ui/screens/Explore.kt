@@ -68,7 +68,6 @@ fun ExploreMarketsScreen(
             if (openDialog) {
                 AccountDetails(
                     setDialog = { openDialog = it },
-                    userInfo = mainViewModel.userInfo!!,
                     signOut = { mainViewModel.logOut() },
                 )
             }

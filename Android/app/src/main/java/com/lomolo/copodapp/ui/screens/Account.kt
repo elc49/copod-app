@@ -2,29 +2,28 @@ package com.lomolo.copodapp.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.ui.common.Avatar
 import com.web3auth.core.types.UserInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -32,7 +31,6 @@ import com.web3auth.core.types.UserInfo
 fun AccountDetails(
     modifier: Modifier = Modifier,
     setDialog: (Boolean) -> Unit,
-    userInfo: UserInfo,
     signOut: () -> Unit,
 ) {
     BasicAlertDialog(onDismissRequest = {}) {
@@ -52,40 +50,26 @@ fun AccountDetails(
                     )
                 }
                 Column(
-                    Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+                    Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Column {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                           Avatar(
-                               userInfo.profileImage,
-                               userInfo.name
-                           ) { setDialog(true) }
-                            Column(
-                                verticalArrangement = Arrangement.spacedBy(4.dp),
-                            ) {
-                                Text(
-                                    userInfo.name,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
-                    }
-                    Column {
-                        TextButton(onClick = {
+                    Button(
+                        onClick = {
                             setDialog(false)
                             signOut()
-                        }) {
-                            Text(
-                                stringResource(R.string.sign_out),
-                                style = MaterialTheme.typography.bodyLarge,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = MaterialTheme.shapes.extraSmall,
+                        contentPadding = PaddingValues(16.dp),
+                    ) {
+                        Text(
+                            stringResource(R.string.sign_out),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                 }
             }
