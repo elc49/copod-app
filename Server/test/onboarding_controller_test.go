@@ -68,4 +68,11 @@ func Test_Onboarding_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, o.ID.String(), ob.ID.String())
 	})
+
+	t.Run("get_onboarding_by_id", func(t *testing.T) {
+		o, err := oc.GetOnboardingByID(ctx, ob.ID)
+
+		assert.Nil(t, err)
+		assert.Equal(t, ob.ID.String(), o.ID.String())
+	})
 }

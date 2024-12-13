@@ -8,7 +8,7 @@ import withAuth from "@/providers/withAuth";
 export default withAuth(Page)
 function Page() {
   const cardPoints = useMemo(() => {
-    return ["lands", "docs"]
+    return ["onboardings"]
   }, [])
 
   return (

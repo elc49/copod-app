@@ -67,6 +67,7 @@ type Payment {
   email: String!
   onboarding: Onboarding
   onboarding_id: UUID!
+  verified: Verification!
   supportingDoc: SupportingDoc
   created_at: Time!
   updated_at: Time!
@@ -76,8 +77,11 @@ type Payment {
 type Onboarding {
   id: UUID!
   titleId: UUID!
+  title: Title!
   supportDocId: UUID!
+  supportingDoc: SupportingDoc!
   displayPictureId: UUID!
+  displayPicture: DisplayPicture!
   verification: Verification!
   created_at: Time!
   updated_at: Time!

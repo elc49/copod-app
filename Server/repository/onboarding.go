@@ -7,6 +7,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -116,5 +117,25 @@ func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*m
 		Verification:     model.Verification(ob.Verification),
 		CreatedAt:        ob.CreatedAt,
 		UpdatedAt:        ob.UpdatedAt,
+	}, nil
+}
+
+func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
+	o, err := r.sql.GetOnboardingByID(ctx, id)
+	if err != nil && err == db.ErrNoRows {
+		return nil, nil
+	} else if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetOnboardingByID")
+		return nil, err
+	}
+
+	return &model.Onboarding{
+		ID:               o.ID,
+		TitleID:          o.TitleID,
+		DisplayPictureID: o.DisplayPictureID,
+		SupportDocID:     o.SupportDocID,
+		Verification:     model.Verification(o.Verification),
+		CreatedAt:        o.CreatedAt,
+		UpdatedAt:        o.UpdatedAt,
 	}, nil
 }

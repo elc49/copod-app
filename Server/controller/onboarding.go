@@ -7,6 +7,7 @@ import (
 	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,6 +18,7 @@ type OnboardingController interface {
 	GetOnboardingByVerificationAndPaymentStatus(context.Context, sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error)
 	GetOnboardingByEmail(context.Context, string) (*model.Onboarding, error)
 	UpdateOnboardingVerificationByID(context.Context, sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error)
+	GetOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -145,4 +147,8 @@ func (c *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*m
 
 func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
 	return c.r.UpdateOnboardingVerificationByID(ctx, args)
+}
+
+func (c *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
+	return c.r.GetOnboardingByID(ctx, id)
 }

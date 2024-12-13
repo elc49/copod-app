@@ -50,13 +50,16 @@ type Mutation struct {
 }
 
 type Onboarding struct {
-	ID               uuid.UUID    `json:"id"`
-	TitleID          uuid.UUID    `json:"titleId"`
-	SupportDocID     uuid.UUID    `json:"supportDocId"`
-	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
-	Verification     Verification `json:"verification"`
-	CreatedAt        time.Time    `json:"created_at"`
-	UpdatedAt        time.Time    `json:"updated_at"`
+	ID               uuid.UUID       `json:"id"`
+	TitleID          uuid.UUID       `json:"titleId"`
+	Title            *Title          `json:"title"`
+	SupportDocID     uuid.UUID       `json:"supportDocId"`
+	SupportingDoc    *SupportingDoc  `json:"supportingDoc"`
+	DisplayPictureID uuid.UUID       `json:"displayPictureId"`
+	DisplayPicture   *DisplayPicture `json:"displayPicture"`
+	Verification     Verification    `json:"verification"`
+	CreatedAt        time.Time       `json:"created_at"`
+	UpdatedAt        time.Time       `json:"updated_at"`
 }
 
 type PayWithMpesaInput struct {
@@ -74,6 +77,7 @@ type Payment struct {
 	Email         string         `json:"email"`
 	Onboarding    *Onboarding    `json:"onboarding,omitempty"`
 	OnboardingID  uuid.UUID      `json:"onboarding_id"`
+	Verified      Verification   `json:"verified"`
 	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
 	CreatedAt     time.Time      `json:"created_at"`
 	UpdatedAt     time.Time      `json:"updated_at"`

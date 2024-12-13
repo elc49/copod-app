@@ -62,6 +62,27 @@ func (q *Queries) GetTitleByEmail(ctx context.Context, email string) (TitleDeed,
 	return i, err
 }
 
+const getTitleByID = `-- name: GetTitleByID :one
+SELECT id, url, title, verification, email, support_doc_id, created_at, updated_at FROM title_deeds
+WHERE id = $1
+`
+
+func (q *Queries) GetTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error) {
+	row := q.db.QueryRowContext(ctx, getTitleByID, id)
+	var i TitleDeed
+	err := row.Scan(
+		&i.ID,
+		&i.Url,
+		&i.Title,
+		&i.Verification,
+		&i.Email,
+		&i.SupportDocID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getTitlesByEmailAndVerification = `-- name: GetTitlesByEmailAndVerification :many
 SELECT id, url, title, verification, email, support_doc_id, created_at, updated_at FROM title_deeds
 WHERE email = $1 AND verification = $2

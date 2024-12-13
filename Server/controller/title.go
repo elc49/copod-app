@@ -6,6 +6,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 )
 
 var titleController *Title
@@ -14,6 +15,7 @@ type TitleController interface {
 	CreateTitle(context.Context, sql.CreateTitleParams) (*model.Title, error)
 	UpdateTitleByID(context.Context, sql.UpdateTitleByIDParams) (*model.Title, error)
 	GetTitlesByEmailAndVerification(context.Context, sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error)
+	GetTitleByID(context.Context, uuid.UUID) (*model.Title, error)
 }
 
 type Title struct {
@@ -41,4 +43,8 @@ func (c *Title) UpdateTitleByID(ctx context.Context, args sql.UpdateTitleByIDPar
 
 func (c *Title) GetTitlesByEmailAndVerification(ctx context.Context, args sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error) {
 	return c.r.GetTitlesByEmailAndVerification(ctx, args)
+}
+
+func (c *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error) {
+	return c.r.GetTitleByID(ctx, id)
 }

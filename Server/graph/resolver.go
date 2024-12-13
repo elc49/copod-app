@@ -16,14 +16,15 @@ import (
 // It serves as dependency injection for your app, add any dependencies you require here.
 
 type Resolver struct {
-	paystack             paystack.Paystack
-	redis                *redis.Client
-	log                  *logrus.Logger
-	titleController      controller.TitleController
-	supportDocController controller.SupportingDocController
-	paymentController    controller.PaymentController
-	userController       controller.UserController
-	onboardingController controller.OnboardingController
+	paystack                 paystack.Paystack
+	redis                    *redis.Client
+	log                      *logrus.Logger
+	titleController          controller.TitleController
+	supportDocController     controller.SupportingDocController
+	paymentController        controller.PaymentController
+	userController           controller.UserController
+	onboardingController     controller.OnboardingController
+	displayPictureController controller.DisplayPictureController
 }
 
 func New() Config {
@@ -36,6 +37,7 @@ func New() Config {
 		controller.GetPaymentController(),
 		controller.GetUserController(),
 		controller.GetOnboardingController(),
+		controller.GetDisplayPictureController(),
 	}
 	return Config{Resolvers: r}
 }

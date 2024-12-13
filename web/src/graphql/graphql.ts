@@ -17,40 +17,48 @@ export type Scalars = {
   UUID: { input: any; output: any; }
 };
 
+export type CreateOnboardingInput = {
+  displayPictureUrl: Scalars['String']['input'];
+  email: Scalars['String']['input'];
+  supportdocUrl: Scalars['String']['input'];
+  titleUrl: Scalars['String']['input'];
+};
+
 export type CreateUserInput = {
   email: Scalars['String']['input'];
   firstname: Scalars['String']['input'];
-  govtid: Scalars['String']['input'];
   lastname: Scalars['String']['input'];
   supportDocId: Scalars['UUID']['input'];
+  supportDocUrl: Scalars['String']['input'];
   verification: Verification;
 };
 
-export type DocUploadInput = {
-  email: Scalars['String']['input'];
-  url: Scalars['String']['input'];
+export type DisplayPicture = {
+  __typename?: 'DisplayPicture';
+  created_at: Scalars['Time']['output'];
+  email: Scalars['String']['output'];
+  id: Scalars['UUID']['output'];
+  updated_at: Scalars['Time']['output'];
+  url: Scalars['String']['output'];
+  verified: Verification;
 };
 
-export type Land = {
-  __typename?: 'Land';
-  created_at: Scalars['Time']['output'];
-  id: Scalars['UUID']['output'];
-  size: Scalars['Int']['output'];
-  symbol: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-  titleDocument: Scalars['String']['output'];
-  town?: Maybe<Scalars['String']['output']>;
-  updated_at: Scalars['Time']['output'];
-  verified: Verification;
+export type GetOnboardingByVerificationAndPaymentStatusInput = {
+  paymentStatus: PaymentStatus;
+  verification: Verification;
+};
+
+export type GetUserLandsInput = {
+  email: Scalars['String']['input'];
+  verification: Verification;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
+  createOnboarding: Onboarding;
   createUser: User;
-  updateTitleVerificationById: Title;
-  uploadLandTitle: Title;
-  uploadSupportingDoc: SupportingDoc;
+  updateOnboardingVerification: Onboarding;
 };
 
 
@@ -59,23 +67,32 @@ export type MutationChargeMpesaArgs = {
 };
 
 
+export type MutationCreateOnboardingArgs = {
+  input: CreateOnboardingInput;
+};
+
+
 export type MutationCreateUserArgs = {
   input: CreateUserInput;
 };
 
 
-export type MutationUpdateTitleVerificationByIdArgs = {
-  input: UpdateTitleVerificationInput;
+export type MutationUpdateOnboardingVerificationArgs = {
+  input: UpdateOnboardingStatusInput;
 };
 
-
-export type MutationUploadLandTitleArgs = {
-  input: DocUploadInput;
-};
-
-
-export type MutationUploadSupportingDocArgs = {
-  input: DocUploadInput;
+export type Onboarding = {
+  __typename?: 'Onboarding';
+  created_at: Scalars['Time']['output'];
+  displayPicture: DisplayPicture;
+  displayPictureId: Scalars['UUID']['output'];
+  id: Scalars['UUID']['output'];
+  supportDocId: Scalars['UUID']['output'];
+  supportingDoc: SupportingDoc;
+  title: Title;
+  titleId: Scalars['UUID']['output'];
+  updated_at: Scalars['Time']['output'];
+  verification: Verification;
 };
 
 export enum PaidFor {
@@ -96,12 +113,13 @@ export type Payment = {
   created_at: Scalars['Time']['output'];
   email: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
+  onboarding?: Maybe<Onboarding>;
+  onboarding_id: Scalars['UUID']['output'];
   reference_id: Scalars['String']['output'];
   status: Scalars['String']['output'];
   supportingDoc?: Maybe<SupportingDoc>;
-  title?: Maybe<Title>;
-  title_id: Scalars['UUID']['output'];
   updated_at: Scalars['Time']['output'];
+  verified: Verification;
 };
 
 export enum PaymentReason {
@@ -124,12 +142,23 @@ export type PaymentUpdate = {
 
 export type Query = {
   __typename?: 'Query';
-  getLocalLands: Array<Land>;
+  getOnboardingByEmail: Onboarding;
+  getOnboardingByVerificationAndPaymentStatus: Array<Onboarding>;
   getPaymentDetailsById: Payment;
   getPaymentsByStatus: Array<Payment>;
   getSupportingDocById: SupportingDoc;
   getSupportingDocsByVerification: Array<SupportingDoc>;
-  getUserLands: Array<Land>;
+  getUserLands: Array<Title>;
+};
+
+
+export type QueryGetOnboardingByEmailArgs = {
+  email: Scalars['String']['input'];
+};
+
+
+export type QueryGetOnboardingByVerificationAndPaymentStatusArgs = {
+  input: GetOnboardingByVerificationAndPaymentStatusInput;
 };
 
 
@@ -154,7 +183,7 @@ export type QueryGetSupportingDocsByVerificationArgs = {
 
 
 export type QueryGetUserLandsArgs = {
-  email: Scalars['String']['input'];
+  input: GetUserLandsInput;
 };
 
 export type Subscription = {
@@ -171,9 +200,9 @@ export type SupportingDoc = {
   __typename?: 'SupportingDoc';
   created_at: Scalars['Time']['output'];
   email: Scalars['String']['output'];
-  govt_id: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   updated_at: Scalars['Time']['output'];
+  url: Scalars['String']['output'];
   verified: Verification;
 };
 
@@ -181,13 +210,14 @@ export type Title = {
   __typename?: 'Title';
   created_at: Scalars['Time']['output'];
   id: Scalars['UUID']['output'];
-  title: Scalars['String']['output'];
+  support_doc_id: Scalars['UUID']['output'];
   updated_at: Scalars['Time']['output'];
+  url: Scalars['String']['output'];
   verified: Verification;
 };
 
-export type UpdateTitleVerificationInput = {
-  id: Scalars['UUID']['input'];
+export type UpdateOnboardingStatusInput = {
+  onboardingId: Scalars['UUID']['input'];
   verification: Verification;
 };
 
@@ -196,7 +226,6 @@ export type User = {
   created_at: Scalars['Time']['output'];
   email: Scalars['String']['output'];
   firstname?: Maybe<Scalars['String']['output']>;
-  govt_id: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   lastname?: Maybe<Scalars['String']['output']>;
   updated_at: Scalars['Time']['output'];

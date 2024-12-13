@@ -45,8 +45,8 @@ func (r *DisplayPicture) GetDisplayPictureByID(ctx context.Context, id uuid.UUID
 
 	return &model.DisplayPicture{
 		ID:        d.ID,
-		Email:     d.Email,
 		URL:       d.Url,
+		Verified:  model.Verification(d.Verification),
 		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
 	}, nil

@@ -7,6 +7,7 @@ import (
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
+	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
 
@@ -89,4 +90,20 @@ func (r *Title) GetTitlesByEmailAndVerification(ctx context.Context, args sql.Ge
 	}
 
 	return titles, nil
+}
+
+func (r *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error) {
+	t, err := r.sql.GetTitleByID(ctx, id)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"id": id}).Errorf("repository: GetTitleByID")
+		return nil, err
+	}
+
+	return &model.Title{
+		ID:        t.ID,
+		URL:       t.Url,
+		Verified:  model.Verification(t.Verification),
+		CreatedAt: t.CreatedAt,
+		UpdatedAt: t.UpdatedAt,
+	}, nil
 }
