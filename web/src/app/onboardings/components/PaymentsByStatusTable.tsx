@@ -72,7 +72,11 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.title.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
+            <IconButton
+              size="xs"
+              aria-label="Go back"
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}`)}
+            >
               <ViewIcon />
             </IconButton>
             {renderDocImage(info.getValue())}
@@ -138,7 +142,6 @@ export default function PaymentsByStatusTable(props: Props) {
             table.getRowModel().rows.map((row) => (
               <Table.Row
                 key={row.id}
-                onClick={() => router.push(`onboardings/title/${row.original.onboarding?.title.id}`)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell key={cell.id}>

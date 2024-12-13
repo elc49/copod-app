@@ -13,8 +13,8 @@ export default function RootLayout({
   const router = useRouter()
   const pathname = usePathname()
   const pageTitle = useMemo(() => {
-    if (pathname.includes("onboardings/title")) {
-      return "Title details"
+    if (pathname.includes("onboardings/document")) {
+      return "Document details"
     }
     return "Payments"
   }, [pathname])
