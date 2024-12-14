@@ -24,15 +24,6 @@ export type CreateOnboardingInput = {
   titleUrl: Scalars['String']['input'];
 };
 
-export type CreateUserInput = {
-  email: Scalars['String']['input'];
-  firstname: Scalars['String']['input'];
-  lastname: Scalars['String']['input'];
-  supportDocId: Scalars['UUID']['input'];
-  supportDocUrl: Scalars['String']['input'];
-  verification: Verification;
-};
-
 export type DisplayPicture = {
   __typename?: 'DisplayPicture';
   created_at: Scalars['Time']['output'];
@@ -43,8 +34,8 @@ export type DisplayPicture = {
   verified: Verification;
 };
 
-export type GetOnboardingByVerificationAndPaymentStatusInput = {
-  paymentStatus: PaymentStatus;
+export type GetOnboardingByEmailAndVerificationInput = {
+  email: Scalars['String']['input'];
   verification: Verification;
 };
 
@@ -57,7 +48,6 @@ export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
   createOnboarding: Onboarding;
-  createUser: User;
   updateOnboardingVerification: Onboarding;
 };
 
@@ -69,11 +59,6 @@ export type MutationChargeMpesaArgs = {
 
 export type MutationCreateOnboardingArgs = {
   input: CreateOnboardingInput;
-};
-
-
-export type MutationCreateUserArgs = {
-  input: CreateUserInput;
 };
 
 
@@ -117,9 +102,7 @@ export type Payment = {
   onboarding_id: Scalars['UUID']['output'];
   reference_id: Scalars['String']['output'];
   status: Scalars['String']['output'];
-  supportingDoc?: Maybe<SupportingDoc>;
   updated_at: Scalars['Time']['output'];
-  verified: Verification;
 };
 
 export enum PaymentReason {
@@ -142,28 +125,16 @@ export type PaymentUpdate = {
 
 export type Query = {
   __typename?: 'Query';
-  getOnboardingByEmail: Onboarding;
-  getOnboardingByVerificationAndPaymentStatus: Array<Onboarding>;
-  getPaymentDetailsById: Payment;
+  getOnboardingByEmailAndVerification: Onboarding;
   getPaymentsByStatus: Array<Payment>;
   getSupportingDocById: SupportingDoc;
-  getSupportingDocsByVerification: Array<SupportingDoc>;
+  getTitleById: Title;
   getUserLands: Array<Title>;
 };
 
 
-export type QueryGetOnboardingByEmailArgs = {
-  email: Scalars['String']['input'];
-};
-
-
-export type QueryGetOnboardingByVerificationAndPaymentStatusArgs = {
-  input: GetOnboardingByVerificationAndPaymentStatusInput;
-};
-
-
-export type QueryGetPaymentDetailsByIdArgs = {
-  id: Scalars['UUID']['input'];
+export type QueryGetOnboardingByEmailAndVerificationArgs = {
+  input: GetOnboardingByEmailAndVerificationInput;
 };
 
 
@@ -177,8 +148,8 @@ export type QueryGetSupportingDocByIdArgs = {
 };
 
 
-export type QueryGetSupportingDocsByVerificationArgs = {
-  verification: Verification;
+export type QueryGetTitleByIdArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 

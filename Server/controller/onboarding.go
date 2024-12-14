@@ -15,10 +15,9 @@ var onboardingController *Onboarding
 
 type OnboardingController interface {
 	CreateOnboarding(context.Context, model.CreateOnboardingInput) (*model.Onboarding, error)
-	GetOnboardingByVerificationAndPaymentStatus(context.Context, sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error)
-	GetOnboardingByEmail(context.Context, string) (*model.Onboarding, error)
 	UpdateOnboardingVerificationByID(context.Context, sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error)
 	GetOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
+	GetOnboardingByEmailAndVerification(context.Context, sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -137,18 +136,14 @@ func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 	}
 }
 
-func (c *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
-	return c.r.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
-}
-
-func (c *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	return c.r.GetOnboardingByEmail(ctx, email)
-}
-
 func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
 	return c.r.UpdateOnboardingVerificationByID(ctx, args)
 }
 
 func (c *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
 	return c.r.GetOnboardingByID(ctx, id)
+}
+
+func (c *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
+	return c.r.GetOnboardingByEmailAndVerification(ctx, args)
 }

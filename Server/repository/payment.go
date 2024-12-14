@@ -110,20 +110,3 @@ func (r *Payment) GetPaymentsByStatus(ctx context.Context, status string) ([]*mo
 
 	return payments, nil
 }
-
-func (r *Payment) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
-	p, err := r.sql.GetPaymentDetailsByID(ctx, id)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"payment_id": id}).Errorf("repository: GetPaymentDetailsByID")
-		return nil, err
-	}
-
-	return &model.Payment{
-		ID:           p.ID,
-		Status:       p.Status,
-		ReferenceID:  p.ReferenceID,
-		OnboardingID: p.OnboardingID.UUID,
-		CreatedAt:    p.CreatedAt,
-		UpdatedAt:    p.UpdatedAt,
-	}, nil
-}

@@ -7,7 +7,6 @@ package sql
 
 import (
 	"context"
-	"database/sql"
 
 	"github.com/google/uuid"
 )
@@ -34,28 +33,6 @@ func (q *Queries) CreateOnboarding(ctx context.Context, arg CreateOnboardingPara
 		arg.DisplayPictureID,
 		arg.Email,
 	)
-	var i Onboarding
-	err := row.Scan(
-		&i.ID,
-		&i.TitleID,
-		&i.SupportDocID,
-		&i.DisplayPictureID,
-		&i.Email,
-		&i.Verification,
-		&i.PaymentStatus,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getOnboardingByEmail = `-- name: GetOnboardingByEmail :one
-SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
-WHERE email = $1 LIMIT 1
-`
-
-func (q *Queries) GetOnboardingByEmail(ctx context.Context, email string) (Onboarding, error) {
-	row := q.db.QueryRowContext(ctx, getOnboardingByEmail, email)
 	var i Onboarding
 	err := row.Scan(
 		&i.ID,
@@ -118,49 +95,6 @@ func (q *Queries) GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboardi
 		&i.UpdatedAt,
 	)
 	return i, err
-}
-
-const getOnboardingByVerificationAndPaymentStatus = `-- name: GetOnboardingByVerificationAndPaymentStatus :many
-SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
-WHERE verification = $1 AND payment_status = $2
-`
-
-type GetOnboardingByVerificationAndPaymentStatusParams struct {
-	Verification  string         `json:"verification"`
-	PaymentStatus sql.NullString `json:"payment_status"`
-}
-
-func (q *Queries) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, arg GetOnboardingByVerificationAndPaymentStatusParams) ([]Onboarding, error) {
-	rows, err := q.db.QueryContext(ctx, getOnboardingByVerificationAndPaymentStatus, arg.Verification, arg.PaymentStatus)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	items := []Onboarding{}
-	for rows.Next() {
-		var i Onboarding
-		if err := rows.Scan(
-			&i.ID,
-			&i.TitleID,
-			&i.SupportDocID,
-			&i.DisplayPictureID,
-			&i.Email,
-			&i.Verification,
-			&i.PaymentStatus,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
 }
 
 const updateOnboardingVerificationByID = `-- name: UpdateOnboardingVerificationByID :one

@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-export const GET_PAYMENTS_BY_STATUS = gql`
+export default gql`
   query GetPaymentsByStatus($status: PaymentStatus!) {
     getPaymentsByStatus(status: $status) {
       id
@@ -12,6 +12,7 @@ export const GET_PAYMENTS_BY_STATUS = gql`
         title {
           id
           url
+          verified
         }
         displayPictureId
         displayPicture {
@@ -25,7 +26,6 @@ export const GET_PAYMENTS_BY_STATUS = gql`
         }
       }
       onboarding_id
-      verified
       reference_id
     }
   }

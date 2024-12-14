@@ -1,7 +1,8 @@
 "use client";
 
+import { useMemo } from "react";
 import { Box, HStack, Heading, IconButton } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft } from "@/components/icons";
 
 export default function RootLayout({
@@ -10,6 +11,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const router = useRouter()
+  const pathname = usePathname()
+  const pageTitle = useMemo(() => {
+    if (pathname.includes("onboardings/document")) {
+      return "Document details"
+    }
+    return "Payments"
+  }, [pathname])
 
   return (
     <Box p="4">
@@ -17,7 +25,7 @@ export default function RootLayout({
         <IconButton aria-label="Go back" onClick={() => router.back()}>
           <ArrowLeft />
         </IconButton>
-        <Heading>Payments</Heading>
+        <Heading>{pageTitle}</Heading>
       </HStack>
       {children}
     </Box>

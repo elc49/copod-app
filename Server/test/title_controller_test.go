@@ -56,4 +56,14 @@ func Test_Title_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, tl.ID.String(), title.ID.String())
 	})
+
+	t.Run("update_title_verification_by_id", func(t *testing.T) {
+		tl, err := tc.UpdateTitleVerificationByID(ctx, sql.UpdateTitleVerificationByIDParams{
+			ID:           title.ID,
+			Verification: model.VerificationVerified.String(),
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, tl.Verified, model.VerificationVerified)
+	})
 }

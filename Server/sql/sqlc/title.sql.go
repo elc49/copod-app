@@ -152,3 +152,30 @@ func (q *Queries) UpdateTitleByID(ctx context.Context, arg UpdateTitleByIDParams
 	)
 	return i, err
 }
+
+const updateTitleVerificationByID = `-- name: UpdateTitleVerificationByID :one
+UPDATE title_deeds SET verification = $1
+WHERE id = $2
+RETURNING id, url, title, verification, email, support_doc_id, created_at, updated_at
+`
+
+type UpdateTitleVerificationByIDParams struct {
+	Verification string    `json:"verification"`
+	ID           uuid.UUID `json:"id"`
+}
+
+func (q *Queries) UpdateTitleVerificationByID(ctx context.Context, arg UpdateTitleVerificationByIDParams) (TitleDeed, error) {
+	row := q.db.QueryRowContext(ctx, updateTitleVerificationByID, arg.Verification, arg.ID)
+	var i TitleDeed
+	err := row.Scan(
+		&i.ID,
+		&i.Url,
+		&i.Title,
+		&i.Verification,
+		&i.Email,
+		&i.SupportDocID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}

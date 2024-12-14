@@ -25,6 +25,7 @@ const columnHelper = createColumnHelper<Payment>()
 
 export default function PaymentsByStatusTable(props: Props) {
   const { payments } = props
+  const router = useRouter()
   const renderStatusColumn = (status: string) => {
     switch (status) {
       case "ONBOARDING":
@@ -56,13 +57,21 @@ export default function PaymentsByStatusTable(props: Props) {
       />
     )
   }
+  const shouldWeDoSomething = (status: string) => {
+    switch(status) {
+      case "VERIFIED":
+        return false
+      default:
+        return true
+    }
+  }
   const columns = useMemo(() => {
     return [
       columnHelper.accessor("reference_id", {
         cell: info => (
           <div>{info.getValue()}</div>
         ),
-        header: () => <span>Payment</span>
+        header: () => <span># Reference</span>
       }),
       columnHelper.accessor("status", {
         cell: info => renderPaymentStatus(info.getValue()),
@@ -71,9 +80,15 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.title.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
-              <ViewIcon />
-            </IconButton>
+            {shouldWeDoSomething(info.row.original.onboarding?.title.verified || "") ? (
+              <IconButton
+                size="xs"
+                aria-label="Go back"
+                onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}/${info.row.original?.onboarding?.title.__typename?.toLowerCase()}`)}
+            >
+                <ViewIcon />
+              </IconButton>
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),
@@ -82,7 +97,11 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.supportingDoc.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
+            <IconButton
+              size="xs"
+              aria-label="Go back"
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.supportingDoc.id}/${info.row.original?.onboarding?.supportingDoc.__typename?.toLowerCase()}`)}
+            >
               <ViewIcon />
             </IconButton>
             {renderDocImage(info.getValue())}
@@ -93,7 +112,11 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.displayPicture.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
+            <IconButton
+              size="xs"
+              aria-label="Go back"
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.displayPicture.id}/${info.row.original?.onboarding?.displayPicture.__typename?.toLowerCase()}`)}
+            >
               <ViewIcon />
             </IconButton>
             {renderDocImage(info.getValue())}
@@ -112,7 +135,6 @@ export default function PaymentsByStatusTable(props: Props) {
     columns,
     getCoreRowModel: getCoreRowModel(),
   })
-  const router = useRouter()
 
   return (
     <Table.ScrollArea height="100%" rounded="md" borderWidth="1px">
@@ -137,7 +159,7 @@ export default function PaymentsByStatusTable(props: Props) {
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <Table.Row
-               key={row.id}
+                key={row.id}
               >
                 {row.getVisibleCells().map((cell) => (
                   <Table.Cell key={cell.id}>
