@@ -63,7 +63,7 @@ export default function PaymentsByStatusTable(props: Props) {
         cell: info => (
           <div>{info.getValue()}</div>
         ),
-        header: () => <span>Payment</span>
+        header: () => <span># Reference</span>
       }),
       columnHelper.accessor("status", {
         cell: info => renderPaymentStatus(info.getValue()),
@@ -75,7 +75,7 @@ export default function PaymentsByStatusTable(props: Props) {
             <IconButton
               size="xs"
               aria-label="Go back"
-              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}`)}
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}/${info.row.original?.onboarding?.title.__typename?.toLowerCase()}`)}
             >
               <ViewIcon />
             </IconButton>
@@ -87,7 +87,11 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.supportingDoc.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
+            <IconButton
+              size="xs"
+              aria-label="Go back"
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.supportingDoc.id}/${info.row.original?.onboarding?.supportingDoc.__typename?.toLowerCase()}`)}
+            >
               <ViewIcon />
             </IconButton>
             {renderDocImage(info.getValue())}
@@ -98,7 +102,11 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.displayPicture.url", {
         cell: info => (
           <HStack>
-            <IconButton size="xs" aria-label="Go back" onClick={() => {}}>
+            <IconButton
+              size="xs"
+              aria-label="Go back"
+              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.displayPicture.id}/${info.row.original?.onboarding?.displayPicture.__typename?.toLowerCase()}`)}
+            >
               <ViewIcon />
             </IconButton>
             {renderDocImage(info.getValue())}
