@@ -16,6 +16,7 @@ type TitleController interface {
 	UpdateTitleByID(context.Context, sql.UpdateTitleByIDParams) (*model.Title, error)
 	GetTitlesByEmailAndVerification(context.Context, sql.GetTitlesByEmailAndVerificationParams) ([]*model.Title, error)
 	GetTitleByID(context.Context, uuid.UUID) (*model.Title, error)
+	UpdateTitleVerificationByID(context.Context, sql.UpdateTitleVerificationByIDParams) (*model.Title, error)
 }
 
 type Title struct {
@@ -47,4 +48,8 @@ func (c *Title) GetTitlesByEmailAndVerification(ctx context.Context, args sql.Ge
 
 func (c *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error) {
 	return c.r.GetTitleByID(ctx, id)
+}
+
+func (c *Title) UpdateTitleVerificationByID(ctx context.Context, args sql.UpdateTitleVerificationByIDParams) (*model.Title, error) {
+	return c.r.UpdateTitleVerificationByID(ctx, args)
 }

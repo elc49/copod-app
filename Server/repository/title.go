@@ -107,3 +107,19 @@ func (r *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, e
 		UpdatedAt: t.UpdatedAt,
 	}, nil
 }
+
+func (r *Title) UpdateTitleVerificationByID(ctx context.Context, args sql.UpdateTitleVerificationByIDParams) (*model.Title, error) {
+	t, err := r.sql.UpdateTitleVerificationByID(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateTitleVerificationByID")
+		return nil, err
+	}
+
+	return &model.Title{
+		ID:        t.ID,
+		URL:       t.Url,
+		Verified:  model.Verification(t.Verification),
+		CreatedAt: t.CreatedAt,
+		UpdatedAt: t.UpdatedAt,
+	}, nil
+}

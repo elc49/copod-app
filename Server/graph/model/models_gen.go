@@ -18,15 +18,6 @@ type CreateOnboardingInput struct {
 	DisplayPictureURL string `json:"displayPictureUrl"`
 }
 
-type CreateUserInput struct {
-	Email         string       `json:"email"`
-	Firstname     string       `json:"firstname"`
-	Lastname      string       `json:"lastname"`
-	SupportDocURL string       `json:"supportDocUrl"`
-	Verification  Verification `json:"verification"`
-	SupportDocID  uuid.UUID    `json:"supportDocId"`
-}
-
 type DisplayPicture struct {
 	ID        uuid.UUID    `json:"id"`
 	URL       string       `json:"url"`
@@ -36,9 +27,9 @@ type DisplayPicture struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
-type GetOnboardingByVerificationAndPaymentStatusInput struct {
-	Verification  Verification  `json:"verification"`
-	PaymentStatus PaymentStatus `json:"paymentStatus"`
+type GetOnboardingByEmailAndVerificationInput struct {
+	Email        string       `json:"email"`
+	Verification Verification `json:"verification"`
 }
 
 type GetUserLandsInput struct {
@@ -71,16 +62,14 @@ type PayWithMpesaInput struct {
 }
 
 type Payment struct {
-	ID            uuid.UUID      `json:"id"`
-	ReferenceID   string         `json:"reference_id"`
-	Status        string         `json:"status"`
-	Email         string         `json:"email"`
-	Onboarding    *Onboarding    `json:"onboarding,omitempty"`
-	OnboardingID  uuid.UUID      `json:"onboarding_id"`
-	Verified      Verification   `json:"verified"`
-	SupportingDoc *SupportingDoc `json:"supportingDoc,omitempty"`
-	CreatedAt     time.Time      `json:"created_at"`
-	UpdatedAt     time.Time      `json:"updated_at"`
+	ID           uuid.UUID   `json:"id"`
+	ReferenceID  string      `json:"reference_id"`
+	Status       string      `json:"status"`
+	Email        string      `json:"email"`
+	Onboarding   *Onboarding `json:"onboarding,omitempty"`
+	OnboardingID uuid.UUID   `json:"onboarding_id"`
+	CreatedAt    time.Time   `json:"created_at"`
+	UpdatedAt    time.Time   `json:"updated_at"`
 }
 
 type PaymentUpdate struct {
@@ -115,6 +104,11 @@ type Title struct {
 
 type UpdateOnboardingStatusInput struct {
 	OnboardingID uuid.UUID    `json:"onboardingId"`
+	Verification Verification `json:"verification"`
+}
+
+type UpdateTitleVerificationByIDInput struct {
+	TitleID      uuid.UUID    `json:"titleId"`
 	Verification Verification `json:"verification"`
 }
 

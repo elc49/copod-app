@@ -75,51 +75,6 @@ func (r *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args 
 	}, nil
 }
 
-func (r *Onboarding) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, args sql.GetOnboardingByVerificationAndPaymentStatusParams) ([]*model.Onboarding, error) {
-	var onboardings []*model.Onboarding
-	obs, err := r.sql.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByVerificationAndPaymentStatus")
-		return nil, err
-	}
-
-	for _, item := range obs {
-		ob := &model.Onboarding{
-			ID:               item.ID,
-			TitleID:          item.TitleID,
-			DisplayPictureID: item.DisplayPictureID,
-			SupportDocID:     item.SupportDocID,
-			Verification:     model.Verification(item.Verification),
-			CreatedAt:        item.CreatedAt,
-			UpdatedAt:        item.UpdatedAt,
-		}
-
-		onboardings = append(onboardings, ob)
-	}
-
-	return onboardings, nil
-}
-
-func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	ob, err := r.sql.GetOnboardingByEmail(ctx, email)
-	if err != nil && err == db.ErrNoRows {
-		return nil, nil
-	} else if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
-		return nil, err
-	}
-
-	return &model.Onboarding{
-		ID:               ob.ID,
-		TitleID:          ob.TitleID,
-		DisplayPictureID: ob.DisplayPictureID,
-		SupportDocID:     ob.SupportDocID,
-		Verification:     model.Verification(ob.Verification),
-		CreatedAt:        ob.CreatedAt,
-		UpdatedAt:        ob.UpdatedAt,
-	}, nil
-}
-
 func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
 	o, err := r.sql.GetOnboardingByID(ctx, id)
 	if err != nil && err == db.ErrNoRows {

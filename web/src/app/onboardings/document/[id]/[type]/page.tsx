@@ -5,7 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
 import { Flex, SimpleGrid } from "@chakra-ui/react";
 import Image from "next/image";
-import { UPDATE_TITLE_VERIFICATION } from "@/graphql/mutation";
+import updateTitleVerificationById from "@/graphql/mutation/UpdateTitleVerificationById";
+import getTitleById from "@/graphql/query/GetTitleById";
 import { parseUnits } from "viem";
 import LandDetails from "../../../form/LandDetails";
 import Loader from "@/components/loader";
@@ -20,15 +21,23 @@ function Page() {
   const [registering, setRegistering] = useState(false)
   const { provider } = useContext(WalletContext)
   const params = useParams()
-  console.log(params)
-  const [updateTitleVerification, { loading: updatingTitleVerification }] = useMutation(UPDATE_TITLE_VERIFICATION)
+  const { data: title, loading: titleLoading } = useQuery(getTitleById, {
+    variables: {
+      id: params.id,
+    },
+    skip: params.type !== "title",
+  })
+  const titleData = useMemo(() => {
+    return title?.getTitleById
+  }, [title])
+  const [updateTitleVerification, { loading: updatingTitle }] = useMutation(updateTitleVerificationById)
   const router = useRouter()
 
   const saveLandLocally = (status: string) => {
     updateTitleVerification({
       variables: {
         input: {
-          id: "",
+          titleId: params.id,
           verification: status,
         },
       },
@@ -44,12 +53,12 @@ function Page() {
   }
 
   const onSuccess = (status: string) => {
+    saveLandLocally(status)
     toaster.create({
       title: "Success",
       description: "Land registered",
       type: "success",
     })
-    saveLandLocally(status)
   }
 
   const onFailure = () => {
@@ -86,24 +95,28 @@ function Page() {
     }
   }
 
-  return false ? <Loader /> : (
-    <SimpleGrid columns={{ base: 1, sm: 2}} p="2" gap={{ base: "40px", sm: "24px" }}>
-      <Flex direction="column" align="center" gap="4">
-        {/*<Image
-          src={""}
-          alt={""}
-          priority={true}
-          width={500}
-          height={500}
-          />*/}
-      </Flex>
-      {/*<Flex direction="column" gap="4">
-        {paymentDetails.title.verified === "VERIFIED" ? (
-          <DoneIcon />
-        ) : (
-          <LandDetails registerLand={registerLand} registering={registering || updatingTitleVerification} />
-        )}
-        </Flex>*/}
+  return titleLoading ? <Loader /> : (
+    <SimpleGrid columns={{ base: 1, sm: 2}} p="2" gap={{ base: 4, sm: 8 }}>
+      {params.type === "title" && (
+        <>
+          <Flex direction="column" align="center" gap="4">
+            <Image
+              src={titleData.url}
+              alt={titleData.__typename}
+              priority={true}
+              width={500}
+              height={500}
+            />
+          </Flex>
+          <Flex direction="column" gap="4">
+            {titleData.verified === "VERIFIED" ? (
+              <DoneIcon />
+            ) : (
+              <LandDetails registerLand={registerLand} registering={registering || updatingTitle} />
+            )}
+          </Flex>
+        </>
+      )}
     </SimpleGrid>
   )
 }

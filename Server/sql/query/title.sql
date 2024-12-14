@@ -21,3 +21,8 @@ WHERE email = $1 AND verification = $2;
 -- name: GetTitleByID :one
 SELECT * FROM title_deeds
 WHERE id = $1;
+
+-- name: UpdateTitleVerificationByID :one
+UPDATE title_deeds SET verification = $1
+WHERE id = $2
+RETURNING *;

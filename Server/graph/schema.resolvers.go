@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	db "database/sql"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -34,29 +33,6 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 	return &res.Data.Reference, nil
 }
 
-// CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
-	args := sql.CreateUserParams{
-		Email:     input.Email,
-		Firstname: input.Firstname,
-		Lastname:  input.Lastname,
-	}
-	u, err := r.userController.CreateUser(ctx, args)
-	if err != nil {
-		return nil, err
-	}
-
-	uargs := sql.UpdateSupportDocByIDParams{
-		ID:           input.SupportDocID,
-		Verification: input.Verification.String(),
-	}
-	if _, err = r.supportDocController.UpdateSupportDocByID(ctx, uargs); err != nil {
-		return nil, err
-	}
-
-	return u, err
-}
-
 // CreateOnboarding is the resolver for the createOnboarding field.
 func (r *mutationResolver) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
 	return r.onboardingController.CreateOnboarding(ctx, input)
@@ -69,6 +45,15 @@ func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, inp
 		Verification: input.Verification.String(),
 	}
 	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
+}
+
+// UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
+func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationByIDInput) (*model.Title, error) {
+	args := sql.UpdateTitleVerificationByIDParams{
+		ID:           input.TitleID,
+		Verification: input.Verification.String(),
+	}
+	return r.titleController.UpdateTitleVerificationByID(ctx, args)
 }
 
 // Title is the resolver for the title field.
@@ -105,14 +90,9 @@ func (r *queryResolver) GetPaymentsByStatus(ctx context.Context, status model.Pa
 	return r.paymentController.GetPaymentsByStatus(ctx, status.String())
 }
 
-// GetPaymentDetailsByID is the resolver for the getPaymentDetailsById field.
-func (r *queryResolver) GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error) {
-	return r.paymentController.GetPaymentDetailsByID(ctx, id)
-}
-
-// GetSupportingDocsByVerification is the resolver for the getSupportingDocsByVerification field.
-func (r *queryResolver) GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error) {
-	return r.supportDocController.GetSupportingDocsByVerification(ctx, verification)
+// GetTitleByID is the resolver for the getTitleById field.
+func (r *queryResolver) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error) {
+	return r.titleController.GetTitleByID(ctx, id)
 }
 
 // GetSupportingDocByID is the resolver for the getSupportingDocById field.
@@ -120,18 +100,13 @@ func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 	return r.supportDocController.GetSupportingDocByID(ctx, id)
 }
 
-// GetOnboardingByVerificationAndPaymentStatus is the resolver for the getOnboardingByVerificationAndPaymentStatus field.
-func (r *queryResolver) GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, input model.GetOnboardingByVerificationAndPaymentStatusInput) ([]*model.Onboarding, error) {
-	args := sql.GetOnboardingByVerificationAndPaymentStatusParams{
-		Verification:  input.Verification.String(),
-		PaymentStatus: db.NullString{String: input.PaymentStatus.String(), Valid: true},
+// GetOnboardingByEmailAndVerification is the resolver for the getOnboardingByEmailAndVerification field.
+func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error) {
+	args := sql.GetOnboardingByEmailAndVerificationParams{
+		Email:        input.Email,
+		Verification: input.Verification.String(),
 	}
-	return r.onboardingController.GetOnboardingByVerificationAndPaymentStatus(ctx, args)
-}
-
-// GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
-func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	return r.onboardingController.GetOnboardingByEmail(ctx, email)
+	return r.onboardingController.GetOnboardingByEmailAndVerification(ctx, args)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

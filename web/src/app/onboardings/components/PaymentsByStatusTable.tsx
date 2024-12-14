@@ -57,6 +57,14 @@ export default function PaymentsByStatusTable(props: Props) {
       />
     )
   }
+  const shouldWeDoSomething = (status: string) => {
+    switch(status) {
+      case "VERIFIED":
+        return false
+      default:
+        return true
+    }
+  }
   const columns = useMemo(() => {
     return [
       columnHelper.accessor("reference_id", {
@@ -72,13 +80,15 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.title.url", {
         cell: info => (
           <HStack>
-            <IconButton
-              size="xs"
-              aria-label="Go back"
-              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}/${info.row.original?.onboarding?.title.__typename?.toLowerCase()}`)}
+            {shouldWeDoSomething(info.row.original.onboarding?.title.verified || "") ? (
+              <IconButton
+                size="xs"
+                aria-label="Go back"
+                onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.title.id}/${info.row.original?.onboarding?.title.__typename?.toLowerCase()}`)}
             >
-              <ViewIcon />
-            </IconButton>
+                <ViewIcon />
+              </IconButton>
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),

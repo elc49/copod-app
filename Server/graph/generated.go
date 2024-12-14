@@ -65,8 +65,8 @@ type ComplexityRoot struct {
 	Mutation struct {
 		ChargeMpesa                  func(childComplexity int, input model.PayWithMpesaInput) int
 		CreateOnboarding             func(childComplexity int, input model.CreateOnboardingInput) int
-		CreateUser                   func(childComplexity int, input model.CreateUserInput) int
 		UpdateOnboardingVerification func(childComplexity int, input model.UpdateOnboardingStatusInput) int
+		UpdateTitleVerificationByID  func(childComplexity int, input model.UpdateTitleVerificationByIDInput) int
 	}
 
 	Onboarding struct {
@@ -83,16 +83,14 @@ type ComplexityRoot struct {
 	}
 
 	Payment struct {
-		CreatedAt     func(childComplexity int) int
-		Email         func(childComplexity int) int
-		ID            func(childComplexity int) int
-		Onboarding    func(childComplexity int) int
-		OnboardingID  func(childComplexity int) int
-		ReferenceID   func(childComplexity int) int
-		Status        func(childComplexity int) int
-		SupportingDoc func(childComplexity int) int
-		UpdatedAt     func(childComplexity int) int
-		Verified      func(childComplexity int) int
+		CreatedAt    func(childComplexity int) int
+		Email        func(childComplexity int) int
+		ID           func(childComplexity int) int
+		Onboarding   func(childComplexity int) int
+		OnboardingID func(childComplexity int) int
+		ReferenceID  func(childComplexity int) int
+		Status       func(childComplexity int) int
+		UpdatedAt    func(childComplexity int) int
 	}
 
 	PaymentUpdate struct {
@@ -102,13 +100,11 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		GetOnboardingByEmail                        func(childComplexity int, email string) int
-		GetOnboardingByVerificationAndPaymentStatus func(childComplexity int, input model.GetOnboardingByVerificationAndPaymentStatusInput) int
-		GetPaymentDetailsByID                       func(childComplexity int, id uuid.UUID) int
-		GetPaymentsByStatus                         func(childComplexity int, status model.PaymentStatus) int
-		GetSupportingDocByID                        func(childComplexity int, id uuid.UUID) int
-		GetSupportingDocsByVerification             func(childComplexity int, verification model.Verification) int
-		GetUserLands                                func(childComplexity int, input model.GetUserLandsInput) int
+		GetOnboardingByEmailAndVerification func(childComplexity int, input model.GetOnboardingByEmailAndVerificationInput) int
+		GetPaymentsByStatus                 func(childComplexity int, status model.PaymentStatus) int
+		GetSupportingDocByID                func(childComplexity int, id uuid.UUID) int
+		GetTitleByID                        func(childComplexity int, id uuid.UUID) int
+		GetUserLands                        func(childComplexity int, input model.GetUserLandsInput) int
 	}
 
 	Subscription struct {
@@ -145,9 +141,9 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
-	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
 	CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error)
 	UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error)
+	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationByIDInput) (*model.Title, error)
 }
 type OnboardingResolver interface {
 	Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error)
@@ -162,11 +158,9 @@ type PaymentResolver interface {
 type QueryResolver interface {
 	GetUserLands(ctx context.Context, input model.GetUserLandsInput) ([]*model.Title, error)
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
-	GetPaymentDetailsByID(ctx context.Context, id uuid.UUID) (*model.Payment, error)
-	GetSupportingDocsByVerification(ctx context.Context, verification model.Verification) ([]*model.SupportingDoc, error)
+	GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error)
 	GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error)
-	GetOnboardingByVerificationAndPaymentStatus(ctx context.Context, input model.GetOnboardingByVerificationAndPaymentStatusInput) ([]*model.Onboarding, error)
-	GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error)
+	GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
@@ -257,18 +251,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateOnboarding(childComplexity, args["input"].(model.CreateOnboardingInput)), true
 
-	case "Mutation.createUser":
-		if e.complexity.Mutation.CreateUser == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createUser_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
-
 	case "Mutation.updateOnboardingVerification":
 		if e.complexity.Mutation.UpdateOnboardingVerification == nil {
 			break
@@ -280,6 +262,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateOnboardingVerification(childComplexity, args["input"].(model.UpdateOnboardingStatusInput)), true
+
+	case "Mutation.updateTitleVerificationById":
+		if e.complexity.Mutation.UpdateTitleVerificationByID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTitleVerificationById_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTitleVerificationByID(childComplexity, args["input"].(model.UpdateTitleVerificationByIDInput)), true
 
 	case "Onboarding.created_at":
 		if e.complexity.Onboarding.CreatedAt == nil {
@@ -400,26 +394,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.Status(childComplexity), true
 
-	case "Payment.supportingDoc":
-		if e.complexity.Payment.SupportingDoc == nil {
-			break
-		}
-
-		return e.complexity.Payment.SupportingDoc(childComplexity), true
-
 	case "Payment.updated_at":
 		if e.complexity.Payment.UpdatedAt == nil {
 			break
 		}
 
 		return e.complexity.Payment.UpdatedAt(childComplexity), true
-
-	case "Payment.verified":
-		if e.complexity.Payment.Verified == nil {
-			break
-		}
-
-		return e.complexity.Payment.Verified(childComplexity), true
 
 	case "PaymentUpdate.email":
 		if e.complexity.PaymentUpdate.Email == nil {
@@ -442,41 +422,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PaymentUpdate.Status(childComplexity), true
 
-	case "Query.getOnboardingByEmail":
-		if e.complexity.Query.GetOnboardingByEmail == nil {
+	case "Query.getOnboardingByEmailAndVerification":
+		if e.complexity.Query.GetOnboardingByEmailAndVerification == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getOnboardingByEmail_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getOnboardingByEmailAndVerification_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetOnboardingByEmail(childComplexity, args["email"].(string)), true
-
-	case "Query.getOnboardingByVerificationAndPaymentStatus":
-		if e.complexity.Query.GetOnboardingByVerificationAndPaymentStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getOnboardingByVerificationAndPaymentStatus_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetOnboardingByVerificationAndPaymentStatus(childComplexity, args["input"].(model.GetOnboardingByVerificationAndPaymentStatusInput)), true
-
-	case "Query.getPaymentDetailsById":
-		if e.complexity.Query.GetPaymentDetailsByID == nil {
-			break
-		}
-
-		args, err := ec.field_Query_getPaymentDetailsById_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.GetPaymentDetailsByID(childComplexity, args["id"].(uuid.UUID)), true
+		return e.complexity.Query.GetOnboardingByEmailAndVerification(childComplexity, args["input"].(model.GetOnboardingByEmailAndVerificationInput)), true
 
 	case "Query.getPaymentsByStatus":
 		if e.complexity.Query.GetPaymentsByStatus == nil {
@@ -502,17 +458,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.GetSupportingDocByID(childComplexity, args["id"].(uuid.UUID)), true
 
-	case "Query.getSupportingDocsByVerification":
-		if e.complexity.Query.GetSupportingDocsByVerification == nil {
+	case "Query.getTitleById":
+		if e.complexity.Query.GetTitleByID == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getSupportingDocsByVerification_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getTitleById_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetSupportingDocsByVerification(childComplexity, args["verification"].(model.Verification)), true
+		return e.complexity.Query.GetTitleByID(childComplexity, args["id"].(uuid.UUID)), true
 
 	case "Query.getUserLands":
 		if e.complexity.Query.GetUserLands == nil {
@@ -673,11 +629,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCreateOnboardingInput,
-		ec.unmarshalInputCreateUserInput,
-		ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput,
+		ec.unmarshalInputGetOnboardingByEmailAndVerificationInput,
 		ec.unmarshalInputGetUserLandsInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateOnboardingStatusInput,
+		ec.unmarshalInputUpdateTitleVerificationByIdInput,
 	)
 	first := true
 
@@ -857,29 +813,6 @@ func (ec *executionContext) field_Mutation_createOnboarding_argsInput(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_createUser_argsInput(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["input"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_createUser_argsInput(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (model.CreateUserInput, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐCreateUserInput(ctx, tmp)
-	}
-
-	var zeroVal model.CreateUserInput
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_updateOnboardingVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -900,6 +833,29 @@ func (ec *executionContext) field_Mutation_updateOnboardingVerification_argsInpu
 	}
 
 	var zeroVal model.UpdateOnboardingStatusInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateTitleVerificationById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_updateTitleVerificationById_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateTitleVerificationById_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.UpdateTitleVerificationByIDInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateTitleVerificationByIdInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationByIDInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateTitleVerificationByIDInput
 	return zeroVal, nil
 }
 
@@ -926,72 +882,26 @@ func (ec *executionContext) field_Query___type_argsName(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getOnboardingByEmail_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getOnboardingByEmailAndVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getOnboardingByEmail_argsEmail(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["email"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_getOnboardingByEmail_argsEmail(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
-	if tmp, ok := rawArgs["email"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_getOnboardingByVerificationAndPaymentStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getOnboardingByVerificationAndPaymentStatus_argsInput(ctx, rawArgs)
+	arg0, err := ec.field_Query_getOnboardingByEmailAndVerification_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getOnboardingByVerificationAndPaymentStatus_argsInput(
+func (ec *executionContext) field_Query_getOnboardingByEmailAndVerification_argsInput(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
+) (model.GetOnboardingByEmailAndVerificationInput, error) {
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNGetOnboardingByVerificationAndPaymentStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByVerificationAndPaymentStatusInput(ctx, tmp)
+		return ec.unmarshalNGetOnboardingByEmailAndVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByEmailAndVerificationInput(ctx, tmp)
 	}
 
-	var zeroVal model.GetOnboardingByVerificationAndPaymentStatusInput
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_getPaymentDetailsById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getPaymentDetailsById_argsID(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["id"] = arg0
-	return args, nil
-}
-func (ec *executionContext) field_Query_getPaymentDetailsById_argsID(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (uuid.UUID, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
-		return ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
-	}
-
-	var zeroVal uuid.UUID
+	var zeroVal model.GetOnboardingByEmailAndVerificationInput
 	return zeroVal, nil
 }
 
@@ -1041,26 +951,26 @@ func (ec *executionContext) field_Query_getSupportingDocById_argsID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getSupportingDocsByVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_getTitleById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_getSupportingDocsByVerification_argsVerification(ctx, rawArgs)
+	arg0, err := ec.field_Query_getTitleById_argsID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["verification"] = arg0
+	args["id"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getSupportingDocsByVerification_argsVerification(
+func (ec *executionContext) field_Query_getTitleById_argsID(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (model.Verification, error) {
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
-	if tmp, ok := rawArgs["verification"]; ok {
-		return ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, tmp)
+) (uuid.UUID, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
 	}
 
-	var zeroVal model.Verification
+	var zeroVal uuid.UUID
 	return zeroVal, nil
 }
 
@@ -1480,75 +1390,6 @@ func (ec *executionContext) fieldContext_Mutation_chargeMpesa(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_createUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_createUser(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(model.CreateUserInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.User)
-	fc.Result = res
-	return ec.marshalNUser2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_User_id(ctx, field)
-			case "firstname":
-				return ec.fieldContext_User_firstname(ctx, field)
-			case "lastname":
-				return ec.fieldContext_User_lastname(ctx, field)
-			case "email":
-				return ec.fieldContext_User_email(ctx, field)
-			case "created_at":
-				return ec.fieldContext_User_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_User_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type User", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_createOnboarding(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_createOnboarding(ctx, field)
 	if err != nil {
@@ -1697,6 +1538,75 @@ func (ec *executionContext) fieldContext_Mutation_updateOnboardingVerification(c
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateOnboardingVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTitleVerificationById(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateTitleVerificationByID(rctx, fc.Args["input"].(model.UpdateTitleVerificationByIDInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Title)
+	fc.Result = res
+	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTitleVerificationById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Title_id(ctx, field)
+			case "url":
+				return ec.fieldContext_Title_url(ctx, field)
+			case "verified":
+				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Title_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Title_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTitleVerificationById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2468,105 +2378,6 @@ func (ec *executionContext) fieldContext_Payment_onboarding_id(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Payment_verified(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_verified(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Verified, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.Verification)
-	fc.Result = res
-	return ec.marshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Payment_verified(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Payment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Verification does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Payment_supportingDoc(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_supportingDoc(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.SupportingDoc, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.SupportingDoc)
-	fc.Result = res
-	return ec.marshalOSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Payment_supportingDoc(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Payment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupportingDoc_id(ctx, field)
-			case "url":
-				return ec.fieldContext_SupportingDoc_url(ctx, field)
-			case "email":
-				return ec.fieldContext_SupportingDoc_email(ctx, field)
-			case "verified":
-				return ec.fieldContext_SupportingDoc_verified(ctx, field)
-			case "created_at":
-				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Payment_created_at(ctx context.Context, field graphql.CollectedField, obj *model.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_created_at(ctx, field)
 	if err != nil {
@@ -2907,10 +2718,6 @@ func (ec *executionContext) fieldContext_Query_getPaymentsByStatus(ctx context.C
 				return ec.fieldContext_Payment_onboarding(ctx, field)
 			case "onboarding_id":
 				return ec.fieldContext_Payment_onboarding_id(ctx, field)
-			case "verified":
-				return ec.fieldContext_Payment_verified(ctx, field)
-			case "supportingDoc":
-				return ec.fieldContext_Payment_supportingDoc(ctx, field)
 			case "created_at":
 				return ec.fieldContext_Payment_created_at(ctx, field)
 			case "updated_at":
@@ -2933,8 +2740,8 @@ func (ec *executionContext) fieldContext_Query_getPaymentsByStatus(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getPaymentDetailsById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getPaymentDetailsById(ctx, field)
+func (ec *executionContext) _Query_getTitleById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getTitleById(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2947,7 +2754,7 @@ func (ec *executionContext) _Query_getPaymentDetailsById(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetPaymentDetailsByID(rctx, fc.Args["id"].(uuid.UUID))
+		return ec.resolvers.Query().GetTitleByID(rctx, fc.Args["id"].(uuid.UUID))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2959,12 +2766,12 @@ func (ec *executionContext) _Query_getPaymentDetailsById(ctx context.Context, fi
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.Payment)
+	res := resTmp.(*model.Title)
 	fc.Result = res
-	return ec.marshalNPayment2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayment(ctx, field.Selections, res)
+	return ec.marshalNTitle2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐTitle(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getPaymentDetailsById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getTitleById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2973,96 +2780,19 @@ func (ec *executionContext) fieldContext_Query_getPaymentDetailsById(ctx context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Payment_id(ctx, field)
-			case "reference_id":
-				return ec.fieldContext_Payment_reference_id(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
-			case "email":
-				return ec.fieldContext_Payment_email(ctx, field)
-			case "onboarding":
-				return ec.fieldContext_Payment_onboarding(ctx, field)
-			case "onboarding_id":
-				return ec.fieldContext_Payment_onboarding_id(ctx, field)
-			case "verified":
-				return ec.fieldContext_Payment_verified(ctx, field)
-			case "supportingDoc":
-				return ec.fieldContext_Payment_supportingDoc(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Payment_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Payment_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getPaymentDetailsById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getSupportingDocsByVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getSupportingDocsByVerification(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetSupportingDocsByVerification(rctx, fc.Args["verification"].(model.Verification))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.SupportingDoc)
-	fc.Result = res
-	return ec.marshalNSupportingDoc2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDocᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getSupportingDocsByVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_SupportingDoc_id(ctx, field)
+				return ec.fieldContext_Title_id(ctx, field)
 			case "url":
-				return ec.fieldContext_SupportingDoc_url(ctx, field)
-			case "email":
-				return ec.fieldContext_SupportingDoc_email(ctx, field)
+				return ec.fieldContext_Title_url(ctx, field)
 			case "verified":
-				return ec.fieldContext_SupportingDoc_verified(ctx, field)
+				return ec.fieldContext_Title_verified(ctx, field)
+			case "support_doc_id":
+				return ec.fieldContext_Title_support_doc_id(ctx, field)
 			case "created_at":
-				return ec.fieldContext_SupportingDoc_created_at(ctx, field)
+				return ec.fieldContext_Title_created_at(ctx, field)
 			case "updated_at":
-				return ec.fieldContext_SupportingDoc_updated_at(ctx, field)
+				return ec.fieldContext_Title_updated_at(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type SupportingDoc", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Title", field.Name)
 		},
 	}
 	defer func() {
@@ -3072,7 +2802,7 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocsByVerification(c
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getSupportingDocsByVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getTitleById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -3148,8 +2878,8 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocById(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getOnboardingByVerificationAndPaymentStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getOnboardingByVerificationAndPaymentStatus(ctx, field)
+func (ec *executionContext) _Query_getOnboardingByEmailAndVerification(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getOnboardingByEmailAndVerification(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3162,84 +2892,7 @@ func (ec *executionContext) _Query_getOnboardingByVerificationAndPaymentStatus(c
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOnboardingByVerificationAndPaymentStatus(rctx, fc.Args["input"].(model.GetOnboardingByVerificationAndPaymentStatusInput))
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Onboarding)
-	fc.Result = res
-	return ec.marshalNOnboarding2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboardingᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_getOnboardingByVerificationAndPaymentStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Onboarding_id(ctx, field)
-			case "titleId":
-				return ec.fieldContext_Onboarding_titleId(ctx, field)
-			case "title":
-				return ec.fieldContext_Onboarding_title(ctx, field)
-			case "supportDocId":
-				return ec.fieldContext_Onboarding_supportDocId(ctx, field)
-			case "supportingDoc":
-				return ec.fieldContext_Onboarding_supportingDoc(ctx, field)
-			case "displayPictureId":
-				return ec.fieldContext_Onboarding_displayPictureId(ctx, field)
-			case "displayPicture":
-				return ec.fieldContext_Onboarding_displayPicture(ctx, field)
-			case "verification":
-				return ec.fieldContext_Onboarding_verification(ctx, field)
-			case "created_at":
-				return ec.fieldContext_Onboarding_created_at(ctx, field)
-			case "updated_at":
-				return ec.fieldContext_Onboarding_updated_at(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Onboarding", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getOnboardingByVerificationAndPaymentStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_getOnboardingByEmail(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getOnboardingByEmail(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetOnboardingByEmail(rctx, fc.Args["email"].(string))
+		return ec.resolvers.Query().GetOnboardingByEmailAndVerification(rctx, fc.Args["input"].(model.GetOnboardingByEmailAndVerificationInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3256,7 +2909,7 @@ func (ec *executionContext) _Query_getOnboardingByEmail(ctx context.Context, fie
 	return ec.marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getOnboardingByEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getOnboardingByEmailAndVerification(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -3295,7 +2948,7 @@ func (ec *executionContext) fieldContext_Query_getOnboardingByEmail(ctx context.
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getOnboardingByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getOnboardingByEmailAndVerification_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6115,14 +5768,14 @@ func (ec *executionContext) unmarshalInputCreateOnboardingInput(ctx context.Cont
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj interface{}) (model.CreateUserInput, error) {
-	var it model.CreateUserInput
+func (ec *executionContext) unmarshalInputGetOnboardingByEmailAndVerificationInput(ctx context.Context, obj interface{}) (model.GetOnboardingByEmailAndVerificationInput, error) {
+	var it model.GetOnboardingByEmailAndVerificationInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"email", "firstname", "lastname", "supportDocUrl", "verification", "supportDocId"}
+	fieldsInOrder := [...]string{"email", "verification"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6136,27 +5789,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Email = data
-		case "firstname":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("firstname"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Firstname = data
-		case "lastname":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("lastname"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Lastname = data
-		case "supportDocUrl":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportDocUrl"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SupportDocURL = data
 		case "verification":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
 			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
@@ -6164,47 +5796,6 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Verification = data
-		case "supportDocId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("supportDocId"))
-			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.SupportDocID = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, obj interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
-	var it model.GetOnboardingByVerificationAndPaymentStatusInput
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"verification", "paymentStatus"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "verification":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
-			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Verification = data
-		case "paymentStatus":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("paymentStatus"))
-			data, err := ec.unmarshalNPaymentStatus2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentStatus(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PaymentStatus = data
 		}
 	}
 
@@ -6334,6 +5925,40 @@ func (ec *executionContext) unmarshalInputUpdateOnboardingStatusInput(ctx contex
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx context.Context, obj interface{}) (model.UpdateTitleVerificationByIDInput, error) {
+	var it model.UpdateTitleVerificationByIDInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"titleId", "verification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "titleId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("titleId"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TitleID = data
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		}
+	}
+
+	return it, nil
+}
+
 // endregion **************************** input.gotpl *****************************
 
 // region    ************************** interface.gotpl ***************************
@@ -6429,13 +6054,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_chargeMpesa(ctx, field)
 			})
-		case "createUser":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_createUser(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "createOnboarding":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createOnboarding(ctx, field)
@@ -6446,6 +6064,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateOnboardingVerification":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOnboardingVerification(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateTitleVerificationById":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTitleVerificationById(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6719,13 +6344,6 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "verified":
-			out.Values[i] = ec._Payment_verified(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "supportingDoc":
-			out.Values[i] = ec._Payment_supportingDoc(ctx, field, obj)
 		case "created_at":
 			out.Values[i] = ec._Payment_created_at(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -6871,7 +6489,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getPaymentDetailsById":
+		case "getTitleById":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -6880,29 +6498,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getPaymentDetailsById(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getSupportingDocsByVerification":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getSupportingDocsByVerification(ctx, field)
+				res = ec._Query_getTitleById(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6937,7 +6533,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getOnboardingByVerificationAndPaymentStatus":
+		case "getOnboardingByEmailAndVerification":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -6946,29 +6542,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getOnboardingByVerificationAndPaymentStatus(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getOnboardingByEmail":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_getOnboardingByEmail(ctx, field)
+				res = ec._Query_getOnboardingByEmailAndVerification(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7564,11 +7138,6 @@ func (ec *executionContext) unmarshalNCreateOnboardingInput2githubᚗcomᚋelc49
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNCreateUserInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐCreateUserInput(ctx context.Context, v interface{}) (model.CreateUserInput, error) {
-	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalNDisplayPicture2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDisplayPicture(ctx context.Context, sel ast.SelectionSet, v model.DisplayPicture) graphql.Marshaler {
 	return ec._DisplayPicture(ctx, sel, &v)
 }
@@ -7583,8 +7152,8 @@ func (ec *executionContext) marshalNDisplayPicture2ᚖgithubᚗcomᚋelc49ᚋcop
 	return ec._DisplayPicture(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNGetOnboardingByVerificationAndPaymentStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByVerificationAndPaymentStatusInput(ctx context.Context, v interface{}) (model.GetOnboardingByVerificationAndPaymentStatusInput, error) {
-	res, err := ec.unmarshalInputGetOnboardingByVerificationAndPaymentStatusInput(ctx, v)
+func (ec *executionContext) unmarshalNGetOnboardingByEmailAndVerificationInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetOnboardingByEmailAndVerificationInput(ctx context.Context, v interface{}) (model.GetOnboardingByEmailAndVerificationInput, error) {
+	res, err := ec.unmarshalInputGetOnboardingByEmailAndVerificationInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -7595,50 +7164,6 @@ func (ec *executionContext) unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋc
 
 func (ec *executionContext) marshalNOnboarding2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx context.Context, sel ast.SelectionSet, v model.Onboarding) graphql.Marshaler {
 	return ec._Onboarding(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNOnboarding2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboardingᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Onboarding) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx context.Context, sel ast.SelectionSet, v *model.Onboarding) graphql.Marshaler {
@@ -7654,10 +7179,6 @@ func (ec *executionContext) marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopod�
 func (ec *executionContext) unmarshalNPayWithMpesaInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayWithMpesaInput(ctx context.Context, v interface{}) (model.PayWithMpesaInput, error) {
 	res, err := ec.unmarshalInputPayWithMpesaInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNPayment2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPayment(ctx context.Context, sel ast.SelectionSet, v model.Payment) graphql.Marshaler {
-	return ec._Payment(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNPayment2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐPaymentᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Payment) graphql.Marshaler {
@@ -7767,50 +7288,6 @@ func (ec *executionContext) marshalNSupportingDoc2githubᚗcomᚋelc49ᚋcopod�
 	return ec._SupportingDoc(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNSupportingDoc2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDocᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.SupportingDoc) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) marshalNSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v *model.SupportingDoc) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -7914,18 +7391,9 @@ func (ec *executionContext) unmarshalNUpdateOnboardingStatusInput2githubᚗcom�
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNUser2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v model.User) graphql.Marshaler {
-	return ec._User(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNUser2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUser(ctx context.Context, sel ast.SelectionSet, v *model.User) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._User(ctx, sel, v)
+func (ec *executionContext) unmarshalNUpdateTitleVerificationByIdInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateTitleVerificationByIDInput(ctx context.Context, v interface{}) (model.UpdateTitleVerificationByIDInput, error) {
+	res, err := ec.unmarshalInputUpdateTitleVerificationByIdInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx context.Context, v interface{}) (model.Verification, error) {
@@ -8238,13 +7706,6 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOSupportingDoc2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐSupportingDoc(ctx context.Context, sel ast.SelectionSet, v *model.SupportingDoc) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._SupportingDoc(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

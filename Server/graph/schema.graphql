@@ -67,8 +67,6 @@ type Payment {
   email: String!
   onboarding: Onboarding
   onboarding_id: UUID!
-  verified: Verification!
-  supportingDoc: SupportingDoc
   created_at: Time!
   updated_at: Time!
 }
@@ -112,15 +110,6 @@ input PayWithMpesaInput {
   paymentFor: UUID!
 }
 
-input CreateUserInput {
-  email: String!
-  firstname: String!
-  lastname: String!
-  supportDocUrl: String!
-  verification: Verification!
-  supportDocId: UUID!
-}
-
 input CreateOnboardingInput {
   email: String!
   titleUrl: String!
@@ -133,31 +122,34 @@ input UpdateOnboardingStatusInput {
   verification: Verification!
 }
 
-input GetOnboardingByVerificationAndPaymentStatusInput {
-  verification: Verification!
-  paymentStatus: PaymentStatus!
-}
-
 input GetUserLandsInput {
   email: String!
+  verification: Verification!
+}
+
+input GetOnboardingByEmailAndVerificationInput {
+  email: String!
+  verification: Verification!
+}
+
+input UpdateTitleVerificationByIdInput {
+  titleId: UUID!
   verification: Verification!
 }
 
 type Query {
   getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
-  getPaymentDetailsById(id: UUID!): Payment!
-  getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
+  getTitleById(id: UUID!): Title!
   getSupportingDocById(id: UUID!): SupportingDoc!
-  getOnboardingByVerificationAndPaymentStatus(input: GetOnboardingByVerificationAndPaymentStatusInput!): [Onboarding!]!
-  getOnboardingByEmail(email: String!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
 }
 
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
-  createUser(input: CreateUserInput!): User!
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
   updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
+  updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
 }
 
 type Subscription {
