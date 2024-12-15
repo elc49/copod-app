@@ -33,6 +33,7 @@ type Querier interface {
 	UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
 	UpdateSupportDocByID(ctx context.Context, arg UpdateSupportDocByIDParams) (SupportDoc, error)
+	UpdateSupportDocVerificationByID(ctx context.Context, arg UpdateSupportDocVerificationByIDParams) (SupportDoc, error)
 	UpdateTitleByID(ctx context.Context, arg UpdateTitleByIDParams) (TitleDeed, error)
 	UpdateTitleVerificationByID(ctx context.Context, arg UpdateTitleVerificationByIDParams) (TitleDeed, error)
 }

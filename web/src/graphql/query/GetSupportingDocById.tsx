@@ -4,7 +4,8 @@ export default gql`
   query GetSupportingDocById($id: UUID!) {
     getSupportingDocById(id: $id) {
       id
-      govt_id
+      url
+      email
       verified
     }
   }

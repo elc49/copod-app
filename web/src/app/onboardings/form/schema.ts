@@ -35,4 +35,22 @@ export const status = createListCollection({
   ],
 })
 
+export const userDetailsSchema = yup.object({
+  firstname: yup.string().required(),
+  lastname: yup.string().required(),
+  verification: yup.array().required(),
+})
+
+export const verifications = createListCollection({
+  items: [
+    {
+      label: "Verify",
+      value: Verification.Verified,
+    },
+    {
+      label: "Reject",
+      value: Verification.Rejected,
+    },
+  ],
+})
 

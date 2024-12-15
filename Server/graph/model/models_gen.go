@@ -18,6 +18,14 @@ type CreateOnboardingInput struct {
 	DisplayPictureURL string `json:"displayPictureUrl"`
 }
 
+type CreateUserInput struct {
+	Email                  string       `json:"email"`
+	Firstname              string       `json:"firstname"`
+	Lastname               string       `json:"lastname"`
+	SupportDocID           uuid.UUID    `json:"supportDocId"`
+	SupportDocVerification Verification `json:"supportDocVerification"`
+}
+
 type DisplayPicture struct {
 	ID        uuid.UUID    `json:"id"`
 	URL       string       `json:"url"`

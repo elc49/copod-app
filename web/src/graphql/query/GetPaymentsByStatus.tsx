@@ -18,11 +18,13 @@ export default gql`
         displayPicture {
           id
           url
+          verified
         }
         supportDocId
         supportingDoc {
           id
           url
+          verified
         }
       }
       onboarding_id

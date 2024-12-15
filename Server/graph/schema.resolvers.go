@@ -56,6 +56,24 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 	return r.titleController.UpdateTitleVerificationByID(ctx, args)
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	args := sql.CreateUserParams{
+		Email:     input.Email,
+		Firstname: input.Firstname,
+		Lastname:  input.Lastname,
+	}
+	_, err := r.supportDocController.UpdateSupportDocVerificationByID(ctx, sql.UpdateSupportDocVerificationByIDParams{
+		ID:           input.SupportDocID,
+		Verification: input.SupportDocVerification.String(),
+	})
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateSupportDocVerificationByID")
+		return nil, err
+	}
+	return r.userController.CreateUser(ctx, args)
+}
+
 // Title is the resolver for the title field.
 func (r *onboardingResolver) Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error) {
 	return r.titleController.GetTitleByID(ctx, obj.TitleID)
