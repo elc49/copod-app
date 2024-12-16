@@ -3,8 +3,8 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
-import { Flex, SimpleGrid } from "@chakra-ui/react";
-import Image from "next/image";
+import { Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
+import NextImage from "next/image";
 import updateTitleVerificationById from "@/graphql/mutation/UpdateTitleVerificationById";
 import createUser from "@/graphql/mutation/CreateUser";
 import getSupportDocById from "@/graphql/query/GetSupportingDocById";
@@ -28,7 +28,7 @@ function Page() {
     variables: {
       id: params.id,
     },
-    skip: params.type !== "title",
+    skip: !(params.type === "title"),
   })
   const titleData = useMemo(() => {
     return title?.getTitleById
@@ -38,7 +38,7 @@ function Page() {
     variables: {
       id: params.id,
     },
-    skip: params.type !== "supportingdoc",
+    skip: !(params.type == "supportingdoc"),
   })
   const docDetails = useMemo(() => {
     return supportDoc?.getSupportingDocById
@@ -143,16 +143,18 @@ function Page() {
 
   return (titleLoading || supportDocLoading) ? <Loader /> : (
     <SimpleGrid columns={{ base: 1, sm: 2}} p="2" gap={{ base: 4, sm: 8 }}>
-      {params.type === "title" && (
+      {params.type != undefined && params.type === "title" && (
         <>
           <Flex direction="column" align="center" gap="4">
-            <Image
-              src={titleData.url}
-              alt={titleData.__typename}
-              priority={true}
-              width={500}
-              height={500}
-            />
+            <ChakraImage asChild>
+              <NextImage
+                src={`${titleData.url}`}
+                alt={titleData.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
           </Flex>
           <Flex direction="column" gap="4">
             {titleData.verified === "VERIFIED" ? (
@@ -163,16 +165,18 @@ function Page() {
           </Flex>
         </>
       )}
-      {params.type === "supportingdoc" && (
+      {params.type != undefined && params.type === "supportingdoc" && (
         <>
           <Flex direction="column" align="center" gap="4">
-            <Image
-              src={docDetails.url}
-              alt={docDetails.__typename}
-              priority={true}
-              width={500}
-              height={500}
-            />
+            <ChakraImage asChild>
+              <NextImage
+                src={`${docDetails.url}`}
+                alt={docDetails.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
           </Flex>
           <Flex direction="column" gap="4">
             <UserDetailsForm updating={creatingUser} saveUser={saveUser} />
