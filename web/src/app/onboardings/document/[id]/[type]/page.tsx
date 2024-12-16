@@ -22,7 +22,6 @@ import { getAccounts, publicClient, privateClient } from "@/blockchain/rpc";
 export default withAuth(Page)
 function Page() {
   const [registering, setRegistering] = useState(false)
-  const [saving, setSaving] = useState(false)
   const { provider } = useContext(WalletContext)
   const params = useParams()
   const { data: title, loading: titleLoading } = useQuery(getTitleById, {
@@ -49,7 +48,6 @@ function Page() {
 
   const saveUser = (values: any) => {
     try {
-      setSaving(true)
       createNewUser({
         variables: {
           input: {
@@ -78,8 +76,6 @@ function Page() {
       })
     } catch (e) {
       console.error(e)
-    } finally {
-      setSaving(false)
     }
   }
 
@@ -162,7 +158,7 @@ function Page() {
             {titleData.verified === "VERIFIED" ? (
               <DoneIcon />
             ) : (
-              <LandDetails registerLand={registerLand} registering={registering || updatingTitle} />
+              <LandDetails registering={registering || updatingTitle} registerLand={registerLand} />
             )}
           </Flex>
         </>
@@ -179,7 +175,7 @@ function Page() {
             />
           </Flex>
           <Flex direction="column" gap="4">
-            <UserDetailsForm updating={saving || creatingUser} saveUser={saveUser} />
+            <UserDetailsForm updating={creatingUser} saveUser={saveUser} />
           </Flex>
         </>
       )}
