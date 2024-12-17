@@ -68,3 +68,20 @@ func (r *DisplayPicture) UpdateDisplayPictureByID(ctx context.Context, args sql.
 		UpdatedAt: d.UpdatedAt,
 	}, nil
 }
+
+func (r *DisplayPicture) UpdateDisplayPictureVerificationByID(ctx context.Context, args sql.UpdateDisplayPictureVerificationByIDParams) (*model.DisplayPicture, error) {
+	d, err := r.sql.UpdateDisplayPictureVerificationByID(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateDisplayPictureVerificationByID")
+		return nil, err
+	}
+
+	return &model.DisplayPicture{
+		ID:        d.ID,
+		Email:     d.Email,
+		Verified:  model.Verification(d.Verification),
+		URL:       d.Url,
+		CreatedAt: d.CreatedAt,
+		UpdatedAt: d.UpdatedAt,
+	}, nil
+}

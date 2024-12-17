@@ -54,3 +54,6 @@ export const verifications = createListCollection({
   ],
 })
 
+export const displayPictureDetailsSchema = yup.object({
+  verification: yup.array().required(),
+})

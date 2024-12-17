@@ -13,3 +13,8 @@ WHERE id = $1;
 UPDATE display_pictures SET url = $1, verification = $2
 WHERE id = $3
 RETURNING *;
+
+-- name: UpdateDisplayPictureVerificationByID :one
+UPDATE display_pictures SET verification = $1
+WHERE id = $2
+RETURNING *;

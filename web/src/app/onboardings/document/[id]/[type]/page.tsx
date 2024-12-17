@@ -3,16 +3,18 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
-import { Button, Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
+import { Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
 import NextImage from "next/image";
 import updateTitleVerificationById from "@/graphql/mutation/UpdateTitleVerificationById";
 import createUser from "@/graphql/mutation/CreateUser";
 import getSupportDocById from "@/graphql/query/GetSupportingDocById";
 import getTitleById from "@/graphql/query/GetTitleById";
 import getDisplayPictureById from "@/graphql/query/GetDisplayPictureById";
+import updateDisplayPictureVerificationById from "@/graphql/mutation/UpdateDisplayPictureVerificationById";
 import { parseUnits } from "viem";
 import LandDetails from "../../../form/LandDetails";
 import UserDetailsForm from "../../../form/UserDetails";
+import DisplayPictureDetails from "../../../form/DisplayPictureDetails";
 import Loader from "@/components/loader";
 import { toaster } from "@/components/ui/toaster";
 import { DoneIcon } from "@/components/icons";
@@ -54,36 +56,71 @@ function Page() {
   const dpDetails = useMemo(() => {
     return displayPicture?.getDisplayPictureById
   }, [displayPicture])
+  const [updateDp, { loading: updatingDp }] = useMutation(updateDisplayPictureVerificationById)
   const router = useRouter()
+  
+  const saveDp = (values: any) => {
+    try {
+      if (!updatingDp) {
+        updateDp({
+          variables: {
+            input: {
+              displayPictureId: params.id,
+              verification: values.verification[0],
+            },
+          },
+          onCompleted: () => {
+            toaster.create({
+              title: "Success",
+              description: "Display picture saved",
+              type: "success",
+            })
+            router.back()
+          },
+          onError: (e) => {
+            toaster.create({
+              title: "Error",
+              description: `${e.message}`,
+              type: "error",
+            })
+          },
+        })
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const saveUser = (values: any) => {
     try {
-      createNewUser({
-        variables: {
-          input: {
-            email: docDetails.email,
-            firstname: values.firstname,
-            lastname: values.lastname,
-            supportDocId: params.id,
-            supportDocVerification: values.verification[0],
+      if (!creatingUser) {
+        createNewUser({
+          variables: {
+            input: {
+              email: docDetails.email,
+              firstname: values.firstname,
+              lastname: values.lastname,
+              supportDocId: params.id,
+              supportDocVerification: values.verification[0],
+            },
           },
-        },
-        onCompleted: () => {
-          toaster.create({
-            title: "Success",
-            description: "User created",
-            type: "success",
-          })
-          router.back()
-        },
-        onError: (e) => {
-          toaster.create({
-            title: "Error",
-            description: `${e.message}`,
-            type: "error",
-          })
-        },
-      })
+          onCompleted: () => {
+            toaster.create({
+              title: "Success",
+              description: "User created",
+              type: "success",
+            })
+            router.back()
+          },
+          onError: (e) => {
+            toaster.create({
+              title: "Error",
+              description: `${e.message}`,
+              type: "error",
+            })
+          },
+        })
+      }
     } catch (e) {
       console.error(e)
     }
@@ -195,7 +232,7 @@ function Page() {
       )}
       {params.type === "displaypicture" && (
         <>
-          <Flex gap="4" align="center">
+          <Flex direction="column" gap="4" align="center">
             <ChakraImage asChild>
               <NextImage
                 src={`${dpDetails.url}`}
@@ -206,12 +243,8 @@ function Page() {
               />
             </ChakraImage>
           </Flex>
-          <Flex gap="4">
-            <Button
-              onClick={() => {}}
-            >
-              Save
-            </Button>
+          <Flex direction="column" gap="4">
+            <DisplayPictureDetails saveDp={saveDp} savingDp={updatingDp} />
           </Flex>
         </>
       )}
