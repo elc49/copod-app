@@ -30,6 +30,7 @@ type Querier interface {
 	GetTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error)
 	GetTitlesByEmailAndVerification(ctx context.Context, arg GetTitlesByEmailAndVerificationParams) ([]TitleDeed, error)
 	UpdateDisplayPictureByID(ctx context.Context, arg UpdateDisplayPictureByIDParams) (DisplayPicture, error)
+	UpdateDisplayPictureVerificationByID(ctx context.Context, arg UpdateDisplayPictureVerificationByIDParams) (DisplayPicture, error)
 	UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error)
 	UpdatePaymentStatus(ctx context.Context, arg UpdatePaymentStatusParams) (Payment, error)
 	UpdateSupportDocByID(ctx context.Context, arg UpdateSupportDocByIDParams) (SupportDoc, error)

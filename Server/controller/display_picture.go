@@ -15,6 +15,7 @@ type DisplayPictureController interface {
 	CreateDisplayPicture(context.Context, sql.CreateDisplayPictureParams) (*model.DisplayPicture, error)
 	GetDisplayPictureByID(context.Context, uuid.UUID) (*model.DisplayPicture, error)
 	UpdateDisplayPictureByID(context.Context, sql.UpdateDisplayPictureByIDParams) (*model.DisplayPicture, error)
+	UpdateDisplayPictureVerificationByID(context.Context, sql.UpdateDisplayPictureVerificationByIDParams) (*model.DisplayPicture, error)
 }
 
 type DisplayPicture struct {
@@ -42,4 +43,8 @@ func (c *DisplayPicture) GetDisplayPictureByID(ctx context.Context, id uuid.UUID
 
 func (c *DisplayPicture) UpdateDisplayPictureByID(ctx context.Context, args sql.UpdateDisplayPictureByIDParams) (*model.DisplayPicture, error) {
 	return c.r.UpdateDisplayPictureByID(ctx, args)
+}
+
+func (c *DisplayPicture) UpdateDisplayPictureVerificationByID(ctx context.Context, args sql.UpdateDisplayPictureVerificationByIDParams) (*model.DisplayPicture, error) {
+	return c.r.UpdateDisplayPictureVerificationByID(ctx, args)
 }

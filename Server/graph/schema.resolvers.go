@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -77,7 +76,11 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 
 // UpdateDisplayPictureVerificationByID is the resolver for the updateDisplayPictureVerificationById field.
 func (r *mutationResolver) UpdateDisplayPictureVerificationByID(ctx context.Context, input model.UpdateDisplayPictureVerificationByIDInput) (*model.DisplayPicture, error) {
-	panic(fmt.Errorf("not implemented: UpdateDisplayPictureVerificationByID - updateDisplayPictureVerificationById"))
+	args := sql.UpdateDisplayPictureVerificationByIDParams{
+		ID:           input.DisplayPictureID,
+		Verification: input.Verification.String(),
+	}
+	return r.displayPictureController.UpdateDisplayPictureVerificationByID(ctx, args)
 }
 
 // Title is the resolver for the title field.

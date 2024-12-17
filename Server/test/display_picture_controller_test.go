@@ -45,4 +45,14 @@ func Test_Display_Picture_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.NotEqual(t, dp.URL, displayPicture.URL)
 	})
+
+	t.Run("update_display_picture_verification_by_id", func(t *testing.T) {
+		dp, err := dc.UpdateDisplayPictureVerificationByID(ctx, sql.UpdateDisplayPictureVerificationByIDParams{
+			ID:           displayPicture.ID,
+			Verification: model.VerificationVerified.String(),
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, dp.Verified, model.VerificationVerified)
+	})
 }
