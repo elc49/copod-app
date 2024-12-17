@@ -137,11 +137,25 @@ input UpdateTitleVerificationByIdInput {
   verification: Verification!
 }
 
+input CreateUserInput {
+  email: String!
+  firstname: String!
+  lastname: String!
+  supportDocId: UUID!
+  supportDocVerification: Verification!
+}
+
+input UpdateDisplayPictureVerificationByIdInput {
+  displayPictureId: UUID!
+  verification: Verification!
+}
+
 type Query {
   getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getTitleById(id: UUID!): Title!
   getSupportingDocById(id: UUID!): SupportingDoc!
+  getDisplayPictureById(id: UUID!): DisplayPicture!
   getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
 }
 
@@ -150,6 +164,8 @@ type Mutation {
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
   updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
   updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
+  createUser(input: CreateUserInput!): User!
+  updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!
 }
 
 type Subscription {

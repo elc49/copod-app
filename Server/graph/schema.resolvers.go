@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -56,6 +57,29 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 	return r.titleController.UpdateTitleVerificationByID(ctx, args)
 }
 
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	args := sql.CreateUserParams{
+		Email:     input.Email,
+		Firstname: input.Firstname,
+		Lastname:  input.Lastname,
+	}
+	_, err := r.supportDocController.UpdateSupportDocVerificationByID(ctx, sql.UpdateSupportDocVerificationByIDParams{
+		ID:           input.SupportDocID,
+		Verification: input.SupportDocVerification.String(),
+	})
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateSupportDocVerificationByID")
+		return nil, err
+	}
+	return r.userController.CreateUser(ctx, args)
+}
+
+// UpdateDisplayPictureVerificationByID is the resolver for the updateDisplayPictureVerificationById field.
+func (r *mutationResolver) UpdateDisplayPictureVerificationByID(ctx context.Context, input model.UpdateDisplayPictureVerificationByIDInput) (*model.DisplayPicture, error) {
+	panic(fmt.Errorf("not implemented: UpdateDisplayPictureVerificationByID - updateDisplayPictureVerificationById"))
+}
+
 // Title is the resolver for the title field.
 func (r *onboardingResolver) Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error) {
 	return r.titleController.GetTitleByID(ctx, obj.TitleID)
@@ -98,6 +122,11 @@ func (r *queryResolver) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.
 // GetSupportingDocByID is the resolver for the getSupportingDocById field.
 func (r *queryResolver) GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error) {
 	return r.supportDocController.GetSupportingDocByID(ctx, id)
+}
+
+// GetDisplayPictureByID is the resolver for the getDisplayPictureById field.
+func (r *queryResolver) GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (*model.DisplayPicture, error) {
+	return r.displayPictureController.GetDisplayPictureByID(ctx, id)
 }
 
 // GetOnboardingByEmailAndVerification is the resolver for the getOnboardingByEmailAndVerification field.

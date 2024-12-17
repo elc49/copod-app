@@ -21,3 +21,8 @@ WHERE id = $1;
 UPDATE support_docs SET url = $1, verification = $2
 WHERE id = $3
 RETURNING *;
+
+-- name: UpdateSupportDocVerificationByID :one
+UPDATE support_docs SET verification = $1
+WHERE id = $2
+RETURNING *;

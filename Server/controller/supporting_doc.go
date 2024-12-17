@@ -16,6 +16,7 @@ type SupportingDocController interface {
 	GetSupportingDocsByVerification(context.Context, model.Verification) ([]*model.SupportingDoc, error)
 	GetSupportingDocByID(context.Context, uuid.UUID) (*model.SupportingDoc, error)
 	UpdateSupportDocByID(context.Context, sql.UpdateSupportDocByIDParams) (*model.SupportingDoc, error)
+	UpdateSupportDocVerificationByID(context.Context, sql.UpdateSupportDocVerificationByIDParams) (*model.SupportingDoc, error)
 }
 
 type SupportingDoc struct {
@@ -64,4 +65,8 @@ func (c *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 
 func (c *SupportingDoc) UpdateSupportDocByID(ctx context.Context, args sql.UpdateSupportDocByIDParams) (*model.SupportingDoc, error) {
 	return c.r.UpdateSupportDocByID(ctx, args)
+}
+
+func (c *SupportingDoc) UpdateSupportDocVerificationByID(ctx context.Context, args sql.UpdateSupportDocVerificationByIDParams) (*model.SupportingDoc, error) {
+	return c.r.UpdateSupportDocVerificationByID(ctx, args)
 }

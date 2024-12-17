@@ -1,11 +1,10 @@
 import { gql } from "@apollo/client"
 
 export default gql`
-  query GetSupportingDocById($id: UUID!) {
-    getSupportingDocById(id: $id) {
+  query GetDisplayPictureById($id: UUID!) {
+    getDisplayPictureById(id: $id) {
       id
       url
-      email
       verified
     }
   }

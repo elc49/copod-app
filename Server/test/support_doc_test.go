@@ -42,7 +42,7 @@ func Test_SupportDoc_Controller(t *testing.T) {
 		doc, err := sc.GetSupportingDocByID(ctx, supportdoc.ID)
 
 		assert.Nil(t, err)
-		assert.Equal(t, doc.URL, docUri)
+		assert.Equal(t, doc.Email, email)
 	})
 
 	t.Run("should_update_supporting_doc_by_email", func(t *testing.T) {
@@ -54,5 +54,15 @@ func Test_SupportDoc_Controller(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, doc.Verified, model.VerificationVerified)
+	})
+
+	t.Run("udpate_support_doc_verification_by_id", func(t *testing.T) {
+		u, err := sc.UpdateSupportDocVerificationByID(ctx, sql.UpdateSupportDocVerificationByIDParams{
+			ID:           supportdoc.ID,
+			Verification: model.VerificationVerified.String(),
+		})
+
+		assert.Nil(t, err)
+		assert.Equal(t, u.Verified, model.VerificationVerified)
 	})
 }

@@ -16,10 +16,10 @@ import { userDetailsSchema, verifications } from "./schema";
 
 interface Props {
   updating: boolean
-  saveDetails: (values: any) => void
+  saveUser: (values: any) => void
 }
 
-export default function UserDetailsForm({ updating, saveDetails }: Props) {
+export default function UserDetailsForm({ updating, saveUser }: Props) {
   const {
     control,
     register,
@@ -28,7 +28,6 @@ export default function UserDetailsForm({ updating, saveDetails }: Props) {
   } = useForm({
     resolver: yupResolver(userDetailsSchema),
     defaultValues: {
-      govtid: "",
       firstname: "",
       lastname: "",
       verification: undefined,
@@ -38,7 +37,7 @@ export default function UserDetailsForm({ updating, saveDetails }: Props) {
   const onSubmit = (values: any) => {
     if (!updating) {
       try {
-        saveDetails(values)
+        saveUser(values)
       } catch (e) {
         console.error(e)
       }
@@ -48,16 +47,6 @@ export default function UserDetailsForm({ updating, saveDetails }: Props) {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap="4" align="flex-start" maxW="sm">
-        <Field
-          required
-          label="Govt Issued ID"
-          invalid={!!errors.govtid}
-          errorText={errors.govtid?.message}
-        >
-          <Input
-            {...register("govtid", { required: "Govt id required" })}
-          />
-        </Field>
         <Field
           required
           label="First name"

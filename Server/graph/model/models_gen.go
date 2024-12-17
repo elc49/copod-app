@@ -18,6 +18,14 @@ type CreateOnboardingInput struct {
 	DisplayPictureURL string `json:"displayPictureUrl"`
 }
 
+type CreateUserInput struct {
+	Email                  string       `json:"email"`
+	Firstname              string       `json:"firstname"`
+	Lastname               string       `json:"lastname"`
+	SupportDocID           uuid.UUID    `json:"supportDocId"`
+	SupportDocVerification Verification `json:"supportDocVerification"`
+}
+
 type DisplayPicture struct {
 	ID        uuid.UUID    `json:"id"`
 	URL       string       `json:"url"`
@@ -100,6 +108,11 @@ type Title struct {
 	SupportDocID uuid.UUID    `json:"support_doc_id"`
 	CreatedAt    time.Time    `json:"created_at"`
 	UpdatedAt    time.Time    `json:"updated_at"`
+}
+
+type UpdateDisplayPictureVerificationByIDInput struct {
+	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
+	Verification     Verification `json:"verification"`
 }
 
 type UpdateOnboardingStatusInput struct {

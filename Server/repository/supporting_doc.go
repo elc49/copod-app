@@ -104,9 +104,27 @@ func (r *SupportingDoc) GetSupportingDocByID(ctx context.Context, id uuid.UUID) 
 
 	return &model.SupportingDoc{
 		ID:        d.ID,
+		Email:     d.Email,
 		URL:       d.Url,
 		Verified:  model.Verification(d.Verification),
 		CreatedAt: d.CreatedAt,
 		UpdatedAt: d.UpdatedAt,
+	}, nil
+}
+
+func (r *SupportingDoc) UpdateSupportDocVerificationByID(ctx context.Context, args sql.UpdateSupportDocVerificationByIDParams) (*model.SupportingDoc, error) {
+	u, err := r.sql.UpdateSupportDocVerificationByID(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateSupportDocVerificationByID")
+		return nil, err
+	}
+
+	return &model.SupportingDoc{
+		ID:        u.ID,
+		Email:     u.Email,
+		URL:       u.Url,
+		Verified:  model.Verification(u.Verification),
+		CreatedAt: u.CreatedAt,
+		UpdatedAt: u.UpdatedAt,
 	}, nil
 }

@@ -49,6 +49,7 @@ export type Mutation = {
   chargeMpesa?: Maybe<Scalars['String']['output']>;
   createOnboarding: Onboarding;
   updateOnboardingVerification: Onboarding;
+  updateTitleVerificationById: Title;
 };
 
 
@@ -64,6 +65,11 @@ export type MutationCreateOnboardingArgs = {
 
 export type MutationUpdateOnboardingVerificationArgs = {
   input: UpdateOnboardingStatusInput;
+};
+
+
+export type MutationUpdateTitleVerificationByIdArgs = {
+  input: UpdateTitleVerificationByIdInput;
 };
 
 export type Onboarding = {
@@ -189,6 +195,11 @@ export type Title = {
 
 export type UpdateOnboardingStatusInput = {
   onboardingId: Scalars['UUID']['input'];
+  verification: Verification;
+};
+
+export type UpdateTitleVerificationByIdInput = {
+  titleId: Scalars['UUID']['input'];
   verification: Verification;
 };
 

@@ -3,12 +3,16 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
-import { Flex, SimpleGrid } from "@chakra-ui/react";
-import Image from "next/image";
+import { Button, Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
+import NextImage from "next/image";
 import updateTitleVerificationById from "@/graphql/mutation/UpdateTitleVerificationById";
+import createUser from "@/graphql/mutation/CreateUser";
+import getSupportDocById from "@/graphql/query/GetSupportingDocById";
 import getTitleById from "@/graphql/query/GetTitleById";
+import getDisplayPictureById from "@/graphql/query/GetDisplayPictureById";
 import { parseUnits } from "viem";
 import LandDetails from "../../../form/LandDetails";
+import UserDetailsForm from "../../../form/UserDetails";
 import Loader from "@/components/loader";
 import { toaster } from "@/components/ui/toaster";
 import { DoneIcon } from "@/components/icons";
@@ -25,13 +29,65 @@ function Page() {
     variables: {
       id: params.id,
     },
-    skip: params.type !== "title",
+    skip: !(params.type === "title"),
   })
   const titleData = useMemo(() => {
     return title?.getTitleById
   }, [title])
   const [updateTitleVerification, { loading: updatingTitle }] = useMutation(updateTitleVerificationById)
+  const { data: supportDoc, loading: supportDocLoading } = useQuery(getSupportDocById, {
+    variables: {
+      id: params.id,
+    },
+    skip: !(params.type == "supportingdoc"),
+  })
+  const docDetails = useMemo(() => {
+    return supportDoc?.getSupportingDocById
+  }, [supportDoc])
+  const [createNewUser, { loading: creatingUser }] = useMutation(createUser)
+  const { data: displayPicture, loading: gettingDisplayPicture } = useQuery(getDisplayPictureById, {
+    variables: {
+      id: params.id,
+    },
+    skip: !(params.type === "displaypicture"),
+  })
+  const dpDetails = useMemo(() => {
+    return displayPicture?.getDisplayPictureById
+  }, [displayPicture])
   const router = useRouter()
+
+  const saveUser = (values: any) => {
+    try {
+      createNewUser({
+        variables: {
+          input: {
+            email: docDetails.email,
+            firstname: values.firstname,
+            lastname: values.lastname,
+            supportDocId: params.id,
+            supportDocVerification: values.verification[0],
+          },
+        },
+        onCompleted: () => {
+          toaster.create({
+            title: "Success",
+            description: "User created",
+            type: "success",
+          })
+          router.back()
+        },
+        onError: (e) => {
+          toaster.create({
+            title: "Error",
+            description: `${e.message}`,
+            type: "error",
+          })
+        },
+      })
+    } catch (e) {
+      console.error(e)
+    }
+  }
 
   const saveLandLocally = (status: string) => {
     updateTitleVerification({
@@ -95,25 +151,67 @@ function Page() {
     }
   }
 
-  return titleLoading ? <Loader /> : (
+  return (titleLoading || supportDocLoading || gettingDisplayPicture) ? <Loader /> : (
     <SimpleGrid columns={{ base: 1, sm: 2}} p="2" gap={{ base: 4, sm: 8 }}>
       {params.type === "title" && (
         <>
           <Flex direction="column" align="center" gap="4">
-            <Image
-              src={titleData.url}
-              alt={titleData.__typename}
-              priority={true}
-              width={500}
-              height={500}
-            />
+            <ChakraImage asChild>
+              <NextImage
+                src={`${titleData.url}`}
+                alt={titleData.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
           </Flex>
           <Flex direction="column" gap="4">
             {titleData.verified === "VERIFIED" ? (
               <DoneIcon />
             ) : (
-              <LandDetails registerLand={registerLand} registering={registering || updatingTitle} />
+              <LandDetails registering={registering || updatingTitle} registerLand={registerLand} />
             )}
+          </Flex>
+        </>
+      )}
+      {params.type === "supportingdoc" && (
+        <>
+          <Flex direction="column" align="center" gap="4">
+            <ChakraImage asChild>
+              <NextImage
+                src={`${docDetails.url}`}
+                alt={docDetails.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
+          </Flex>
+          <Flex direction="column" gap="4">
+            <UserDetailsForm updating={creatingUser} saveUser={saveUser} />
+          </Flex>
+        </>
+      )}
+      {params.type === "displaypicture" && (
+        <>
+          <Flex gap="4" align="center">
+            <ChakraImage asChild>
+              <NextImage
+                src={`${dpDetails.url}`}
+                alt={dpDetails.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
+          </Flex>
+          <Flex gap="4">
+            <Button
+              onClick={() => {}}
+            >
+              Save
+            </Button>
           </Flex>
         </>
       )}

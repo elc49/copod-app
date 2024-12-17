@@ -97,13 +97,15 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.supportingDoc.url", {
         cell: info => (
           <HStack>
-            <IconButton
-              size="xs"
-              aria-label="Go back"
-              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.supportingDoc.id}/${info.row.original?.onboarding?.supportingDoc.__typename?.toLowerCase()}`)}
-            >
-              <ViewIcon />
-            </IconButton>
+            {shouldWeDoSomething(info.row.original.onboarding?.supportingDoc.verified || "") ? (
+              <IconButton
+                size="xs"
+                aria-label="Go back"
+                onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.supportingDoc.id}/${info.row.original?.onboarding?.supportingDoc.__typename?.toLowerCase()}`)}
+              >
+                <ViewIcon />
+              </IconButton>
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),
@@ -112,13 +114,15 @@ export default function PaymentsByStatusTable(props: Props) {
       columnHelper.accessor("onboarding.displayPicture.url", {
         cell: info => (
           <HStack>
-            <IconButton
-              size="xs"
-              aria-label="Go back"
-              onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.displayPicture.id}/${info.row.original?.onboarding?.displayPicture.__typename?.toLowerCase()}`)}
-            >
-              <ViewIcon />
-            </IconButton>
+            {shouldWeDoSomething(info.row.original.onboarding?.displayPicture.verified || "") ? (
+              <IconButton
+                size="xs"
+                aria-label="Go back"
+                onClick={() => router.push(`onboardings/document/${info.row.original?.onboarding?.displayPicture.id}/${info.row.original?.onboarding?.displayPicture.__typename?.toLowerCase()}`)}
+              >
+                <ViewIcon />
+              </IconButton>
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),

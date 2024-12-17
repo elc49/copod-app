@@ -32,7 +32,7 @@ func Test_Display_Picture_Controller(t *testing.T) {
 		dp, err := dc.GetDisplayPictureByID(ctx, displayPicture.ID)
 
 		assert.Nil(t, err)
-		assert.Equal(t, displayPicture.ID, dp.ID)
+		assert.Equal(t, dp.Email, email)
 	})
 
 	t.Run("update_display_picture_by_id", func(t *testing.T) {
