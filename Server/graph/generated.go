@@ -63,11 +63,12 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		ChargeMpesa                  func(childComplexity int, input model.PayWithMpesaInput) int
-		CreateOnboarding             func(childComplexity int, input model.CreateOnboardingInput) int
-		CreateUser                   func(childComplexity int, input model.CreateUserInput) int
-		UpdateOnboardingVerification func(childComplexity int, input model.UpdateOnboardingStatusInput) int
-		UpdateTitleVerificationByID  func(childComplexity int, input model.UpdateTitleVerificationByIDInput) int
+		ChargeMpesa                          func(childComplexity int, input model.PayWithMpesaInput) int
+		CreateOnboarding                     func(childComplexity int, input model.CreateOnboardingInput) int
+		CreateUser                           func(childComplexity int, input model.CreateUserInput) int
+		UpdateDisplayPictureVerificationByID func(childComplexity int, input model.UpdateDisplayPictureVerificationByIDInput) int
+		UpdateOnboardingVerification         func(childComplexity int, input model.UpdateOnboardingStatusInput) int
+		UpdateTitleVerificationByID          func(childComplexity int, input model.UpdateTitleVerificationByIDInput) int
 	}
 
 	Onboarding struct {
@@ -101,6 +102,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		GetDisplayPictureByID               func(childComplexity int, id uuid.UUID) int
 		GetOnboardingByEmailAndVerification func(childComplexity int, input model.GetOnboardingByEmailAndVerificationInput) int
 		GetPaymentsByStatus                 func(childComplexity int, status model.PaymentStatus) int
 		GetSupportingDocByID                func(childComplexity int, id uuid.UUID) int
@@ -146,6 +148,7 @@ type MutationResolver interface {
 	UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error)
 	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationByIDInput) (*model.Title, error)
 	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
+	UpdateDisplayPictureVerificationByID(ctx context.Context, input model.UpdateDisplayPictureVerificationByIDInput) (*model.DisplayPicture, error)
 }
 type OnboardingResolver interface {
 	Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error)
@@ -162,6 +165,7 @@ type QueryResolver interface {
 	GetPaymentsByStatus(ctx context.Context, status model.PaymentStatus) ([]*model.Payment, error)
 	GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, error)
 	GetSupportingDocByID(ctx context.Context, id uuid.UUID) (*model.SupportingDoc, error)
+	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (*model.DisplayPicture, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error)
 }
 type SubscriptionResolver interface {
@@ -264,6 +268,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(model.CreateUserInput)), true
+
+	case "Mutation.updateDisplayPictureVerificationById":
+		if e.complexity.Mutation.UpdateDisplayPictureVerificationByID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateDisplayPictureVerificationById_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateDisplayPictureVerificationByID(childComplexity, args["input"].(model.UpdateDisplayPictureVerificationByIDInput)), true
 
 	case "Mutation.updateOnboardingVerification":
 		if e.complexity.Mutation.UpdateOnboardingVerification == nil {
@@ -435,6 +451,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PaymentUpdate.Status(childComplexity), true
+
+	case "Query.getDisplayPictureById":
+		if e.complexity.Query.GetDisplayPictureByID == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getDisplayPictureById_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetDisplayPictureByID(childComplexity, args["id"].(uuid.UUID)), true
 
 	case "Query.getOnboardingByEmailAndVerification":
 		if e.complexity.Query.GetOnboardingByEmailAndVerification == nil {
@@ -647,6 +675,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGetOnboardingByEmailAndVerificationInput,
 		ec.unmarshalInputGetUserLandsInput,
 		ec.unmarshalInputPayWithMpesaInput,
+		ec.unmarshalInputUpdateDisplayPictureVerificationByIdInput,
 		ec.unmarshalInputUpdateOnboardingStatusInput,
 		ec.unmarshalInputUpdateTitleVerificationByIdInput,
 	)
@@ -851,6 +880,29 @@ func (ec *executionContext) field_Mutation_createUser_argsInput(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Mutation_updateDisplayPictureVerificationById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_updateDisplayPictureVerificationById_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateDisplayPictureVerificationById_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.UpdateDisplayPictureVerificationByIDInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateDisplayPictureVerificationByIdInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateDisplayPictureVerificationByIDInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateDisplayPictureVerificationByIDInput
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Mutation_updateOnboardingVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -917,6 +969,29 @@ func (ec *executionContext) field_Query___type_argsName(
 	}
 
 	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getDisplayPictureById_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getDisplayPictureById_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["id"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getDisplayPictureById_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (uuid.UUID, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, tmp)
+	}
+
+	var zeroVal uuid.UUID
 	return zeroVal, nil
 }
 
@@ -1714,6 +1789,75 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateDisplayPictureVerificationById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateDisplayPictureVerificationById(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateDisplayPictureVerificationByID(rctx, fc.Args["input"].(model.UpdateDisplayPictureVerificationByIDInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DisplayPicture)
+	fc.Result = res
+	return ec.marshalNDisplayPicture2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDisplayPicture(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateDisplayPictureVerificationById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DisplayPicture_id(ctx, field)
+			case "url":
+				return ec.fieldContext_DisplayPicture_url(ctx, field)
+			case "email":
+				return ec.fieldContext_DisplayPicture_email(ctx, field)
+			case "verified":
+				return ec.fieldContext_DisplayPicture_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_DisplayPicture_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_DisplayPicture_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DisplayPicture", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateDisplayPictureVerificationById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2979,6 +3123,75 @@ func (ec *executionContext) fieldContext_Query_getSupportingDocById(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getSupportingDocById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getDisplayPictureById(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getDisplayPictureById(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetDisplayPictureByID(rctx, fc.Args["id"].(uuid.UUID))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.DisplayPicture)
+	fc.Result = res
+	return ec.marshalNDisplayPicture2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐDisplayPicture(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getDisplayPictureById(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_DisplayPicture_id(ctx, field)
+			case "url":
+				return ec.fieldContext_DisplayPicture_url(ctx, field)
+			case "email":
+				return ec.fieldContext_DisplayPicture_email(ctx, field)
+			case "verified":
+				return ec.fieldContext_DisplayPicture_verified(ctx, field)
+			case "created_at":
+				return ec.fieldContext_DisplayPicture_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_DisplayPicture_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DisplayPicture", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getDisplayPictureById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6053,6 +6266,40 @@ func (ec *executionContext) unmarshalInputPayWithMpesaInput(ctx context.Context,
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateDisplayPictureVerificationByIdInput(ctx context.Context, obj interface{}) (model.UpdateDisplayPictureVerificationByIDInput, error) {
+	var it model.UpdateDisplayPictureVerificationByIDInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"displayPictureId", "verification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "displayPictureId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayPictureId"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DisplayPictureID = data
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateOnboardingStatusInput(ctx context.Context, obj interface{}) (model.UpdateOnboardingStatusInput, error) {
 	var it model.UpdateOnboardingStatusInput
 	asMap := map[string]interface{}{}
@@ -6240,6 +6487,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateDisplayPictureVerificationById":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateDisplayPictureVerificationById(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6690,6 +6944,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getSupportingDocById(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getDisplayPictureById":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getDisplayPictureById(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7558,6 +7834,11 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNUpdateDisplayPictureVerificationByIdInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateDisplayPictureVerificationByIDInput(ctx context.Context, v interface{}) (model.UpdateDisplayPictureVerificationByIDInput, error) {
+	res, err := ec.unmarshalInputUpdateDisplayPictureVerificationByIdInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNUpdateOnboardingStatusInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateOnboardingStatusInput(ctx context.Context, v interface{}) (model.UpdateOnboardingStatusInput, error) {

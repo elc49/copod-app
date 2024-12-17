@@ -3,12 +3,13 @@
 import { useContext, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useMutation, useQuery } from "@apollo/client";
-import { Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
+import { Button, Image as ChakraImage,Flex, SimpleGrid } from "@chakra-ui/react";
 import NextImage from "next/image";
 import updateTitleVerificationById from "@/graphql/mutation/UpdateTitleVerificationById";
 import createUser from "@/graphql/mutation/CreateUser";
 import getSupportDocById from "@/graphql/query/GetSupportingDocById";
 import getTitleById from "@/graphql/query/GetTitleById";
+import getDisplayPictureById from "@/graphql/query/GetDisplayPictureById";
 import { parseUnits } from "viem";
 import LandDetails from "../../../form/LandDetails";
 import UserDetailsForm from "../../../form/UserDetails";
@@ -44,6 +45,15 @@ function Page() {
     return supportDoc?.getSupportingDocById
   }, [supportDoc])
   const [createNewUser, { loading: creatingUser }] = useMutation(createUser)
+  const { data: displayPicture, loading: gettingDisplayPicture } = useQuery(getDisplayPictureById, {
+    variables: {
+      id: params.id,
+    },
+    skip: !(params.type === "displaypicture"),
+  })
+  const dpDetails = useMemo(() => {
+    return displayPicture?.getDisplayPictureById
+  }, [displayPicture])
   const router = useRouter()
 
   const saveUser = (values: any) => {
@@ -55,7 +65,7 @@ function Page() {
             firstname: values.firstname,
             lastname: values.lastname,
             supportDocId: params.id,
-            supportDocVerification: values.verification,
+            supportDocVerification: values.verification[0],
           },
         },
         onCompleted: () => {
@@ -141,9 +151,9 @@ function Page() {
     }
   }
 
-  return (titleLoading || supportDocLoading) ? <Loader /> : (
+  return (titleLoading || supportDocLoading || gettingDisplayPicture) ? <Loader /> : (
     <SimpleGrid columns={{ base: 1, sm: 2}} p="2" gap={{ base: 4, sm: 8 }}>
-      {params.type != undefined && params.type === "title" && (
+      {params.type === "title" && (
         <>
           <Flex direction="column" align="center" gap="4">
             <ChakraImage asChild>
@@ -165,7 +175,7 @@ function Page() {
           </Flex>
         </>
       )}
-      {params.type != undefined && params.type === "supportingdoc" && (
+      {params.type === "supportingdoc" && (
         <>
           <Flex direction="column" align="center" gap="4">
             <ChakraImage asChild>
@@ -180,6 +190,28 @@ function Page() {
           </Flex>
           <Flex direction="column" gap="4">
             <UserDetailsForm updating={creatingUser} saveUser={saveUser} />
+          </Flex>
+        </>
+      )}
+      {params.type === "displaypicture" && (
+        <>
+          <Flex gap="4" align="center">
+            <ChakraImage asChild>
+              <NextImage
+                src={`${dpDetails.url}`}
+                alt={dpDetails.__typename}
+                priority={true}
+                width={500}
+                height={500}
+              />
+            </ChakraImage>
+          </Flex>
+          <Flex gap="4">
+            <Button
+              onClick={() => {}}
+            >
+              Save
+            </Button>
           </Flex>
         </>
       )}

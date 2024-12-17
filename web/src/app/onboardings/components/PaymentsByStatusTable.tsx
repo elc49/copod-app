@@ -105,7 +105,7 @@ export default function PaymentsByStatusTable(props: Props) {
               >
                 <ViewIcon />
               </IconButton>
-            ) : (<ViewIcon />)}
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),
@@ -122,7 +122,7 @@ export default function PaymentsByStatusTable(props: Props) {
               >
                 <ViewIcon />
               </IconButton>
-            ) : (<ViewIcon />)}
+            ) : (<DoneIcon />)}
             {renderDocImage(info.getValue())}
           </HStack>
         ),

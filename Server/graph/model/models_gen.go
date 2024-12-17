@@ -110,6 +110,11 @@ type Title struct {
 	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
+type UpdateDisplayPictureVerificationByIDInput struct {
+	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
+	Verification     Verification `json:"verification"`
+}
+
 type UpdateOnboardingStatusInput struct {
 	OnboardingID uuid.UUID    `json:"onboardingId"`
 	Verification Verification `json:"verification"`

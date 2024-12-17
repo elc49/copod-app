@@ -17,6 +17,7 @@ export default gql`
         displayPictureId
         displayPicture {
           id
+          email
           url
           verified
         }
