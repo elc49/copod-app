@@ -15,11 +15,9 @@ input CreateUserInput {
 
   lastname: String!
 
-  supportDocUrl: String!
-
-  verification: Verification!
-
   supportDocId: UUID!
+
+  supportDocVerification: Verification!
 }
 
 type DisplayPicture {
@@ -36,10 +34,10 @@ type DisplayPicture {
   updated_at: Time!
 }
 
-input GetOnboardingByVerificationAndPaymentStatusInput {
-  verification: Verification!
+input GetOnboardingByEmailAndVerificationInput {
+  email: String!
 
-  paymentStatus: PaymentStatus!
+  verification: Verification!
 }
 
 input GetUserLandsInput {
@@ -51,11 +49,15 @@ input GetUserLandsInput {
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
 
-  createUser(input: CreateUserInput!): User!
-
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
 
   updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
+
+  updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
+
+  createUser(input: CreateUserInput!): User!
+
+  updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!
 }
 
 type Onboarding {
@@ -63,9 +65,15 @@ type Onboarding {
 
   titleId: UUID!
 
+  title: Title!
+
   supportDocId: UUID!
 
+  supportingDoc: SupportingDoc!
+
   displayPictureId: UUID!
+
+  displayPicture: DisplayPicture!
 
   verification: Verification!
 
@@ -105,8 +113,6 @@ type Payment {
 
   onboarding_id: UUID!
 
-  supportingDoc: SupportingDoc
-
   created_at: Time!
 
   updated_at: Time!
@@ -139,15 +145,13 @@ type Query {
 
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
 
-  getPaymentDetailsById(id: UUID!): Payment!
-
-  getSupportingDocsByVerification(verification: Verification!): [SupportingDoc!]!
+  getTitleById(id: UUID!): Title!
 
   getSupportingDocById(id: UUID!): SupportingDoc!
 
-  getOnboardingByVerificationAndPaymentStatus(input: GetOnboardingByVerificationAndPaymentStatusInput!): [Onboarding!]!
+  getDisplayPictureById(id: UUID!): DisplayPicture!
 
-  getOnboardingByEmail(email: String!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
 }
 
 type Subscription {
@@ -186,8 +190,20 @@ type Title {
 
 scalar UUID
 
+input UpdateDisplayPictureVerificationByIdInput {
+  displayPictureId: UUID!
+
+  verification: Verification!
+}
+
 input UpdateOnboardingStatusInput {
   onboardingId: UUID!
+
+  verification: Verification!
+}
+
+input UpdateTitleVerificationByIdInput {
+  titleId: UUID!
 
   verification: Verification!
 }
