@@ -6,7 +6,6 @@ import (
 
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/graph/model"
-	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,7 +24,7 @@ func Test_Onboarding_Controller(t *testing.T) {
 		ob = o
 
 		assert.Nil(t, err)
-		assert.Equal(t, o.Verification, model.VerificationOnboarding)
+		assert.NotNil(t, o)
 	})
 
 	t.Run("update_existing_onboarding", func(t *testing.T) {
@@ -40,17 +39,6 @@ func Test_Onboarding_Controller(t *testing.T) {
 		assert.NotNil(t, o)
 	})
 
-	t.Run("update_onboarding_verification_status", func(t *testing.T) {
-		o, err := oc.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
-			ID:           ob.ID,
-			Verification: model.VerificationRejected.String(),
-		})
-
-		assert.Nil(t, err)
-		assert.Equal(t, o.Verification, model.VerificationRejected)
-		assert.NotEqual(t, ob.Verification, o.Verification)
-	})
-
 	t.Run("get_onboarding_by_id", func(t *testing.T) {
 		o, err := oc.GetOnboardingByID(ctx, ob.ID)
 
@@ -58,13 +46,10 @@ func Test_Onboarding_Controller(t *testing.T) {
 		assert.Equal(t, ob.ID.String(), o.ID.String())
 	})
 
-	t.Run("get_onboarding_by_email_and_verification_status", func(t *testing.T) {
-		o, err := oc.GetOnboardingByEmailAndVerification(ctx, sql.GetOnboardingByEmailAndVerificationParams{
-			Email:        email,
-			Verification: model.VerificationRejected.String(),
-		})
+	t.Run("get_onboarding_by_email", func(t *testing.T) {
+		o, err := oc.GetOnboardingByEmail(ctx, email)
 
 		assert.Nil(t, err)
-		assert.Equal(t, o.Verification.String(), model.VerificationRejected.String())
+		assert.Equal(t, email, o.Email)
 	})
 }

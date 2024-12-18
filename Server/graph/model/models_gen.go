@@ -35,11 +35,6 @@ type DisplayPicture struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
-type GetOnboardingByEmailAndVerificationInput struct {
-	Email        string       `json:"email"`
-	Verification Verification `json:"verification"`
-}
-
 type GetUserLandsInput struct {
 	Email        string       `json:"email"`
 	Verification Verification `json:"verification"`
@@ -50,6 +45,7 @@ type Mutation struct {
 
 type Onboarding struct {
 	ID               uuid.UUID       `json:"id"`
+	Email            string          `json:"email"`
 	TitleID          uuid.UUID       `json:"titleId"`
 	Title            *Title          `json:"title"`
 	SupportDocID     uuid.UUID       `json:"supportDocId"`
@@ -113,11 +109,6 @@ type Title struct {
 type UpdateDisplayPictureVerificationByIDInput struct {
 	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
 	Verification     Verification `json:"verification"`
-}
-
-type UpdateOnboardingStatusInput struct {
-	OnboardingID uuid.UUID    `json:"onboardingId"`
-	Verification Verification `json:"verification"`
 }
 
 type UpdateTitleVerificationByIDInput struct {

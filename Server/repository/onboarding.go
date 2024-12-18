@@ -33,46 +33,30 @@ func (r *Onboarding) CreateOnboarding(ctx context.Context, args sql.CreateOnboar
 		TitleID:          o.TitleID,
 		SupportDocID:     o.SupportDocID,
 		DisplayPictureID: o.DisplayPictureID,
-		Verification:     model.Verification(o.Verification),
 		CreatedAt:        o.CreatedAt,
 		UpdatedAt:        o.UpdatedAt,
 	}, nil
 }
 
-func (r *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
-	o, err := r.sql.GetOnboardingByEmailAndVerification(ctx, args)
+func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	o, err := r.sql.GetOnboardingByEmail(ctx, email)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByEmailAndVerification")
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
 		return nil, err
 	default:
 		return &model.Onboarding{
 			ID:               o.ID,
+			Email:            o.Email,
 			TitleID:          o.TitleID,
 			SupportDocID:     o.SupportDocID,
 			DisplayPictureID: o.DisplayPictureID,
-			Verification:     model.Verification(o.Verification),
 			CreatedAt:        o.CreatedAt,
 			UpdatedAt:        o.UpdatedAt,
 		}, nil
 	}
-}
-
-func (r *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
-	u, err := r.sql.UpdateOnboardingVerificationByID(ctx, args)
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateOnboardingVerificationByID")
-		return nil, err
-	}
-
-	return &model.Onboarding{
-		ID:           u.ID,
-		Verification: model.Verification(u.Verification),
-		CreatedAt:    u.CreatedAt,
-		UpdatedAt:    u.UpdatedAt,
-	}, nil
 }
 
 func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
@@ -89,7 +73,6 @@ func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*mode
 		TitleID:          o.TitleID,
 		DisplayPictureID: o.DisplayPictureID,
 		SupportDocID:     o.SupportDocID,
-		Verification:     model.Verification(o.Verification),
 		CreatedAt:        o.CreatedAt,
 		UpdatedAt:        o.UpdatedAt,
 	}, nil

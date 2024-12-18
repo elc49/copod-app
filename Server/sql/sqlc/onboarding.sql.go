@@ -16,7 +16,7 @@ INSERT INTO onboardings (
   title_id, support_doc_id, display_picture_id, email
 ) VALUES (
   $1, $2, $3, $4
-) RETURNING id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at
+) RETURNING id, title_id, support_doc_id, display_picture_id, email, payment_status, created_at, updated_at
 `
 
 type CreateOnboardingParams struct {
@@ -40,7 +40,6 @@ func (q *Queries) CreateOnboarding(ctx context.Context, arg CreateOnboardingPara
 		&i.SupportDocID,
 		&i.DisplayPictureID,
 		&i.Email,
-		&i.Verification,
 		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -48,18 +47,13 @@ func (q *Queries) CreateOnboarding(ctx context.Context, arg CreateOnboardingPara
 	return i, err
 }
 
-const getOnboardingByEmailAndVerification = `-- name: GetOnboardingByEmailAndVerification :one
-SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
-WHERE email = $1 AND verification = $2
+const getOnboardingByEmail = `-- name: GetOnboardingByEmail :one
+SELECT id, title_id, support_doc_id, display_picture_id, email, payment_status, created_at, updated_at FROM onboardings
+WHERE email = $1
 `
 
-type GetOnboardingByEmailAndVerificationParams struct {
-	Email        string `json:"email"`
-	Verification string `json:"verification"`
-}
-
-func (q *Queries) GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error) {
-	row := q.db.QueryRowContext(ctx, getOnboardingByEmailAndVerification, arg.Email, arg.Verification)
+func (q *Queries) GetOnboardingByEmail(ctx context.Context, email string) (Onboarding, error) {
+	row := q.db.QueryRowContext(ctx, getOnboardingByEmail, email)
 	var i Onboarding
 	err := row.Scan(
 		&i.ID,
@@ -67,7 +61,6 @@ func (q *Queries) GetOnboardingByEmailAndVerification(ctx context.Context, arg G
 		&i.SupportDocID,
 		&i.DisplayPictureID,
 		&i.Email,
-		&i.Verification,
 		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
@@ -76,7 +69,7 @@ func (q *Queries) GetOnboardingByEmailAndVerification(ctx context.Context, arg G
 }
 
 const getOnboardingByID = `-- name: GetOnboardingByID :one
-SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+SELECT id, title_id, support_doc_id, display_picture_id, email, payment_status, created_at, updated_at FROM onboardings
 WHERE id = $1
 `
 
@@ -89,35 +82,6 @@ func (q *Queries) GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboardi
 		&i.SupportDocID,
 		&i.DisplayPictureID,
 		&i.Email,
-		&i.Verification,
-		&i.PaymentStatus,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const updateOnboardingVerificationByID = `-- name: UpdateOnboardingVerificationByID :one
-UPDATE onboardings SET verification = $1
-WHERE id = $2
-RETURNING id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at
-`
-
-type UpdateOnboardingVerificationByIDParams struct {
-	Verification string    `json:"verification"`
-	ID           uuid.UUID `json:"id"`
-}
-
-func (q *Queries) UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error) {
-	row := q.db.QueryRowContext(ctx, updateOnboardingVerificationByID, arg.Verification, arg.ID)
-	var i Onboarding
-	err := row.Scan(
-		&i.ID,
-		&i.TitleID,
-		&i.SupportDocID,
-		&i.DisplayPictureID,
-		&i.Email,
-		&i.Verification,
 		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,

@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -36,15 +37,6 @@ func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithM
 // CreateOnboarding is the resolver for the createOnboarding field.
 func (r *mutationResolver) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
 	return r.onboardingController.CreateOnboarding(ctx, input)
-}
-
-// UpdateOnboardingVerification is the resolver for the updateOnboardingVerification field.
-func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
-	args := sql.UpdateOnboardingVerificationByIDParams{
-		ID:           input.OnboardingID,
-		Verification: input.Verification.String(),
-	}
-	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
 }
 
 // UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
@@ -132,13 +124,9 @@ func (r *queryResolver) GetDisplayPictureByID(ctx context.Context, id uuid.UUID)
 	return r.displayPictureController.GetDisplayPictureByID(ctx, id)
 }
 
-// GetOnboardingByEmailAndVerification is the resolver for the getOnboardingByEmailAndVerification field.
-func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error) {
-	args := sql.GetOnboardingByEmailAndVerificationParams{
-		Email:        input.Email,
-		Verification: input.Verification.String(),
-	}
-	return r.onboardingController.GetOnboardingByEmailAndVerification(ctx, args)
+// GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
+func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	panic(fmt.Errorf("not implemented: GetOnboardingByEmail - getOnboardingByEmail"))
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
