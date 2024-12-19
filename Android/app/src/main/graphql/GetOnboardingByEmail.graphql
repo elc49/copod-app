@@ -1,6 +1,24 @@
 query GetOnboardingByEmail($email: String!) {
     getOnboardingByEmail(email: $email) {
         id
-        verification
+        titleId
+        title {
+            id
+            url
+            verified
+        }
+        displayPictureId
+        displayPicture {
+            id
+            email
+            url
+            verified
+        }
+        supportDocId
+        supportingDoc {
+            id
+            url
+            verified
+        }
     }
 }

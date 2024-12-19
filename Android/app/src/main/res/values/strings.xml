@@ -39,4 +39,5 @@
     <string name="picture_of_you">Picture of you</string>
     <string name="waiting_submission">We are validating your submission</string>
     <string name="account">Account</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.lomolo.copodapp.GetOnboardingByEmailQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
@@ -46,6 +47,7 @@ import com.lomolo.copodapp.state.viewmodels.GetUserLands
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.type.Verification
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
@@ -113,6 +115,7 @@ fun LandScreen(
                 ) {
                     Text(stringResource(R.string.waiting_submission))
                 }
+
                 currentOnboarding == null && viewModel.gettingUserLands is GetUserLands.Success -> {
                     if (lands.isEmpty()) {
                         NoLand(
@@ -123,7 +126,7 @@ fun LandScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             items(lands) {
-                               LandCard(land = it)
+                                LandCard(land = it)
                             }
                         }
                     }
@@ -161,9 +164,7 @@ private fun LandCard(
             .padding(8.dp),
     ) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(land.url)
-                .crossfade(true)
+            model = ImageRequest.Builder(LocalContext.current).data(land.url).crossfade(true)
                 .build(),
             placeholder = painterResource(R.drawable.loading_img),
             error = painterResource(R.drawable.ic_broken_image),
@@ -200,5 +201,13 @@ private fun NoLand(
                 contentDescription = stringResource(R.string.add),
             )
         }
+    }
+}
+
+fun GetOnboardingByEmailQuery.GetOnboardingByEmail.isOnboardingOK(): Boolean {
+    return when {
+        this.displayPicture.verified == Verification.VERIFIED && this.supportingDoc.verified == Verification.VERIFIED && this.title.verified == Verification.VERIFIED -> true
+
+        else -> false
     }
 }
