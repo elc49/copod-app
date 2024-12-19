@@ -24,6 +24,14 @@ export type CreateOnboardingInput = {
   titleUrl: Scalars['String']['input'];
 };
 
+export type CreateUserInput = {
+  email: Scalars['String']['input'];
+  firstname: Scalars['String']['input'];
+  lastname: Scalars['String']['input'];
+  supportDocId: Scalars['UUID']['input'];
+  supportDocVerification: Verification;
+};
+
 export type DisplayPicture = {
   __typename?: 'DisplayPicture';
   created_at: Scalars['Time']['output'];
@@ -32,11 +40,6 @@ export type DisplayPicture = {
   updated_at: Scalars['Time']['output'];
   url: Scalars['String']['output'];
   verified: Verification;
-};
-
-export type GetOnboardingByEmailAndVerificationInput = {
-  email: Scalars['String']['input'];
-  verification: Verification;
 };
 
 export type GetUserLandsInput = {
@@ -48,7 +51,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   chargeMpesa?: Maybe<Scalars['String']['output']>;
   createOnboarding: Onboarding;
-  updateOnboardingVerification: Onboarding;
+  createUser: User;
+  updateDisplayPictureVerificationById: DisplayPicture;
   updateTitleVerificationById: Title;
 };
 
@@ -63,8 +67,13 @@ export type MutationCreateOnboardingArgs = {
 };
 
 
-export type MutationUpdateOnboardingVerificationArgs = {
-  input: UpdateOnboardingStatusInput;
+export type MutationCreateUserArgs = {
+  input: CreateUserInput;
+};
+
+
+export type MutationUpdateDisplayPictureVerificationByIdArgs = {
+  input: UpdateDisplayPictureVerificationByIdInput;
 };
 
 
@@ -77,6 +86,7 @@ export type Onboarding = {
   created_at: Scalars['Time']['output'];
   displayPicture: DisplayPicture;
   displayPictureId: Scalars['UUID']['output'];
+  email: Scalars['String']['output'];
   id: Scalars['UUID']['output'];
   supportDocId: Scalars['UUID']['output'];
   supportingDoc: SupportingDoc;
@@ -131,7 +141,8 @@ export type PaymentUpdate = {
 
 export type Query = {
   __typename?: 'Query';
-  getOnboardingByEmailAndVerification: Onboarding;
+  getDisplayPictureById: DisplayPicture;
+  getOnboardingByEmail: Onboarding;
   getPaymentsByStatus: Array<Payment>;
   getSupportingDocById: SupportingDoc;
   getTitleById: Title;
@@ -139,8 +150,13 @@ export type Query = {
 };
 
 
-export type QueryGetOnboardingByEmailAndVerificationArgs = {
-  input: GetOnboardingByEmailAndVerificationInput;
+export type QueryGetDisplayPictureByIdArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
+export type QueryGetOnboardingByEmailArgs = {
+  email: Scalars['String']['input'];
 };
 
 
@@ -193,8 +209,8 @@ export type Title = {
   verified: Verification;
 };
 
-export type UpdateOnboardingStatusInput = {
-  onboardingId: Scalars['UUID']['input'];
+export type UpdateDisplayPictureVerificationByIdInput = {
+  displayPictureId: Scalars['UUID']['input'];
   verification: Verification;
 };
 

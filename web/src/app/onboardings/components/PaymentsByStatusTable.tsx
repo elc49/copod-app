@@ -127,11 +127,7 @@ export default function PaymentsByStatusTable(props: Props) {
           </HStack>
         ),
         header: () => <span>Profile picture</span>
-      }),
-      columnHelper.accessor("onboarding.verification", {
-        cell: info => renderStatusColumn(info.getValue()),
-        header: () => <span>Verification</span>
-      }),
+      })
     ]
   }, [])
   const table = useReactTable({

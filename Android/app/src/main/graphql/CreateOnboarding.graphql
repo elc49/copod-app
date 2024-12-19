@@ -1,6 +1,5 @@
 mutation CreateOnboarding($input: CreateOnboardingInput!) {
     createOnboarding(input: $input) {
         id
-        verification
     }
 }

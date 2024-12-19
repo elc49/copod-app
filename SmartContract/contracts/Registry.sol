@@ -54,5 +54,5 @@ contract Registry {
     // Get land ERC721 contract
     function getLandERC721Contract(string memory titleNo_) public view returns (address) {
         return lands[titleNo_];
-    }
+    https://x.com/i/bookmarks}
 }
