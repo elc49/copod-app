@@ -7,7 +7,6 @@ export default gql`
       email
       status
       onboarding {
-        verification
         titleId
         title {
           id

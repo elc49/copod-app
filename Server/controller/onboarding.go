@@ -15,9 +15,8 @@ var onboardingController *Onboarding
 
 type OnboardingController interface {
 	CreateOnboarding(context.Context, model.CreateOnboardingInput) (*model.Onboarding, error)
-	UpdateOnboardingVerificationByID(context.Context, sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error)
 	GetOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
-	GetOnboardingByEmailAndVerification(context.Context, sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error)
+	GetOnboardingByEmail(context.Context, string) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -42,8 +41,7 @@ func GetOnboardingController() OnboardingController {
 func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
 	var supportDoc *model.SupportingDoc
 	// Check existing pending onboarding
-	getArgs := sql.GetOnboardingByEmailAndVerificationParams{}
-	onboarding, oErr := c.r.GetOnboardingByEmailAndVerification(ctx, getArgs)
+	onboarding, oErr := c.r.GetOnboardingByEmail(ctx, input.Email)
 	oArgs := sql.CreateOnboardingParams{
 		Email: input.Email,
 	}
@@ -127,23 +125,16 @@ func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 			return nil, err
 		}
 
-		return c.r.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
-			ID:           onboarding.ID,
-			Verification: model.VerificationOnboarding.String(),
-		})
+		return onboarding, nil
 	default:
 		return nil, oErr
 	}
-}
-
-func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
-	return c.r.UpdateOnboardingVerificationByID(ctx, args)
 }
 
 func (c *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
 	return c.r.GetOnboardingByID(ctx, id)
 }
 
-func (c *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
-	return c.r.GetOnboardingByEmailAndVerification(ctx, args)
+func (c *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	return c.r.GetOnboardingByEmail(ctx, email)
 }

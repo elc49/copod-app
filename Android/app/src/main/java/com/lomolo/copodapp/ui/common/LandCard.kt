@@ -23,6 +23,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 
@@ -79,6 +80,9 @@ fun NoLands(
             modifier = Modifier.size(60.dp),
             contentDescription = stringResource(R.string.land),
         )
-        Text(stringResource(R.string.no_lands))
+        Text(
+            stringResource(R.string.no_lands),
+            textAlign = TextAlign.Center,
+        )
     }
 }

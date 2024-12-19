@@ -74,6 +74,7 @@ type Payment {
 # Onboarding
 type Onboarding {
   id: UUID!
+  email: String!
   titleId: UUID!
   title: Title!
   supportDocId: UUID!
@@ -117,17 +118,7 @@ input CreateOnboardingInput {
   displayPictureUrl: String!
 }
 
-input UpdateOnboardingStatusInput {
-  onboardingId: UUID!
-  verification: Verification!
-}
-
 input GetUserLandsInput {
-  email: String!
-  verification: Verification!
-}
-
-input GetOnboardingByEmailAndVerificationInput {
   email: String!
   verification: Verification!
 }
@@ -156,13 +147,12 @@ type Query {
   getTitleById(id: UUID!): Title!
   getSupportingDocById(id: UUID!): SupportingDoc!
   getDisplayPictureById(id: UUID!): DisplayPicture!
-  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
+  getOnboardingByEmail(email: String!): Onboarding!
 }
 
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
-  updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
   updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
   createUser(input: CreateUserInput!): User!
   updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!

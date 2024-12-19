@@ -38,15 +38,6 @@ func (r *mutationResolver) CreateOnboarding(ctx context.Context, input model.Cre
 	return r.onboardingController.CreateOnboarding(ctx, input)
 }
 
-// UpdateOnboardingVerification is the resolver for the updateOnboardingVerification field.
-func (r *mutationResolver) UpdateOnboardingVerification(ctx context.Context, input model.UpdateOnboardingStatusInput) (*model.Onboarding, error) {
-	args := sql.UpdateOnboardingVerificationByIDParams{
-		ID:           input.OnboardingID,
-		Verification: input.Verification.String(),
-	}
-	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
-}
-
 // UpdateTitleVerificationByID is the resolver for the updateTitleVerificationById field.
 func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationByIDInput) (*model.Title, error) {
 	args := sql.UpdateTitleVerificationByIDParams{
@@ -132,13 +123,9 @@ func (r *queryResolver) GetDisplayPictureByID(ctx context.Context, id uuid.UUID)
 	return r.displayPictureController.GetDisplayPictureByID(ctx, id)
 }
 
-// GetOnboardingByEmailAndVerification is the resolver for the getOnboardingByEmailAndVerification field.
-func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error) {
-	args := sql.GetOnboardingByEmailAndVerificationParams{
-		Email:        input.Email,
-		Verification: input.Verification.String(),
-	}
-	return r.onboardingController.GetOnboardingByEmailAndVerification(ctx, args)
+// GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
+func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
+	return r.onboardingController.GetOnboardingByEmail(ctx, email)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

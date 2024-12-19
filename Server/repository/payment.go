@@ -79,10 +79,9 @@ func (r *Payment) GetPaymentOnboardingByID(ctx context.Context, onboardingID uui
 	}
 
 	return &model.Onboarding{
-		ID:           t.ID,
-		Verification: model.Verification(t.Verification),
-		CreatedAt:    t.CreatedAt,
-		UpdatedAt:    t.UpdatedAt,
+		ID:        t.ID,
+		CreatedAt: t.CreatedAt,
+		UpdatedAt: t.UpdatedAt,
 	}, nil
 }
 

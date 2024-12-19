@@ -34,12 +34,6 @@ type DisplayPicture {
   updated_at: Time!
 }
 
-input GetOnboardingByEmailAndVerificationInput {
-  email: String!
-
-  verification: Verification!
-}
-
 input GetUserLandsInput {
   email: String!
 
@@ -51,8 +45,6 @@ type Mutation {
 
   createOnboarding(input: CreateOnboardingInput!): Onboarding!
 
-  updateOnboardingVerification(input: UpdateOnboardingStatusInput!): Onboarding!
-
   updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
 
   createUser(input: CreateUserInput!): User!
@@ -62,6 +54,8 @@ type Mutation {
 
 type Onboarding {
   id: UUID!
+
+  email: String!
 
   titleId: UUID!
 
@@ -151,7 +145,7 @@ type Query {
 
   getDisplayPictureById(id: UUID!): DisplayPicture!
 
-  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
+  getOnboardingByEmail(email: String!): Onboarding!
 }
 
 type Subscription {
@@ -192,12 +186,6 @@ scalar UUID
 
 input UpdateDisplayPictureVerificationByIdInput {
   displayPictureId: UUID!
-
-  verification: Verification!
-}
-
-input UpdateOnboardingStatusInput {
-  onboardingId: UUID!
 
   verification: Verification!
 }

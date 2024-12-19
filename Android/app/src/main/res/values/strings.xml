@@ -13,7 +13,7 @@
     <string name="close">close</string>
     <string name="sign_out">Sign out</string>
     <string name="add">add</string>
-    <string name="no_lands">Lands added to market will be visible here.</string>
+    <string name="no_lands">Lands and spaces added to market will be visible here.</string>
     <string name="something_wrong">Something went wrong</string>
     <string name="register_land">Register land</string>
     <string name="submit">Submit</string>
@@ -38,4 +38,6 @@
     <string name="display_picture">Display picture</string>
     <string name="picture_of_you">Picture of you</string>
     <string name="waiting_submission">We are validating your submission</string>
+    <string name="account">Account</string>
+    <string name="something_went_wrong">Something went wrong</string>
 </resources>

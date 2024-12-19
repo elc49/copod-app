@@ -80,7 +80,7 @@ func (q *Queries) GetPaymentByReferenceID(ctx context.Context, referenceID strin
 }
 
 const getPaymentOnboardingByID = `-- name: GetPaymentOnboardingByID :one
-SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+SELECT id, title_id, support_doc_id, display_picture_id, email, payment_status, created_at, updated_at FROM onboardings
 WHERE id = $1
 `
 
@@ -93,7 +93,6 @@ func (q *Queries) GetPaymentOnboardingByID(ctx context.Context, id uuid.UUID) (O
 		&i.SupportDocID,
 		&i.DisplayPictureID,
 		&i.Email,
-		&i.Verification,
 		&i.PaymentStatus,
 		&i.CreatedAt,
 		&i.UpdatedAt,
