@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/graph/model"
@@ -126,7 +125,7 @@ func (r *queryResolver) GetDisplayPictureByID(ctx context.Context, id uuid.UUID)
 
 // GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
 func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	panic(fmt.Errorf("not implemented: GetOnboardingByEmail - getOnboardingByEmail"))
+	return r.onboardingController.GetOnboardingByEmail(ctx, email)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
