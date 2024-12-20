@@ -15,9 +15,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,13 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.GetLocalLands
+import com.lomolo.copodapp.state.viewmodels.MarketViewModel
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.NoLands
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
-import com.lomolo.copodapp.state.viewmodels.GetLocalLands
-import com.lomolo.copodapp.state.viewmodels.MainViewModel
-import com.lomolo.copodapp.state.viewmodels.MarketViewModel
 import org.koin.androidx.compose.koinViewModel
 
 object ExploreMarketsScreenDestination : Navigation {
@@ -43,19 +39,17 @@ object ExploreMarketsScreenDestination : Navigation {
 @Composable
 fun ExploreMarketsScreen(
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = koinViewModel<MainViewModel>(),
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,
 ) {
-    var openDialog by remember { mutableStateOf(false) }
-    val userInfo = mainViewModel.userInfo
     val lands by marketViewModel.lands.collectAsState()
 
     Scaffold(topBar = {
         TopBar(
-            userInfo = userInfo!!,
-            onOpenDialog = { openDialog = true },
+            title = {
+                Text(stringResource(R.string.markets))
+            }
         )
     }, bottomBar = {
         BottomNavBar(
@@ -65,12 +59,6 @@ fun ExploreMarketsScreen(
         Surface(
             modifier = modifier.padding(innerPadding)
         ) {
-            if (openDialog) {
-                AccountDetails(
-                    setDialog = { openDialog = it },
-                    signOut = { mainViewModel.logOut() },
-                )
-            }
             when (marketViewModel.gettingLands) {
                 GetLocalLands.Success -> {
                     if (lands.isEmpty()) {

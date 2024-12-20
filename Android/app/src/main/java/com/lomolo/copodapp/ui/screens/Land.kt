@@ -24,9 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,7 +41,6 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
 import com.lomolo.copodapp.state.viewmodels.GetUserLands
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
-import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.type.Verification
 import com.lomolo.copodapp.ui.common.BottomNavBar
@@ -65,7 +61,6 @@ fun LandScreen(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
     viewModel: LandViewModel = koinViewModel<LandViewModel>(),
-    mainViewModel: MainViewModel,
     onboardingViewModel: OnboardingViewModel,
     userInfo: UserInfo?,
     onClickAddLand: () -> Unit,
@@ -76,7 +71,6 @@ fun LandScreen(
     }
     val currentOnboarding by onboardingViewModel.currentOnboarding.collectAsState()
     val lands by viewModel.lands.collectAsState()
-    var openDialog by remember { mutableStateOf(false) }
     val loading = when {
         viewModel.gettingUserLands is GetUserLands.Loading -> true
         onboardingViewModel.gettingCurrentOnboarding is GetCurrentOnboarding.Loading -> true
@@ -88,8 +82,6 @@ fun LandScreen(
             title = {
                 Text(stringResource(R.string.your_lands))
             },
-            userInfo = userInfo!!,
-            onOpenDialog = { openDialog = true },
         )
     }, bottomBar = {
         BottomNavBar(
@@ -100,12 +92,6 @@ fun LandScreen(
         Surface(
             modifier = modifier.padding(innerPadding)
         ) {
-            if (openDialog) {
-                AccountDetails(
-                    setDialog = { openDialog = it },
-                    signOut = { mainViewModel.logOut() },
-                )
-            }
             when {
                 currentOnboarding?.anyOneOnboarding() == true -> Column(
                     Modifier.fillMaxSize(),
