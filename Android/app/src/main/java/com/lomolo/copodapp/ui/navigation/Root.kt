@@ -184,6 +184,7 @@ fun NavigationHost(
             AccountScreen(
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
+                mainViewModel = mainViewModel,
             )
         }
     }

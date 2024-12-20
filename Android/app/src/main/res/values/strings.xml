@@ -41,4 +41,5 @@
     <string name="account">Account</string>
     <string name="something_went_wrong">Something went wrong</string>
     <string name="markets">Markets</string>
+    <string name="vertical_dots">vertical_dots</string>
 </resources>
