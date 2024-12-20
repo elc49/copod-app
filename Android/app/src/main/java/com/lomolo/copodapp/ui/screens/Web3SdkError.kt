@@ -13,9 +13,9 @@ import androidx.compose.ui.text.style.TextAlign
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
 
-object Web3SdkErrorScreenDestination: Navigation {
+object ErrorScreenDestination: Navigation {
     override val title = null
-    override val route = "web3sdk_error"
+    override val route = "error"
 }
 
 @Composable

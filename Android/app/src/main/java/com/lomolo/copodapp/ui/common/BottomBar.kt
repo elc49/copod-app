@@ -38,6 +38,13 @@ sealed class Screen(
         "land",
         false,
     )
+    data object Account: Screen(
+        R.string.account,
+        R.drawable.account_outlined,
+        R.drawable.account_filled,
+        "account",
+        false,
+    )
 }
 
 
@@ -46,7 +53,7 @@ fun BottomNavBar(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
 ) {
-    val navItems = listOf(Screen.Explore, Screen.Land)
+    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Account)
 
     NavigationBar {
         navItems.forEachIndexed { _, item ->

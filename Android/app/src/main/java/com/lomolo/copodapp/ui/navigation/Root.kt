@@ -12,6 +12,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
+import com.lomolo.copodapp.state.viewmodels.InitializeSdk
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.ui.screens.AccountScreen
+import com.lomolo.copodapp.ui.screens.AccountScreenDestination
+import com.lomolo.copodapp.ui.screens.ErrorScreen
+import com.lomolo.copodapp.ui.screens.ErrorScreenDestination
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
@@ -24,18 +32,12 @@ import com.lomolo.copodapp.ui.screens.MpesaScreen
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
 import com.lomolo.copodapp.ui.screens.SuccessScreen
 import com.lomolo.copodapp.ui.screens.SuccessScreenDestination
+import com.lomolo.copodapp.ui.screens.UploadDisplayPicture
+import com.lomolo.copodapp.ui.screens.UploadDisplayPictureDestination
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedId
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadLandTitle
 import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
-import com.lomolo.copodapp.ui.screens.ErrorScreen
-import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
-import com.lomolo.copodapp.state.viewmodels.InitializeSdk
-import com.lomolo.copodapp.state.viewmodels.MainViewModel
-import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
-import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
-import com.lomolo.copodapp.ui.screens.UploadDisplayPicture
-import com.lomolo.copodapp.ui.screens.UploadDisplayPictureDestination
 import org.koin.androidx.compose.navigation.koinNavViewModel
 
 interface Navigation {
@@ -68,7 +70,7 @@ fun NavigationHost(
             }
         }
 
-        else -> Web3SdkErrorScreenDestination.route
+        else -> ErrorScreenDestination.route
     }
     val onNavigateTo = { route: String ->
         navHostController.navigate(route) {
@@ -93,7 +95,6 @@ fun NavigationHost(
     ) {
         composable(route = ExploreMarketsScreenDestination.route) {
             ExploreMarketsScreen(
-                mainViewModel = mainViewModel,
                 onNavigateTo = onNavigateTo,
                 currentDestination = it.destination,
             )
@@ -103,7 +104,7 @@ fun NavigationHost(
                 modifier = modifier,
             )
         }
-        composable(route = Web3SdkErrorScreenDestination.route) {
+        composable(route = ErrorScreenDestination.route) {
             ErrorScreen(
                 modifier = modifier,
             )
@@ -116,7 +117,6 @@ fun NavigationHost(
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
                 onboardingViewModel = onboardingViewModel,
-                mainViewModel = mainViewModel,
                 onClickAddLand = {
                     navHostController.navigate(UploadLandTitleScreenDestination.route)
                 })
@@ -178,6 +178,13 @@ fun NavigationHost(
         ) {
             SuccessScreen(
                 onNavigateTo = onNavigateTo,
+            )
+        }
+        composable(route = AccountScreenDestination.route) {
+            AccountScreen(
+                currentDestination = it.destination,
+                onNavigateTo = onNavigateTo,
+                mainViewModel = mainViewModel,
             )
         }
     }
