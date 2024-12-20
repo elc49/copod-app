@@ -27,6 +27,7 @@ type Onboarding struct {
 	SupportDocID     uuid.UUID      `json:"support_doc_id"`
 	DisplayPictureID uuid.UUID      `json:"display_picture_id"`
 	Email            string         `json:"email"`
+	Verification     string         `json:"verification"`
 	PaymentStatus    sql.NullString `json:"payment_status"`
 	CreatedAt        time.Time      `json:"created_at"`
 	UpdatedAt        time.Time      `json:"updated_at"`

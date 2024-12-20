@@ -3,12 +3,14 @@ query GetOnboardingByEmail($email: String!) {
         id
         titleId
         title {
+            __typename
             id
             url
             verified
         }
         displayPictureId
         displayPicture {
+            __typename
             id
             email
             url
@@ -16,6 +18,7 @@ query GetOnboardingByEmail($email: String!) {
         }
         supportDocId
         supportingDoc {
+            __typename
             id
             url
             verified

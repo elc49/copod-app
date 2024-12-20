@@ -19,7 +19,7 @@ object Web3SdkErrorScreenDestination: Navigation {
 }
 
 @Composable
-fun Web3SdkErrorScreen(
+fun ErrorScreen(
     modifier: Modifier = Modifier,
 ) {
     Column(

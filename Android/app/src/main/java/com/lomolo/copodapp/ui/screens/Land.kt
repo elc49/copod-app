@@ -34,7 +34,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
@@ -108,7 +107,7 @@ fun LandScreen(
                 )
             }
             when {
-                currentOnboarding != null -> Column(
+                currentOnboarding?.anyOneOnboarding() == true -> Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -116,7 +115,7 @@ fun LandScreen(
                     Text(stringResource(R.string.waiting_submission))
                 }
 
-                currentOnboarding == null && viewModel.gettingUserLands is GetUserLands.Success -> {
+                currentOnboarding?.isOnboardingOK() == true && viewModel.gettingUserLands is GetUserLands.Success -> {
                     if (lands.isEmpty()) {
                         NoLand(
                             onClickAddLand = onClickAddLand,
@@ -142,11 +141,10 @@ fun LandScreen(
                     )
                 }
 
-                viewModel.gettingUserLands is GetUserLands.Error -> Text(
-                    "Something went wrong",
-                    color = MaterialTheme.colorScheme.error,
-                    fontWeight = FontWeight.Bold,
-                )
+                // TODO: who is still onboarding
+                // TODO: move to the screen
+
+                viewModel.gettingUserLands is GetUserLands.Error -> ErrorScreen()
             }
         }
     }
@@ -209,5 +207,22 @@ fun GetOnboardingByEmailQuery.GetOnboardingByEmail.isOnboardingOK(): Boolean {
         this.displayPicture.verified == Verification.VERIFIED && this.supportingDoc.verified == Verification.VERIFIED && this.title.verified == Verification.VERIFIED -> true
 
         else -> false
+    }
+}
+
+fun GetOnboardingByEmailQuery.GetOnboardingByEmail.anyOneOnboarding(): Boolean {
+    return when {
+        this.displayPicture.verified == Verification.ONBOARDING || this.title.verified == Verification.ONBOARDING || this.supportingDoc.verified == Verification.ONBOARDING -> true
+
+        else -> false
+    }
+}
+
+fun GetOnboardingByEmailQuery.GetOnboardingByEmail.whoIsStillOnboarding(): String {
+    return when {
+        this.displayPicture.verified == Verification.REJECTED -> this.displayPicture.__typename.lowercase()
+        this.title.verified == Verification.REJECTED -> this.title.__typename.lowercase()
+        this.supportingDoc.verified == Verification.REJECTED -> this.supportingDoc.__typename.lowercase()
+        else -> ""
     }
 }
