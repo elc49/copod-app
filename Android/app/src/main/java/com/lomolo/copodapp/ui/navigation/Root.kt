@@ -28,7 +28,7 @@ import com.lomolo.copodapp.ui.screens.UploadGovtIssuedId
 import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadLandTitle
 import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
-import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreen
+import com.lomolo.copodapp.ui.screens.ErrorScreen
 import com.lomolo.copodapp.ui.screens.Web3SdkErrorScreenDestination
 import com.lomolo.copodapp.state.viewmodels.InitializeSdk
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
@@ -104,7 +104,7 @@ fun NavigationHost(
             )
         }
         composable(route = Web3SdkErrorScreenDestination.route) {
-            Web3SdkErrorScreen(
+            ErrorScreen(
                 modifier = modifier,
             )
         }
