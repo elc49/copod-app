@@ -103,6 +103,8 @@ fun AccountScreen(
                             modifier = Modifier
                                 .size(120.dp)
                                 .clip(CircleShape),
+                            placeholder = painterResource(R.drawable.loading_img),
+                            error = painterResource(R.drawable.ic_broken_image),
                             contentScale = ContentScale.Crop,
                             contentDescription = stringResource(R.string.account),
                         )

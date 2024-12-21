@@ -73,7 +73,6 @@ fun LandScreen(
     val lands by viewModel.lands.collectAsState()
     val loading = when {
         viewModel.gettingUserLands is GetUserLands.Loading -> true
-        onboardingViewModel.gettingCurrentOnboarding is GetCurrentOnboarding.Loading -> true
         else -> false
     }
 
@@ -97,42 +96,63 @@ fun LandScreen(
             modifier = modifier.padding(innerPadding)
         ) {
             when {
-                currentOnboarding?.isOnboardingOK() != true -> Column(
-                    Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(R.drawable.doc_review).crossfade(true).build(),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = stringResource(R.string.waiting_submission)
-                    )
-                    Column(
-                        Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            stringResource(R.string.under_review_text),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Text(
-                            stringResource(R.string.verification_notice_text),
-                        )
-                    }
-                }
+                viewModel.gettingUserLands is GetUserLands.Success -> {
+                    when (onboardingViewModel.gettingCurrentOnboarding) {
+                        is GetCurrentOnboarding.Success -> {
+                            when {
+                                currentOnboarding?.isOnboardingOK() != true -> Column(
+                                    Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                ) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data(R.drawable.doc_review).crossfade(true).build(),
+                                        contentScale = ContentScale.Crop,
+                                        placeholder = painterResource(R.drawable.loading_img),
+                                        error = painterResource(R.drawable.ic_broken_image),
+                                        contentDescription = stringResource(R.string.waiting_submission)
+                                    )
+                                    Column(
+                                        Modifier.padding(16.dp),
+                                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Text(
+                                            stringResource(R.string.under_review_text),
+                                            style = MaterialTheme.typography.titleLarge,
+                                        )
+                                        Text(
+                                            stringResource(R.string.verification_notice_text),
+                                        )
+                                    }
+                                }
 
-                currentOnboarding?.isOnboardingOK() == true && viewModel.gettingUserLands is GetUserLands.Success -> {
-                    if (lands.isEmpty()) {
-                        NoLand(
-                            onClickAddLand = onClickAddLand,
-                        )
-                    } else {
-                        LazyColumn(
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            items(lands) {
-                                LandCard(land = it)
+                                currentOnboarding?.isOnboardingOK() == true && viewModel.gettingUserLands is GetUserLands.Success -> {
+                                    if (lands.isEmpty()) {
+                                        NoLand(
+                                            onClickAddLand = onClickAddLand,
+                                        )
+                                    } else {
+                                        LazyColumn(
+                                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                                        ) {
+                                            items(lands) {
+                                                LandCard(land = it)
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                        }
+
+                        is GetCurrentOnboarding.Loading -> Column(
+                            Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            CircularProgressIndicator(
+                                Modifier.size(20.dp)
+                            )
                         }
                     }
                 }

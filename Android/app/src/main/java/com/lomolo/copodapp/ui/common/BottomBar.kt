@@ -33,14 +33,14 @@ sealed class Screen(
     )
     data object Land: Screen(
         R.string.land,
-        R.drawable.global_africa_outlined,
-        R.drawable.global_africa_filled,
+        R.drawable.land,
+        R.drawable.land_filled,
         "land",
         false,
     )
     data object Account: Screen(
         R.string.account,
-        R.drawable.account_outlined,
+        R.drawable.account,
         R.drawable.account_filled,
         "account",
         false,
@@ -81,14 +81,14 @@ fun BottomNavBar(
                         BadgedBox(badge = { Badge() }) {
                             Icon(
                                 painterResource(if (isActive) item.activeIcon else item.defaultIcon),
-                                modifier = Modifier.size(28.dp),
+                                modifier = Modifier.size(24.dp),
                                 contentDescription = null,
                             )
                         }
                     } else {
                         Icon(
                             painterResource(if (isActive) item.activeIcon else item.defaultIcon),
-                            modifier = if (item.route == "create_land") Modifier.size(32.dp) else Modifier.size(28.dp),
+                            modifier = Modifier.size(24.dp),
                             contentDescription = null,
                         )
                     }

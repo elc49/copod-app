@@ -47,4 +47,6 @@
     <string name="under_review_text">Your documents are under review</string>
     <string name="create">Create</string>
     <string name="search">Search</string>
+    <string name="no_land_space">There is no land space for rent available at the moment</string>
+    <string name="check_market_later">We\'re adding new listings. Check back later.</string>
 </resources>
