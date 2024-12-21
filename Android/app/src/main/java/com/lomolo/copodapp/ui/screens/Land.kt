@@ -80,7 +80,11 @@ fun LandScreen(
     Scaffold(topBar = {
         TopBar(
             title = {
-                Text(stringResource(R.string.your_lands))
+                if (currentOnboarding?.anyOneOnboarding() == true) {
+                    Text(stringResource(R.string.verification_progress_text))
+                } else {
+                    Text(stringResource(R.string.your_lands))
+                }
             },
         )
     }, bottomBar = {
@@ -95,10 +99,29 @@ fun LandScreen(
             when {
                 currentOnboarding?.anyOneOnboarding() == true -> Column(
                     Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text(stringResource(R.string.waiting_submission))
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(R.drawable.doc_review)
+                            .crossfade(true)
+                            .build(),
+                        contentScale = ContentScale.Crop,
+                        contentDescription = stringResource(R.string.waiting_submission)
+                    )
+                    Column(
+                        Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.under_review_text),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Text(
+                            stringResource(R.string.verification_notice_text),
+                        )
+                    }
                 }
 
                 currentOnboarding?.isOnboardingOK() == true && viewModel.gettingUserLands is GetUserLands.Success -> {
