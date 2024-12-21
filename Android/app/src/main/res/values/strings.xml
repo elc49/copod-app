@@ -45,4 +45,6 @@
     <string name="verification_progress_text">Verification in progress</string>
     <string name="verification_notice_text">We\'ve received your documents. We\'ll let you know when the verification process is complete.</string>
     <string name="under_review_text">Your documents are under review</string>
+    <string name="create">Create</string>
+    <string name="search">Search</string>
 </resources>
