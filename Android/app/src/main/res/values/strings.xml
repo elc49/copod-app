@@ -42,4 +42,7 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="markets">Markets</string>
     <string name="vertical_dots">vertical_dots</string>
+    <string name="verification_progress_text">Verification in progress</string>
+    <string name="verification_notice_text">We\'ve received your documents. We\'ll let you know when the verification process is complete.</string>
+    <string name="under_review_text">Your documents are under review</string>
 </resources>
