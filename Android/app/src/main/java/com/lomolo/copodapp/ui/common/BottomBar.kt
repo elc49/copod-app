@@ -45,6 +45,20 @@ sealed class Screen(
         "account",
         false,
     )
+    data object Create: Screen(
+        R.string.create,
+        R.drawable.create,
+        R.drawable.create_filled,
+        "create_land",
+        false,
+    )
+    data object Search: Screen(
+        R.string.search,
+        R.drawable.search,
+        R.drawable.search_filled,
+        "search_land",
+        false,
+    )
 }
 
 
@@ -53,7 +67,7 @@ fun BottomNavBar(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
 ) {
-    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Account)
+    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Create, Screen.Search, Screen.Account)
 
     NavigationBar {
         navItems.forEachIndexed { _, item ->
@@ -74,7 +88,7 @@ fun BottomNavBar(
                     } else {
                         Icon(
                             painterResource(if (isActive) item.activeIcon else item.defaultIcon),
-                            modifier = Modifier.size(28.dp),
+                            modifier = if (item.route == "create_land") Modifier.size(32.dp) else Modifier.size(28.dp),
                             contentDescription = null,
                         )
                     }
