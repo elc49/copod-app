@@ -80,7 +80,7 @@ fun LandScreen(
     Scaffold(topBar = {
         TopBar(
             title = {
-                if (currentOnboarding?.anyOneOnboarding() == true) {
+                if (currentOnboarding?.isOnboardingOK() != true) {
                     Text(stringResource(R.string.verification_progress_text))
                 } else {
                     Text(stringResource(R.string.your_lands))
@@ -97,22 +97,19 @@ fun LandScreen(
             modifier = modifier.padding(innerPadding)
         ) {
             when {
-                currentOnboarding?.anyOneOnboarding() == true -> Column(
+                currentOnboarding?.isOnboardingOK() != true -> Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(R.drawable.doc_review)
-                            .crossfade(true)
-                            .build(),
+                            .data(R.drawable.doc_review).crossfade(true).build(),
                         contentScale = ContentScale.Crop,
                         contentDescription = stringResource(R.string.waiting_submission)
                     )
                     Column(
-                        Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(
                             stringResource(R.string.under_review_text),
@@ -219,19 +216,12 @@ fun GetOnboardingByEmailQuery.GetOnboardingByEmail.isOnboardingOK(): Boolean {
     }
 }
 
-fun GetOnboardingByEmailQuery.GetOnboardingByEmail.anyOneOnboarding(): Boolean {
-    return when {
-        this.displayPicture.verified == Verification.ONBOARDING || this.title.verified == Verification.ONBOARDING || this.supportingDoc.verified == Verification.ONBOARDING -> true
-
-        else -> false
+fun GetOnboardingByEmailQuery.GetOnboardingByEmail.whoIsStillOnboarding(): List<String> {
+    var rejects = mutableListOf<String>()
+    when {
+        this.displayPicture.verified == Verification.REJECTED -> rejects.add(this.displayPicture.__typename.lowercase())
+        this.title.verified == Verification.REJECTED -> rejects.add(this.title.__typename.lowercase())
+        this.supportingDoc.verified == Verification.REJECTED -> rejects.add(this.supportingDoc.__typename.lowercase())
     }
-}
-
-fun GetOnboardingByEmailQuery.GetOnboardingByEmail.whoIsStillOnboarding(): String {
-    return when {
-        this.displayPicture.verified == Verification.REJECTED -> this.displayPicture.__typename.lowercase()
-        this.title.verified == Verification.REJECTED -> this.title.__typename.lowercase()
-        this.supportingDoc.verified == Verification.REJECTED -> this.supportingDoc.__typename.lowercase()
-        else -> ""
-    }
+    return rejects
 }

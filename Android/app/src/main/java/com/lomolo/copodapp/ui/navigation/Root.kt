@@ -4,13 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import androidx.navigation.navArgument
 import com.lomolo.copodapp.state.viewmodels.InitializeSdk
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
@@ -172,10 +170,7 @@ fun NavigationHost(
                 mainViewModel = mainViewModel,
             )
         }
-        dialog(
-            route = SuccessScreenDestination.route,
-            dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
-        ) {
+        composable(route = SuccessScreenDestination.route) {
             SuccessScreen(
                 onNavigateTo = onNavigateTo,
             )

@@ -1,5 +1,6 @@
 package com.lomolo.copodapp.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +33,7 @@ fun SuccessScreen(
     modifier: Modifier = Modifier,
     onNavigateTo: (String) -> Unit,
 ) {
+    BackHandler {  }
     Scaffold(topBar = {
         TopBar(navigationIcon = {
             IconButton(
