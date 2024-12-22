@@ -18,7 +18,7 @@
     <string name="register_land">Register land</string>
     <string name="submit">Submit</string>
     <string name="govt_issued_id">Supporting document</string>
-    <string name="land_title_document">Land title document</string>
+    <string name="land_title_document">Land title</string>
     <string name="image">image</string>
     <string name="govt_issued_title">Upload govt issued title</string>
     <string name="upload_govt_issued_id">Upload govt issued ID</string>
@@ -62,4 +62,5 @@
     <string name="no_lands_available">No Lands available</string>
     <string name="you_can_create_a_listing">You can create a listing</string>
     <string name="next">Next</string>
+    <string name="land_uplod_copy_text">Upload a photo of your land title. Text should be clear and not blurred out. We accept JPG, and PNG files.</string>
 </resources>

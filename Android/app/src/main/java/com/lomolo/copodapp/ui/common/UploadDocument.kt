@@ -1,7 +1,9 @@
 package com.lomolo.copodapp.ui.common
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,14 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
+import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,6 +43,8 @@ fun UploadDocument(
     modifier: Modifier = Modifier,
     onNext: () -> Unit,
     title: @Composable (() -> Unit),
+    titleSize: String = "",
+    copyText: String = "",
     onGoBack: () -> Unit,
     onSelectImage: () -> Unit,
     savingDoc: Boolean,
@@ -48,16 +55,41 @@ fun UploadDocument(
     val context = LocalContext.current
 
     Scaffold(topBar = {
-        TopAppBar(title = title, navigationIcon = {
-            IconButton(
-                onClick = onGoBack,
-            ) {
-                Icon(
-                    Icons.AutoMirrored.TwoTone.ArrowBack,
-                    contentDescription = stringResource(R.string.go_back),
-                )
-            }
-        })
+        if (titleSize == "large") {
+            LargeTopAppBar(
+                title = title, navigationIcon = {
+                if (titleSize == "large") {
+                    IconButton(
+                        onClick = onGoBack,
+                    ) {
+                        Icon(
+                            Icons.TwoTone.Close,
+                            contentDescription = stringResource(R.string.close)
+                        )
+                    }
+                } else {
+                    IconButton(
+                        onClick = onGoBack,
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.TwoTone.ArrowBack,
+                            contentDescription = stringResource(R.string.go_back),
+                        )
+                    }
+                }
+            })
+        } else {
+            TopAppBar(title = title, navigationIcon = {
+                IconButton(
+                    onClick = onGoBack,
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.TwoTone.ArrowBack,
+                        contentDescription = stringResource(R.string.go_back),
+                    )
+                }
+            })
+        }
     }, bottomBar = {
         BottomAppBar {
             Button(
@@ -83,20 +115,26 @@ fun UploadDocument(
                 .padding(innerPadding)
                 .padding(8.dp),
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            Column(
+                Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
-                    contentScale = if (!newUpload) ContentScale.Crop else ContentScale.Fit,
-                    placeholder = painterResource(R.drawable.loading_img),
-                    error = painterResource(R.drawable.ic_broken_image),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clip(MaterialTheme.shapes.small)
-                        .clickable { onSelectImage() },
-                    contentDescription = stringResource(R.string.image),
-                )
+                Text(copyText)
+                Box(
+                    contentAlignment = Alignment.Center,
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
+                        contentScale = if (!newUpload) ContentScale.Crop else ContentScale.Fit,
+                        placeholder = painterResource(R.drawable.upload),
+                        error = painterResource(R.drawable.ic_broken_image),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(MaterialTheme.shapes.small)
+                            .clickable { onSelectImage() },
+                        contentDescription = stringResource(R.string.image),
+                    )
+                }
             }
         }
     }
