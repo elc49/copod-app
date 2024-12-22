@@ -16,6 +16,8 @@ import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.screens.AccountScreen
 import com.lomolo.copodapp.ui.screens.AccountScreenDestination
+import com.lomolo.copodapp.ui.screens.AddLandScreen
+import com.lomolo.copodapp.ui.screens.AddLandScreenDestination
 import com.lomolo.copodapp.ui.screens.ErrorScreen
 import com.lomolo.copodapp.ui.screens.ErrorScreenDestination
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
@@ -180,6 +182,16 @@ fun NavigationHost(
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
                 mainViewModel = mainViewModel,
+            )
+        }
+        composable(route = AddLandScreenDestination.route) {
+            AddLandScreen(
+                viewModel = onboardingViewModel,
+                currentDestination = it.destination,
+                onNavigateTo = onNavigateTo,
+                onClickAddLand = {
+                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                }
             )
         }
     }

@@ -49,4 +49,17 @@
     <string name="search">Search</string>
     <string name="no_land_space">There is no land space for rent available at the moment</string>
     <string name="check_market_later">We\'re adding new listings. Check back later.</string>
+    <string name="create_new_land">Create New Land</string>
+    <string name="new_land_copy">To register your land, we need 1 land title document, and 2 supporting documents.</string>
+    <string name="start_onboarding">Start Onboarding</string>
+    <string name="registration_status">Registration Status</string>
+    <string name="your_registration_status">Your registration status</string>
+    <string name="check">Check</string>
+    <string name="review_copy">We\'ve received your registration. We\'ll be in touch within 2 business days.</string>
+    <string name="pending_review">Pending review</string>
+    <string name="no_listings_yet">No listings yet</string>
+    <string name="we_are_adding_listings">We\'re adding new listings all the time.</string>
+    <string name="no_lands_available">No Lands available</string>
+    <string name="you_can_create_a_listing">You can create a listing</string>
+    <string name="next">Next</string>
 </resources>
