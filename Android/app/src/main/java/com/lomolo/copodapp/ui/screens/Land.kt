@@ -3,6 +3,7 @@ package com.lomolo.copodapp.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.twotone.ArrowForward
 import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
@@ -253,23 +256,54 @@ private fun NoLand(
     onClickAddLand: () -> Unit,
 ) {
     Column(
-        modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            painterResource(R.drawable.sealed),
-            modifier = Modifier.size(60.dp),
-            contentDescription = stringResource(R.string.land),
+        Text(
+            stringResource(R.string.no_listings_yet),
+            style = MaterialTheme.typography.titleLarge,
+            textAlign = TextAlign.Start,
         )
-        Text(stringResource(R.string.no_user_lands))
-        OutlinedIconButton(
-            onClick = onClickAddLand
+        Text(stringResource(R.string.we_are_adding_listings))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                Icons.TwoTone.Add,
-                contentDescription = stringResource(R.string.add),
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(R.drawable._9872287).crossfade(true).build(),
+                modifier = Modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .size(100.dp),
+                placeholder = painterResource(R.drawable.loading_img),
+                error = painterResource(R.drawable.ic_broken_image),
+                contentDescription = stringResource(R.string.land)
             )
+            Spacer(Modifier.size(16.dp))
+            Column(
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    stringResource(R.string.no_lands_available),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    stringResource(R.string.you_can_create_a_listing),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+            Spacer(Modifier.weight(1f))
+            IconButton(
+                onClick = onClickAddLand,
+            ) {
+                Icon(
+                    Icons.AutoMirrored.TwoTone.ArrowForward,
+                    contentDescription = stringResource(R.string.next)
+                )
+            }
         }
     }
 }

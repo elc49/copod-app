@@ -49,7 +49,7 @@ sealed class Screen(
         R.string.create,
         R.drawable.create,
         R.drawable.create_filled,
-        "create_land",
+        "add_land",
         false,
     )
     data object Search: Screen(
