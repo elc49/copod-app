@@ -78,7 +78,8 @@ fun LandScreen(
         viewModel.gettingUserLands is GetUserLands.Loading -> true
         else -> false
     }
-    val showTopBarTitle = onboardingViewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Loading && onboardingViewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Error
+    val showTopBarTitle =
+        onboardingViewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Loading && onboardingViewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Error
 
     Scaffold(topBar = {
         TopBar(
@@ -116,7 +117,8 @@ fun LandScreen(
                                     ) {
                                         AsyncImage(
                                             model = ImageRequest.Builder(LocalContext.current)
-                                                .data(R.drawable.doc_review).crossfade(true).build(),
+                                                .data(R.drawable.doc_review).crossfade(true)
+                                                .build(),
                                             contentScale = ContentScale.Crop,
                                             placeholder = painterResource(R.drawable.loading_img),
                                             error = painterResource(R.drawable.ic_broken_image),
@@ -154,24 +156,23 @@ fun LandScreen(
                                 }
                             } else {
                                 Column(
-                                    Modifier.fillMaxSize().padding(8.dp),
+                                    Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp),
                                     horizontalAlignment = Alignment.CenterHorizontally,
                                 ) {
                                     Text(stringResource(R.string.new_land_copy))
                                     AsyncImage(
                                         model = ImageRequest.Builder(LocalContext.current)
-                                            .data(R.drawable._9872287)
-                                            .crossfade(true)
-                                            .build(),
-                                        modifier = Modifier
-                                            .clip(MaterialTheme.shapes.medium),
+                                            .data(R.drawable._9872287).crossfade(true).build(),
+                                        modifier = Modifier.clip(MaterialTheme.shapes.medium),
                                         placeholder = painterResource(R.drawable.loading_img),
                                         error = painterResource(R.drawable.ic_broken_image),
                                         contentDescription = stringResource(R.string.land)
                                     )
                                     Button(
-                                        onClick = {},
+                                        onClick = onClickAddLand,
                                         contentPadding = PaddingValues(16.dp),
                                         shape = MaterialTheme.shapes.extraSmall,
                                         modifier = Modifier.align(Alignment.End)
