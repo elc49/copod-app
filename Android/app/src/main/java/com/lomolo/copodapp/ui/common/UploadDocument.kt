@@ -126,7 +126,7 @@ fun UploadDocument(
                     AsyncImage(
                         model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
                         contentScale = if (!newUpload) ContentScale.Crop else ContentScale.Fit,
-                        placeholder = painterResource(R.drawable.upload),
+                        placeholder = painterResource(R.drawable.loading_img),
                         error = painterResource(R.drawable.ic_broken_image),
                         modifier = Modifier
                             .fillMaxSize()
