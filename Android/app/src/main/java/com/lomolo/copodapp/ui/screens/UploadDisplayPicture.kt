@@ -5,9 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowForward
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -79,13 +76,10 @@ fun UploadDisplayPicture(
     }
 
     UploadDocument(modifier = modifier,
+        titleSize = "large",
         title = @Composable {
             Column {
                 Text(stringResource(R.string.display_picture))
-                Text(
-                    stringResource(R.string.picture_of_you),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
             }
         },
         image = displayPicture,
@@ -110,14 +104,11 @@ fun UploadDisplayPicture(
                 }
             }
         },
+        copyText = stringResource(R.string.upload_dp_copy_text),
         buttonText = @Composable {
             Text(
-                stringResource(R.string.proceed),
+                stringResource(R.string.continue_text),
                 style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowForward,
-                contentDescription = stringResource(R.string.proceed),
             )
         })
 }

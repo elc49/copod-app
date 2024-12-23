@@ -78,13 +78,10 @@ fun UploadGovtIssuedId(
 
     UploadDocument(
         modifier = modifier,
+        titleSize = "large",
         title = @Composable {
             Column {
-                Text(stringResource(R.string.govt_issued_id))
-                Text(
-                    stringResource(R.string.upload_govt_issued_id),
-                    style = MaterialTheme.typography.bodyLarge,
-                )
+                Text(stringResource(R.string.verify_your_id))
             }
         },
         newUpload = image.isEmpty(),
@@ -106,6 +103,7 @@ fun UploadGovtIssuedId(
                 }
             }
         },
+        copyText = stringResource(R.string.verify_your_id_copy_text),
         savingDoc = viewModel.uploadingGovtId is UploadingDoc.Loading,
         buttonText = @Composable {
             Text(

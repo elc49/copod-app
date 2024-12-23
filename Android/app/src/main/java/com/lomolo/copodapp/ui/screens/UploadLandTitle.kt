@@ -77,13 +77,9 @@ fun UploadLandTitle(
         }
     }
 
-    UploadDocument(modifier = modifier, title = @Composable {
+    UploadDocument(modifier = modifier, titleSize = "large", title = @Composable {
         Column {
             Text(stringResource(R.string.land_title_document))
-            Text(
-                stringResource(R.string.govt_issued_title),
-                style = MaterialTheme.typography.bodyLarge,
-            )
         }
     }, image = landTitle, newUpload = image.isEmpty(), savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading, onNext = {
         if (image.isNotEmpty()) {
@@ -99,7 +95,7 @@ fun UploadLandTitle(
                 )
             }
         }
-    }, buttonText = @Composable {
+    }, copyText = stringResource(R.string.land_uplod_copy_text), buttonText = @Composable {
         Text(
             stringResource(R.string.proceed),
             style = MaterialTheme.typography.titleMedium,

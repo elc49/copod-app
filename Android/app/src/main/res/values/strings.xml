@@ -7,7 +7,7 @@
     <string name="start_by_email">Email</string>
     <string name="get_started">Get Started</string>
     <string name="land">Land</string>
-    <string name="home_headline">Register land. Search land. Buy land space</string>
+    <string name="home_headline">Register land. Search land. Rent land space</string>
     <string name="explore">Explore</string>
     <string name="user">user</string>
     <string name="close">close</string>
@@ -18,7 +18,7 @@
     <string name="register_land">Register land</string>
     <string name="submit">Submit</string>
     <string name="govt_issued_id">Supporting document</string>
-    <string name="land_title_document">Land title document</string>
+    <string name="land_title_document">Land title</string>
     <string name="image">image</string>
     <string name="govt_issued_title">Upload govt issued title</string>
     <string name="upload_govt_issued_id">Upload govt issued ID</string>
@@ -35,7 +35,7 @@
     <string name="google_sign_in">Google Signin</string>
     <string name="land_title">Land title</string>
     <string name="your_lands">Your lands</string>
-    <string name="display_picture">Display picture</string>
+    <string name="display_picture">Display Picture</string>
     <string name="picture_of_you">Picture of you</string>
     <string name="waiting_submission">We are validating your submission</string>
     <string name="account">Account</string>
@@ -62,4 +62,9 @@
     <string name="no_lands_available">No Lands available</string>
     <string name="you_can_create_a_listing">You can create a listing</string>
     <string name="next">Next</string>
+    <string name="land_uplod_copy_text">Upload a photo of your land title. Text should be clear and not blurred out. We accept JPG, and PNG files.</string>
+    <string name="verify_your_id">Verify your ID</string>
+    <string name="verify_your_id_copy_text">We\'ll need a photo of your government-issued ID. Make sure the document is visible.</string>
+    <string name="upload_dp_copy_text">Let people you transact with know who they are talking to. We recommend a clear, professional photo.</string>
+    <string name="continue_text">Continue</string>
 </resources>
