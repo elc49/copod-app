@@ -1,9 +1,9 @@
 package com.lomolo.copodapp.ui.screens
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -22,9 +22,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.ui.navigation.Navigation
 import com.lomolo.copodapp.state.viewmodels.LoginSdk
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
+import com.lomolo.copodapp.ui.navigation.Navigation
 
 object HomeScreenDestination : Navigation {
     override val title = null
@@ -62,13 +62,13 @@ fun HomeScreen(
                 when(mainViewModel.loginSdk) {
                     LoginSdk.Success -> Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
                     ) {
                         Icon(
                             painterResource(R.drawable.icons8_google),
                             modifier = Modifier.size(24.dp),
                             contentDescription = stringResource(R.string.google),
                         )
+                        Spacer(Modifier.size(8.dp))
                         Text(
                             text = stringResource(R.string.google_sign_in),
                             style = MaterialTheme.typography.titleMedium,
