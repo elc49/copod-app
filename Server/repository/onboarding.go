@@ -38,13 +38,13 @@ func (r *Onboarding) CreateOnboarding(ctx context.Context, args sql.CreateOnboar
 	}, nil
 }
 
-func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	o, err := r.sql.GetOnboardingByEmail(ctx, email)
+func (r *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
+	o, err := r.sql.GetOnboardingByEmailAndVerification(ctx, args)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByEmailAndVerification")
 		return nil, err
 	default:
 		return &model.Onboarding{

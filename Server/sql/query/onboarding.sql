@@ -5,9 +5,9 @@ INSERT INTO onboardings (
   $1, $2, $3, $4
 ) RETURNING *;
 
--- name: GetOnboardingByEmail :one
+-- name: GetOnboardingByEmailAndVerification :one
 SELECT * FROM onboardings
-WHERE email = $1;
+WHERE email = $1 AND verification = $2;
 
 -- name: GetOnboardingByID :one
 SELECT * FROM onboardings

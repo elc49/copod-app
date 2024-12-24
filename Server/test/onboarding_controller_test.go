@@ -6,6 +6,7 @@ import (
 
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/graph/model"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -47,7 +48,10 @@ func Test_Onboarding_Controller(t *testing.T) {
 	})
 
 	t.Run("get_onboarding_by_email", func(t *testing.T) {
-		o, err := oc.GetOnboardingByEmail(ctx, email)
+		o, err := oc.GetOnboardingByEmailAndVerification(ctx, sql.GetOnboardingByEmailAndVerificationParams{
+			Email:        email,
+			Verification: model.VerificationOnboarding.String(),
+		})
 
 		assert.Nil(t, err)
 		assert.Equal(t, email, o.Email)

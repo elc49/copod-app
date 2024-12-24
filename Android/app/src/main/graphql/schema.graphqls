@@ -34,6 +34,12 @@ type DisplayPicture {
   updated_at: Time!
 }
 
+input GetOnboardingByEmailAndVerificationInput {
+  email: String!
+
+  verification: Verification!
+}
+
 input GetUserLandsInput {
   email: String!
 
@@ -145,7 +151,7 @@ type Query {
 
   getDisplayPictureById(id: UUID!): DisplayPicture!
 
-  getOnboardingByEmail(email: String!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
 }
 
 type Subscription {

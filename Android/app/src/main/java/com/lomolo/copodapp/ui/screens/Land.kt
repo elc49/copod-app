@@ -41,7 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.lomolo.copodapp.GetOnboardingByEmailQuery
+import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
@@ -308,7 +308,7 @@ private fun NoLand(
     }
 }
 
-fun GetOnboardingByEmailQuery.GetOnboardingByEmail.isOnboardingOK(): Boolean {
+fun GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification.isOnboardingOK(): Boolean {
     return when {
         this.displayPicture.verified == Verification.VERIFIED && this.supportingDoc.verified == Verification.VERIFIED && this.title.verified == Verification.VERIFIED -> true
 
@@ -316,7 +316,7 @@ fun GetOnboardingByEmailQuery.GetOnboardingByEmail.isOnboardingOK(): Boolean {
     }
 }
 
-fun GetOnboardingByEmailQuery.GetOnboardingByEmail.whoIsStillOnboarding(): List<String> {
+fun GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification.whoIsStillOnboarding(): List<String> {
     var rejects = mutableListOf<String>()
     when {
         this.displayPicture.verified == Verification.REJECTED -> rejects.add(this.displayPicture.__typename.lowercase())

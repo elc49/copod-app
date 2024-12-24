@@ -141,13 +141,18 @@ input UpdateDisplayPictureVerificationByIdInput {
   verification: Verification!
 }
 
+input GetOnboardingByEmailAndVerificationInput {
+  email: String!
+  verification: Verification!
+}
+
 type Query {
   getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
   getTitleById(id: UUID!): Title!
   getSupportingDocById(id: UUID!): SupportingDoc!
   getDisplayPictureById(id: UUID!): DisplayPicture!
-  getOnboardingByEmail(email: String!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
 }
 
 type Mutation {

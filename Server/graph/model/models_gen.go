@@ -35,6 +35,11 @@ type DisplayPicture struct {
 	UpdatedAt time.Time    `json:"updated_at"`
 }
 
+type GetOnboardingByEmailAndVerificationInput struct {
+	Email        string       `json:"email"`
+	Verification Verification `json:"verification"`
+}
+
 type GetUserLandsInput struct {
 	Email        string       `json:"email"`
 	Verification Verification `json:"verification"`

@@ -123,9 +123,13 @@ func (r *queryResolver) GetDisplayPictureByID(ctx context.Context, id uuid.UUID)
 	return r.displayPictureController.GetDisplayPictureByID(ctx, id)
 }
 
-// GetOnboardingByEmail is the resolver for the getOnboardingByEmail field.
-func (r *queryResolver) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	return r.onboardingController.GetOnboardingByEmail(ctx, email)
+// GetOnboardingByEmailAndVerification is the resolver for the getOnboardingByEmailAndVerification field.
+func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error) {
+	args := sql.GetOnboardingByEmailAndVerificationParams{
+		Email:        input.Email,
+		Verification: input.Verification.String(),
+	}
+	return r.onboardingController.GetOnboardingByEmailAndVerification(ctx, args)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
