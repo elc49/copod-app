@@ -151,7 +151,7 @@ type Query {
 
   getDisplayPictureById(id: UUID!): DisplayPicture!
 
-  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
 }
 
 type Subscription {

@@ -93,5 +93,40 @@ func (c *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*mode
 }
 
 func (c *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
-	return c.r.GetOnboardingByEmailAndVerification(ctx, args)
+	// Get onboarding
+	o, err := c.r.GetOnboardingByEmailAndVerification(ctx, args)
+	if err == nil && o == nil {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	// TODO Check if docs are verified
+	if c.areDocsOnboarded(ctx, o) {
+		// TODO finish onboarding
+		_, err := c.sql.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
+			ID:           o.ID,
+			Verification: model.VerificationVerified.String(),
+		})
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	return o, nil
+}
+
+func (c *Onboarding) areDocsOnboarded(ctx context.Context, o *model.Onboarding) bool {
+	// Check if title is verified
+	if o.Title.Verified != model.VerificationVerified {
+		return false
+	}
+	// Check if display picture is verified
+	if o.DisplayPicture.Verified != model.VerificationVerified {
+		return false
+	}
+	// Check if supporting doc is verified
+	if o.SupportingDoc.Verified != model.VerificationVerified {
+		return false
+	}
+	return true
 }

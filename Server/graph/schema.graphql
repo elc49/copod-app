@@ -152,7 +152,7 @@ type Query {
   getTitleById(id: UUID!): Title!
   getSupportingDocById(id: UUID!): SupportingDoc!
   getDisplayPictureById(id: UUID!): DisplayPicture!
-  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding!
+  getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
 }
 
 type Mutation {
