@@ -6,10 +6,11 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.ChargeMpesaMutation
 import com.lomolo.copodapp.CreateOnboardingMutation
-import com.lomolo.copodapp.GetOnboardingByEmailQuery
+import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
 import com.lomolo.copodapp.type.CreateOnboardingInput
+import com.lomolo.copodapp.type.GetOnboardingByEmailAndVerificationInput
 import com.lomolo.copodapp.type.GetUserLandsInput
 import com.lomolo.copodapp.type.PayWithMpesaInput
 import kotlinx.coroutines.flow.Flow
@@ -18,7 +19,7 @@ interface IGraphQL {
     suspend fun getUserLands(input: GetUserLandsInput): ApolloResponse<GetUserLandQuery.Data>
     suspend fun chargeMpesa(input: PayWithMpesaInput): ApolloResponse<ChargeMpesaMutation.Data>
     fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
-    suspend fun getOnboardingByEmail(email: String): ApolloResponse<GetOnboardingByEmailQuery.Data>
+    suspend fun getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput): ApolloResponse<GetOnboardingByEmailAndVerificationQuery.Data>
     suspend fun createOnboarding(input: CreateOnboardingInput): ApolloResponse<CreateOnboardingMutation.Data>
 }
 
@@ -37,8 +38,8 @@ class GraphQLServiceImpl(
         PaymentUpdateSubscription(email)
     ).toFlow()
 
-    override suspend fun getOnboardingByEmail(email: String) =
-        apolloClient.query(GetOnboardingByEmailQuery(email)).fetchPolicy(
+    override suspend fun getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput) =
+        apolloClient.query(GetOnboardingByEmailAndVerificationQuery(input)).fetchPolicy(
             FetchPolicy.NetworkFirst
         ).execute()
 

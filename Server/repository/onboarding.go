@@ -38,20 +38,47 @@ func (r *Onboarding) CreateOnboarding(ctx context.Context, args sql.CreateOnboar
 	}, nil
 }
 
-func (r *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	o, err := r.sql.GetOnboardingByEmail(ctx, email)
+func (r *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
+	o, err := r.sql.GetOnboardingByEmailAndVerification(ctx, args)
 	switch {
 	case err != nil && err == db.ErrNoRows:
 		return nil, nil
 	case err != nil:
-		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetOnboardingByEmail")
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: GetOnboardingByEmailAndVerification")
 		return nil, err
 	default:
+		// Get title verification
+		title, err := r.sql.GetTitleByID(ctx, o.TitleID)
+		if err != nil && err == db.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			r.log.WithError(err).WithFields(logrus.Fields{"id": o.TitleID}).Errorf("repository: GetOnboardingByEmailAndVerification: GetTitleByID")
+			return nil, err
+		}
+		// Get support doc verification
+		supportDoc, err := r.sql.GetSupportDocByID(ctx, o.SupportDocID)
+		if err != nil && err == db.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			r.log.WithError(err).WithFields(logrus.Fields{"id": o.SupportDocID}).Errorf("repository: GetOnboardingByEmailAndVerification: GetSupportDocByID")
+			return nil, err
+		}
+		// Get display picture verification
+		dp, err := r.sql.GetDisplayPictureByID(ctx, o.DisplayPictureID)
+		if err != nil && err == db.ErrNoRows {
+			return nil, nil
+		} else if err != nil {
+			r.log.WithError(err).WithFields(logrus.Fields{"id": o.DisplayPictureID}).Errorf("repository: GetOnboardingByEmailAndVerification: GetDisplayPictureByID")
+			return nil, err
+		}
 		return &model.Onboarding{
 			ID:               o.ID,
 			Email:            o.Email,
+			Title:            &model.Title{Verified: model.Verification(title.Verification)},
 			TitleID:          o.TitleID,
+			SupportingDoc:    &model.SupportingDoc{Verified: model.Verification(supportDoc.Verification)},
 			SupportDocID:     o.SupportDocID,
+			DisplayPicture:   &model.DisplayPicture{Verified: model.Verification(dp.Verification)},
 			DisplayPictureID: o.DisplayPictureID,
 			CreatedAt:        o.CreatedAt,
 			UpdatedAt:        o.UpdatedAt,

@@ -7,11 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
-import com.lomolo.copodapp.GetOnboardingByEmailQuery
+import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.network.IGraphQL
 import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.CreateOnboardingInput
+import com.lomolo.copodapp.type.GetOnboardingByEmailAndVerificationInput
+import com.lomolo.copodapp.type.Verification
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,15 +30,15 @@ interface UploadingDoc {
 }
 
 interface GetCurrentOnboarding {
-    data object Success: GetCurrentOnboarding
-    data object Loading: GetCurrentOnboarding
-    data class Error(val msg: String?): GetCurrentOnboarding
+    data object Success : GetCurrentOnboarding
+    data object Loading : GetCurrentOnboarding
+    data class Error(val msg: String?) : GetCurrentOnboarding
 }
 
 interface Onboarding {
-    data object Success: Onboarding
-    data object Loading: Onboarding
-    data class Error(val msg: String?): Onboarding
+    data object Success : Onboarding
+    data object Loading : Onboarding
+    data class Error(val msg: String?) : Onboarding
 }
 
 class OnboardingViewModel(
@@ -53,8 +55,10 @@ class OnboardingViewModel(
     private val _displayPicture: MutableStateFlow<String> = MutableStateFlow("")
     val displayPicture: StateFlow<String> = _displayPicture.asStateFlow()
 
-    private val _currentOnboarding: MutableStateFlow<GetOnboardingByEmailQuery.GetOnboardingByEmail?> = MutableStateFlow(null)
-    val currentOnboarding: StateFlow<GetOnboardingByEmailQuery.GetOnboardingByEmail?> = _currentOnboarding.asStateFlow()
+    private val _currentOnboarding: MutableStateFlow<GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification?> =
+        MutableStateFlow(null)
+    val currentOnboarding: StateFlow<GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification?> =
+        _currentOnboarding.asStateFlow()
 
     var uploadingLandDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
@@ -143,8 +147,13 @@ class OnboardingViewModel(
             viewModelScope.launch {
                 gettingCurrentOnboarding = try {
                     val userInfo = web3Auth.getUserInfo()
-                    val res = graphqlApiService.getOnboardingByEmail(userInfo.email).dataOrThrow()
-                    _currentOnboarding.emit(res.getOnboardingByEmail)
+                    val res = graphqlApiService.getOnboardingByEmailAndVerification(
+                        GetOnboardingByEmailAndVerificationInput(
+                            email = userInfo.email,
+                            verification = Verification.ONBOARDING,
+                        )
+                    ).dataOrThrow()
+                    _currentOnboarding.emit(res.getOnboardingByEmailAndVerification)
                     GetCurrentOnboarding.Success
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")

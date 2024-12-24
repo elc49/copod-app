@@ -79,20 +79,20 @@ fun AddLandScreen(
         ) {
             when (viewModel.gettingCurrentOnboarding) {
                 GetCurrentOnboarding.Success -> {
-                    when {
-                        currentOnboarding?.isOnboardingOK() == true -> Column(
-                            modifier.fillMaxSize().padding(innerPadding).padding(8.dp),
+                    if (currentOnboarding == null) {
+                        Column(
+                            modifier
+                                .fillMaxSize()
+                                .padding(innerPadding)
+                                .padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(stringResource(R.string.new_land_copy))
                             AsyncImage(
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(R.drawable._9872287)
-                                    .crossfade(true)
-                                    .build(),
-                                modifier = Modifier
-                                    .clip(MaterialTheme.shapes.medium),
+                                    .data(R.drawable._9872287).crossfade(true).build(),
+                                modifier = Modifier.clip(MaterialTheme.shapes.medium),
                                 placeholder = painterResource(R.drawable.loading_img),
                                 error = painterResource(R.drawable.ic_broken_image),
                                 contentDescription = stringResource(R.string.land)
@@ -114,8 +114,8 @@ fun AddLandScreen(
                                 )
                             }
                         }
-
-                        currentOnboarding?.isOnboardingOK() != true -> Column(
+                    } else {
+                        Column(
                             Modifier
                                 .fillMaxSize()
                                 .padding(innerPadding)

@@ -16,7 +16,7 @@ var onboardingController *Onboarding
 type OnboardingController interface {
 	CreateOnboarding(context.Context, model.CreateOnboardingInput) (*model.Onboarding, error)
 	GetOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
-	GetOnboardingByEmail(context.Context, string) (*model.Onboarding, error)
+	GetOnboardingByEmailAndVerification(context.Context, sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -40,101 +40,93 @@ func GetOnboardingController() OnboardingController {
 
 func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error) {
 	var supportDoc *model.SupportingDoc
-	// Check existing pending onboarding
-	onboarding, oErr := c.r.GetOnboardingByEmail(ctx, input.Email)
 	oArgs := sql.CreateOnboardingParams{
 		Email: input.Email,
 	}
-
-	switch {
-	case oErr == nil && onboarding == nil:
-		// Create new onboarding
-		// New support doc
-		sArgs := sql.CreateSupportDocParams{
-			Email: input.Email,
-			Url:   input.SupportdocURL,
-		}
-		if s, sErr := c.sql.CreateSupportDoc(ctx, sArgs); sErr != nil {
-			c.log.WithError(sErr).WithFields(logrus.Fields{"args": sArgs}).Errorf("controller: CreateOnboarding: CreateSupportDoc")
-			return nil, sErr
-		} else {
-			oArgs.SupportDocID = s.ID
-			supportDoc = &model.SupportingDoc{
-				ID: s.ID,
-			}
-		}
-
-		// New title
-		tArgs := sql.CreateTitleParams{
-			Url:          input.TitleURL,
-			Email:        input.Email,
-			SupportDocID: supportDoc.ID,
-		}
-		if t, tErr := c.sql.CreateTitle(ctx, tArgs); tErr != nil {
-			c.log.WithError(tErr).WithFields(logrus.Fields{"args": tArgs}).Errorf("controller: CreateOnboarding: CreateTitle")
-			return nil, tErr
-		} else {
-			oArgs.TitleID = t.ID
-		}
-
-		// New display picture
-		dArgs := sql.CreateDisplayPictureParams{
-			Email:        input.Email,
-			SupportDocID: supportDoc.ID,
-			Url:          input.DisplayPictureURL,
-		}
-		if dp, dErr := c.sql.CreateDisplayPicture(ctx, dArgs); dErr != nil {
-			c.log.WithError(dErr).WithFields(logrus.Fields{"args": dArgs}).Errorf("controller: CreateOnboarding: CreateDisplayPicture")
-			return nil, dErr
-		} else {
-			oArgs.DisplayPictureID = dp.ID
-		}
-
-		return c.r.CreateOnboarding(ctx, oArgs)
-	case oErr == nil && onboarding != nil:
-		// Update existing with new incoming onboarding data
-		// Update Support doc
-		suArgs := sql.UpdateSupportDocByIDParams{
-			ID:           onboarding.SupportDocID,
-			Url:          input.SupportdocURL,
-			Verification: model.VerificationOnboarding.String(),
-		}
-		if _, err := c.sql.UpdateSupportDocByID(ctx, suArgs); err != nil {
-			return nil, err
-		}
-
-		// Update Title
-		tuArgs := sql.UpdateTitleByIDParams{
-			ID:           onboarding.TitleID,
-			Url:          input.TitleURL,
-			Verification: model.VerificationOnboarding.String(),
-		}
-		if _, err := c.sql.UpdateTitleByID(ctx, tuArgs); err != nil {
-			c.log.WithError(err).WithFields(logrus.Fields{"args": tuArgs}).Errorf("controller: CreateOnboarding: UpdateTitleByID")
-			return nil, err
-		}
-
-		// Update Display picture
-		udArgs := sql.UpdateDisplayPictureByIDParams{
-			ID:           onboarding.DisplayPictureID,
-			Url:          input.DisplayPictureURL,
-			Verification: model.VerificationOnboarding.String(),
-		}
-		if _, err := c.sql.UpdateDisplayPictureByID(ctx, udArgs); err != nil {
-			c.log.WithError(err).WithFields(logrus.Fields{"args": udArgs}).Errorf("controller: CreateOnboarding: UpdateDisplayPictureByID")
-			return nil, err
-		}
-
-		return onboarding, nil
-	default:
-		return nil, oErr
+	// Create new onboarding
+	// New support doc
+	sArgs := sql.CreateSupportDocParams{
+		Email: input.Email,
+		Url:   input.SupportdocURL,
 	}
+	if s, sErr := c.sql.CreateSupportDoc(ctx, sArgs); sErr != nil {
+		c.log.WithError(sErr).WithFields(logrus.Fields{"args": sArgs}).Errorf("controller: CreateOnboarding: CreateSupportDoc")
+		return nil, sErr
+	} else {
+		oArgs.SupportDocID = s.ID
+		supportDoc = &model.SupportingDoc{
+			ID: s.ID,
+		}
+	}
+
+	// New title
+	tArgs := sql.CreateTitleParams{
+		Url:          input.TitleURL,
+		Email:        input.Email,
+		SupportDocID: supportDoc.ID,
+	}
+	if t, tErr := c.sql.CreateTitle(ctx, tArgs); tErr != nil {
+		c.log.WithError(tErr).WithFields(logrus.Fields{"args": tArgs}).Errorf("controller: CreateOnboarding: CreateTitle")
+		return nil, tErr
+	} else {
+		oArgs.TitleID = t.ID
+	}
+
+	// New display picture
+	dArgs := sql.CreateDisplayPictureParams{
+		Email:        input.Email,
+		SupportDocID: supportDoc.ID,
+		Url:          input.DisplayPictureURL,
+	}
+	if dp, dErr := c.sql.CreateDisplayPicture(ctx, dArgs); dErr != nil {
+		c.log.WithError(dErr).WithFields(logrus.Fields{"args": dArgs}).Errorf("controller: CreateOnboarding: CreateDisplayPicture")
+		return nil, dErr
+	} else {
+		oArgs.DisplayPictureID = dp.ID
+	}
+
+	return c.r.CreateOnboarding(ctx, oArgs)
 }
 
 func (c *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*model.Onboarding, error) {
 	return c.r.GetOnboardingByID(ctx, id)
 }
 
-func (c *Onboarding) GetOnboardingByEmail(ctx context.Context, email string) (*model.Onboarding, error) {
-	return c.r.GetOnboardingByEmail(ctx, email)
+func (c *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, args sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error) {
+	// Get onboarding
+	o, err := c.r.GetOnboardingByEmailAndVerification(ctx, args)
+	if err == nil && o == nil {
+		return nil, nil
+	} else if err != nil {
+		return nil, err
+	}
+	// TODO Check if docs are verified
+	if c.areDocsOnboarded(ctx, o) {
+		// TODO finish onboarding
+		_, err := c.sql.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
+			ID:           o.ID,
+			Verification: model.VerificationVerified.String(),
+		})
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	}
+	return o, nil
+}
+
+func (c *Onboarding) areDocsOnboarded(ctx context.Context, o *model.Onboarding) bool {
+	// Check if title is verified
+	if o.Title.Verified != model.VerificationVerified {
+		return false
+	}
+	// Check if display picture is verified
+	if o.DisplayPicture.Verified != model.VerificationVerified {
+		return false
+	}
+	// Check if supporting doc is verified
+	if o.SupportingDoc.Verified != model.VerificationVerified {
+		return false
+	}
+	return true
 }

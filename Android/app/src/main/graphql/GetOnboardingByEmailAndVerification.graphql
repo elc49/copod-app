@@ -1,5 +1,5 @@
-query GetOnboardingByEmail($email: String!) {
-    getOnboardingByEmail(email: $email) {
+query GetOnboardingByEmailAndVerification($input: GetOnboardingByEmailAndVerificationInput!) {
+    getOnboardingByEmailAndVerification(input: $input) {
         id
         titleId
         title {
