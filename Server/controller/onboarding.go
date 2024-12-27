@@ -100,9 +100,9 @@ func (c *Onboarding) GetOnboardingByEmailAndVerification(ctx context.Context, ar
 	} else if err != nil {
 		return nil, err
 	}
-	// TODO Check if docs are verified
+	// Check if docs are verified
 	if c.areDocsOnboarded(ctx, o) {
-		// TODO finish onboarding
+		// Finish onboarding
 		_, err := c.sql.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
 			ID:           o.ID,
 			Verification: model.VerificationVerified.String(),
