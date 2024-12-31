@@ -67,4 +67,5 @@
     <string name="verify_your_id_copy_text">We\'ll need a photo of your government-issued ID. Make sure the document is visible.</string>
     <string name="upload_dp_copy_text">Let people you transact with know who they are talking to. We recommend a clear, professional photo.</string>
     <string name="continue_text">Continue</string>
+    <string name="search_land">Search for land</string>
 </resources>
