@@ -35,21 +35,19 @@ import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.ui.navigation.Navigation
 
-object SearchScreenDestination: Navigation {
+object SearchScreenDestination : Navigation {
     override val title = null
     override val route = "search_land"
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchScreen(
-    modifier: Modifier = Modifier,
-) {
+fun SearchScreen() {
     var searchQuery by remember { mutableStateOf("") }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Box(
-        modifier
+        Modifier
             .fillMaxSize()
             .semantics { isTraversalGroup = true }) {
         SearchBar(
@@ -57,15 +55,24 @@ fun SearchScreen(
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = 0f },
             inputField = {
-                SearchBarDefaults.InputField(
-                    query = searchQuery,
+                SearchBarDefaults.InputField(query = searchQuery,
                     onSearch = { expanded = false },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text(stringResource(R.string.search_land)) },
-                    leadingIcon = { if (!expanded) Icon(Icons.Default.Search, contentDescription = null) else IconButton(onClick = { expanded = false }) { Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = stringResource(R.string.go_back)) } },
-                    onQueryChange = { searchQuery = it }
-                )
+                    leadingIcon = {
+                        if (!expanded) Icon(
+                            Icons.Default.Search, contentDescription = null
+                        ) else IconButton(onClick = {
+                            expanded = false
+                        }) {
+                            Icon(
+                                Icons.AutoMirrored.Default.ArrowBack,
+                                contentDescription = stringResource(R.string.go_back)
+                            )
+                        }
+                    },
+                    onQueryChange = { searchQuery = it })
             },
             onExpandedChange = { expanded = it },
             expanded = expanded,
@@ -73,15 +80,13 @@ fun SearchScreen(
             Column(Modifier.verticalScroll(rememberScrollState())) {
                 repeat(4) { idx ->
                     val resultText = "Suggestion $idx"
-                    ListItem(
-                        headlineContent = { Text(resultText) },
+                    ListItem(headlineContent = { Text(resultText) },
                         supportingContent = { Text("Additional info") },
                         leadingContent = { Icon(Icons.Filled.Star, contentDescription = null) },
                         modifier = Modifier
                             .clickable {}
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
+                            .padding(horizontal = 16.dp, vertical = 4.dp))
                 }
             }
         }
