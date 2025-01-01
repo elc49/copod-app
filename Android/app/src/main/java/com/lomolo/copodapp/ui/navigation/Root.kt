@@ -30,7 +30,7 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.MpesaScreen
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
-import com.lomolo.copodapp.ui.screens.SearchScreen
+import com.lomolo.copodapp.ui.screens.SearchLandScreen
 import com.lomolo.copodapp.ui.screens.SearchScreenDestination
 import com.lomolo.copodapp.ui.screens.SuccessScreen
 import com.lomolo.copodapp.ui.screens.SuccessScreenDestination
@@ -196,7 +196,7 @@ fun NavigationHost(
             )
         }
         composable(route = SearchScreenDestination.route) {
-            SearchScreen()
+            SearchLandScreen(currentDestination = it.destination, onNavigateTo = onNavigateTo)
         }
     }
 }
