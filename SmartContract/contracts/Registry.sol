@@ -21,6 +21,9 @@ contract Registry {
     mapping(address => mapping(string => UsageRight)) private usage;
     // Count tokenized lands
     uint256 private tokenizedLands;
+    // Count land usages
+    // Track after reclaiming land usage rights - by owner
+    mapping(string => uint256) private countLandUsages;
 
     // Land events
     event LandCreated(string titleNo, uint size);
@@ -54,5 +57,10 @@ contract Registry {
     // Get land ERC721 contract
     function getLandERC721Contract(string memory titleNo_) public view returns (address) {
         return lands[titleNo_];
+    }
+
+    // Count land usages
+    function getLandUsagesCount(string memory titleNo_) public view returns (uint256) {
+        return countLandUsages[titleNo_];
     }
 }

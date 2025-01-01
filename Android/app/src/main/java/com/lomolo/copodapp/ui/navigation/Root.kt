@@ -22,6 +22,8 @@ import com.lomolo.copodapp.ui.screens.ErrorScreen
 import com.lomolo.copodapp.ui.screens.ErrorScreenDestination
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreenDestination
+import com.lomolo.copodapp.ui.screens.FoundLandScreen
+import com.lomolo.copodapp.ui.screens.FoundLandScreenDestination
 import com.lomolo.copodapp.ui.screens.HomeScreen
 import com.lomolo.copodapp.ui.screens.HomeScreenDestination
 import com.lomolo.copodapp.ui.screens.LandScreen
@@ -30,6 +32,8 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.MpesaScreen
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
+import com.lomolo.copodapp.ui.screens.SearchLandScreen
+import com.lomolo.copodapp.ui.screens.SearchScreenDestination
 import com.lomolo.copodapp.ui.screens.SuccessScreen
 import com.lomolo.copodapp.ui.screens.SuccessScreenDestination
 import com.lomolo.copodapp.ui.screens.UploadDisplayPicture
@@ -192,6 +196,12 @@ fun NavigationHost(
                     navHostController.navigate(UploadLandTitleScreenDestination.route)
                 }
             )
+        }
+        composable(route = SearchScreenDestination.route) {
+            SearchLandScreen(currentDestination = it.destination, onNavigateTo = onNavigateTo)
+        }
+        composable(route = FoundLandScreenDestination.route) {
+            FoundLandScreen()
         }
     }
 }

@@ -43,5 +43,11 @@ describe("Registry", () => {
         registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34)
       ).to.be.reverted
     })
+
+    it("count land usages", async () => {
+      const count = await registryContract.getLandUsagesCount(land.titleNo)
+
+      expect(count).to.be.equal(0)
+    })
   })
 })
