@@ -13,6 +13,7 @@ import (
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/config/postgres"
+	registry "github.com/elc49/copod/contract"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
 	"github.com/elc49/copod/handlers/webhook"
@@ -135,4 +136,8 @@ func (s *Server) CacheService() {
 
 func (s *Server) IpinfoService() {
 	ip.New()
+}
+
+func (s *Server) NewEthereumService() {
+	registry.NewEthBackend()
 }

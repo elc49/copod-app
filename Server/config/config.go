@@ -20,6 +20,7 @@ type config struct {
 	Database Database
 	Paystack Paystack
 	Ipinfo   Ipinfo
+	Ethereum Ethereum
 }
 
 func env() {
@@ -37,6 +38,7 @@ func New() {
 	c.Database = databaseConfig()
 	c.Paystack = paystackConfig()
 	c.Ipinfo = ipinfoConfig()
+	c.Ethereum = ethereumConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
@@ -100,6 +102,15 @@ func ipinfoConfig() Ipinfo {
 	var config Ipinfo
 
 	config.ApiKey = strings.TrimSpace(os.Getenv("IPINFO_API_KEY"))
+
+	return config
+}
+
+func ethereumConfig() Ethereum {
+	var config Ethereum
+
+	config.InfuraApi = strings.TrimSpace(os.Getenv("INFURA_API"))
+	config.RegistryContractAddress = strings.TrimSpace(os.Getenv("REGISTRY_CONTRACT_ADDRESS"))
 
 	return config
 }

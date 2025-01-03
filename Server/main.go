@@ -13,5 +13,6 @@ func main() {
 	s.PaystackService()
 	s.IpinfoService()
 	s.MountController()
+	s.NewEthereumService()
 	s.Start()
 }

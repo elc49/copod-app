@@ -18,7 +18,4 @@ web-app:
 	cd web && npm run dev
 # Deploy smart contract to optimisim sepolia testnet
 op-sepolia-deploy:
-	cd SmartContract && rm -rf ignition/deployments && npx hardhat ignition deploy ./ignition/modules/Registry.ts --network sepolia
-# Compile smart contract
-comp-sol:
-	cd SmartContract && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi && cd ../Server && abigen --abi abi/Registry.abi --bin abi/Registry.bin --pkg ethereum --out ethereum/registry.go
+	cd SmartContract && rm -rf ignition/deployments && npx hardhat ignition deploy ./ignition/modules/Registry.ts --network sepolia && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi && cd ../Server && abigen --abi abi/Registry.abi --bin abi/Registry.bin --pkg registry --out contract/registry.go
