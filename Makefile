@@ -22,3 +22,6 @@ web-app:
 # Deploy smart contract to optimisim sepolia testnet
 op-sepolia-deploy:
 	cd SmartContract && rm -rf ignition/deployments && npx hardhat ignition deploy ./ignition/modules/Registry.ts --network sepolia
+# Compile smart contract
+comp-sol:
+	cd SmartContract && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi
