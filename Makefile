@@ -1,9 +1,6 @@
-# Run smart contract tests
-test-contracts:
-	cd SmartContract && npm run test
 # Run server/api tests
-test-api:
-	cd Server && go test ./test
+test-copod:
+	cd Server && go test ./test && cd ../SmartContract && npm run test
 # Tidy server
 tidy:
 	cd Server && go mod tidy
@@ -24,4 +21,4 @@ op-sepolia-deploy:
 	cd SmartContract && rm -rf ignition/deployments && npx hardhat ignition deploy ./ignition/modules/Registry.ts --network sepolia
 # Compile smart contract
 comp-sol:
-	cd SmartContract && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi
+	cd SmartContract && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi && cd ../Server && abigen --abi abi/Registry.abi --bin abi/Registry.bin --pkg ethereum --out ethereum/registry.go

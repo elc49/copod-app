@@ -4,7 +4,7 @@
   "description": "Land marketplace smart contracts",
   "main": "index.js",
   "scripts": {
-    "test": "REPORT_GAS=true hardhat test && hardhat coverage"
+    "test": "hardhat test"
   },
   "author": "Chanzu Lomolo",
   "license": "ISC",
