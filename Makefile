@@ -28,8 +28,8 @@ op-sepolia-deploy:
 
 # Make registry contract
 registry-contract:
-	cd SmartContract && npx hardhat compile && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../Server/abi && cd ../Server && abigen --abi abi/Registry.abi --bin abi/Registry.bin --pkg registry --out contracts/registry/registry.go
+	cd SmartContract && npx hardhat compile && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Registry.sol -o ../SmartContract/ignition/abi && cd ../Server && abigen --abi ../SmartContract/ignition/abi/Registry.abi --bin ../SmartContract/ignition/abi/Registry.bin --pkg registry --out contracts/registry/registry.go
 
 # Make land contract
 land-contract:
-	cd SmartContract && npx hardhat compile && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Land.sol -o ../Server/abi && cd ../Server && abigen --abi abi/Land.abi --bin abi/Land.bin --pkg land --out contracts/land/land.go
+	cd SmartContract && npx hardhat compile && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Land.sol -o ../SmartContract/ignition/abi && cd ../Server && abigen --abi ../SmartContract/ignition/abi/Land.abi --bin ../SmartContract/ignition/abi/Land.bin --pkg land --out contracts/land/land.go
