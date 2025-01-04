@@ -1,7 +1,8 @@
-package registry
+package contracts
 
 import (
 	"github.com/elc49/copod/config"
+	"github.com/elc49/copod/contracts/registry"
 	"github.com/elc49/copod/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -9,7 +10,7 @@ import (
 
 var (
 	client           *ethclient.Client
-	registryContract *Registry
+	registryContract *registry.Registry
 )
 
 type ethBackend struct{}
@@ -26,7 +27,7 @@ func NewEthBackend() {
 	client = conn
 
 	// Registry contract instance
-	r, err := NewRegistry(common.HexToAddress(config.C.Ethereum.RegistryContractAddress), conn)
+	r, err := registry.NewRegistry(common.HexToAddress(config.C.Ethereum.RegistryContractAddress), conn)
 	if err != nil {
 		log.WithError(err).Fatalln("registry:Failed to instantiate a Registry contract")
 	} else {
@@ -40,6 +41,6 @@ func GetEthClient() *ethclient.Client {
 	return client
 }
 
-func GetRegistryContract() *Registry {
+func GetRegistryContract() *registry.Registry {
 	return registryContract
 }

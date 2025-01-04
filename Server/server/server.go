@@ -13,7 +13,7 @@ import (
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/config/postgres"
-	registry "github.com/elc49/copod/contract"
+	"github.com/elc49/copod/contracts"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/handlers"
 	"github.com/elc49/copod/handlers/webhook"
@@ -139,5 +139,5 @@ func (s *Server) IpinfoService() {
 }
 
 func (s *Server) NewEthereumService() {
-	registry.NewEthBackend()
+	contracts.NewEthBackend()
 }
