@@ -132,6 +132,11 @@ func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context,
 	return r.onboardingController.GetOnboardingByEmailAndVerification(ctx, args)
 }
 
+// GetIsTitleVerified is the resolver for the getIsTitleVerified field.
+func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) (bool, error) {
+	return false, nil
+}
+
 // PaymentUpdate is the resolver for the paymentUpdate field.
 func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error) {
 	ch := make(chan *model.PaymentUpdate)

@@ -153,6 +153,7 @@ type Query {
   getSupportingDocById(id: UUID!): SupportingDoc!
   getDisplayPictureById(id: UUID!): DisplayPicture!
   getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
+  getIsTitleVerified(titleNo: String!): Boolean!
 }
 
 type Mutation {
