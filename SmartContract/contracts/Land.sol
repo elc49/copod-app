@@ -4,7 +4,6 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {Math} from "@openzeppelin/contracts/utils/math/Math.sol";
 
 // Land parcel
 struct LandDetails {
@@ -13,25 +12,16 @@ struct LandDetails {
     string symbol;
     address payable owner;
     uint256 tokenId;
+    uint256 registration;
 }
 
 contract Land is ERC721, Ownable {
-    using Math for uint256;
-
     // Land details
     LandDetails private land;
 
-    // Events
-    event GrantSize(address owner, uint256 size);
-    event ReclaimSize(address owner, uint256 size);
-
-    // Errors
-    error TrySubtract(uint256 size);
-    error TryAdd(uint256 size);
-
-    constructor(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_) ERC721(titleNo_, symbol_) Ownable(owner_) {
-        land = LandDetails(titleNo_, size_, symbol_, payable(owner_), tokenId_);
-        // Transfer titleNo_ to owner_
+    constructor(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_, uint256 registration_) ERC721(titleNo_, symbol_) Ownable(owner_) {
+        land = LandDetails(titleNo_, size_, symbol_, payable(owner_), tokenId_, registration_);
+        // Transfer tokenId_ to owner_
         _safeMint(owner_, tokenId_);
     }
 
@@ -40,4 +30,3 @@ contract Land is ERC721, Ownable {
         return land;
     }
 }
-

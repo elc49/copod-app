@@ -25,7 +25,8 @@ describe("Registry", () => {
 
   describe("register", async () => {
     it("register success", async () => {
-      await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size)
+      const registration = Date.now()
+      await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size, registration)
 
       landContract = (await ethers.getContractFactory("Land")).attach(await registryContract.getLandERC721Contract(land.titleNo))
       const result = await landContract.getLand()
@@ -36,11 +37,12 @@ describe("Registry", () => {
       expect(result.symbol).to.be.equal(land.unit)
       expect(count).to.be.equal(1)
       expect(countLands).to.be.equal(1)
+      expect(result.registration).to.be.equal(registration)
     })
 
     it("Dont't register same land parcel", async () => {
       await expect(
-        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34)
+        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, Date.now())
       ).to.be.reverted
     })
 
