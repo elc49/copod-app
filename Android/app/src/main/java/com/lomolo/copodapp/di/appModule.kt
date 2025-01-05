@@ -10,6 +10,7 @@ import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.rest.getRestService
 import com.lomolo.copodapp.retrofit.getRestApiClient
+import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.MarketViewModel
@@ -38,4 +39,5 @@ val appModule = module {
     viewModel { MpesaViewModel(get(), get(), get()) }
     viewModel { OnboardingViewModel(get(), get(), get()) }
     viewModel { SearchLandViewModel(get()) }
+    viewModel { LandTitleDetailsViewModel(get()) }
 }

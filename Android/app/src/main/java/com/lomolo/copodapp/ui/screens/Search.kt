@@ -144,7 +144,7 @@ fun SearchLandTopBar(
                         },
                         modifier = Modifier
                             .clickable {
-                                onNavigateToFoundLand(FoundLandScreenDestination.route)
+                                onNavigateToFoundLand("${FoundLandScreenDestination.route}/${searchQuery}")
                             }
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp))

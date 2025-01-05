@@ -200,8 +200,15 @@ fun NavigationHost(
                 onNavigateTo = onNavigateTo,
                 onNavigateToFoundLand = { navHostController.navigate(it) })
         }
-        composable(route = FoundLandScreenDestination.route) {
-            FoundLandScreen()
+        composable(
+            route = FoundLandScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(FoundLandScreenDestination.TITLE_NO_ARG) {
+                type = NavType.StringType
+            }),
+        ) {
+            FoundLandScreen(
+                onGoBack = { navHostController.popBackStack() }
+            )
         }
     }
 }
