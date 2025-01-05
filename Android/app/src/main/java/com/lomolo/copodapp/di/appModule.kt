@@ -15,6 +15,7 @@ import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.MarketViewModel
 import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.state.viewmodels.SearchLandViewModel
 import com.lomolo.copodapp.web3.getWeb3AuthImpl
 import com.squareup.moshi.Moshi
 import okhttp3.OkHttpClient
@@ -36,4 +37,5 @@ val appModule = module {
     viewModel { LandViewModel(get()) }
     viewModel { MpesaViewModel(get(), get(), get()) }
     viewModel { OnboardingViewModel(get(), get(), get()) }
+    viewModel { SearchLandViewModel(get()) }
 }

@@ -74,4 +74,7 @@
     <string name="had_usage_rights">%1$s had usage rights</string>
     <string name="total">Total: %1$s</string>
     <string name="previous_users">Previous Users</string>
+    <string name="no_search_results">Your search did not return any results.</string>
+    <string name="no_results_found">No results found</string>
+    <string name="found_this_title">We found this land title</string>
 </resources>
