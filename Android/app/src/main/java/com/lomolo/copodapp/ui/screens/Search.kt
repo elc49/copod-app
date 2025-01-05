@@ -57,11 +57,13 @@ fun SearchLandScreen(
     modifier: Modifier = Modifier,
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
+    onNavigateToFoundLand: (String) -> Unit,
     viewModel: SearchLandViewModel = koinViewModel<SearchLandViewModel>(),
 ) {
     Scaffold(topBar = {
         SearchLandTopBar(
             viewModel = viewModel,
+            onNavigateToFoundLand = onNavigateToFoundLand,
         )
     }, bottomBar = {
         BottomNavBar(currentDestination = currentDestination, onNavigateTo = onNavigateTo)
@@ -79,6 +81,7 @@ fun SearchLandScreen(
 fun SearchLandTopBar(
     modifier: Modifier = Modifier,
     viewModel: SearchLandViewModel,
+    onNavigateToFoundLand: (String) -> Unit,
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -140,7 +143,9 @@ fun SearchLandTopBar(
                             )
                         },
                         modifier = Modifier
-                            .clickable {}
+                            .clickable {
+                                onNavigateToFoundLand(FoundLandScreenDestination.route)
+                            }
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp, vertical = 4.dp))
                 } else {
