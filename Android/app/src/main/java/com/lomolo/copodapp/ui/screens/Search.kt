@@ -130,7 +130,7 @@ fun SearchLandTopBar(
             Column(
                 Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                if (searchResult) {
+                if (!searchResult) {
                     ListItem(headlineContent = { Text(searchQuery) },
                         supportingContent = { Text(stringResource(R.string.found_this_title)) },
                         colors = ListItemDefaults.colors(containerColor = Color.Transparent),

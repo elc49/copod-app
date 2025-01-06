@@ -3,6 +3,7 @@ package com.lomolo.copodapp.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -59,22 +60,25 @@ fun FoundLandScreen(
                     .padding(innerPadding)
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text(
-                    stringResource(R.string.users_with_usage_rights),
-                    style = MaterialTheme.typography.titleLarge,
-                )
                 // TODO style with box shadow
-                Text(
-                    "No users"
-                )
-                Text(
-                    stringResource(R.string.land_registration_date),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(.5f),
+                ) {
+                    Text(
+                        stringResource(R.string.users_with_usage_rights),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    Text("No users")
+                }
                 Column {
+                    Text(
+                        stringResource(R.string.land_registration_date),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
                     Text(
                         "January 1, 2024",
                         style = MaterialTheme.typography.titleSmall,
@@ -85,13 +89,11 @@ fun FoundLandScreen(
                         color = MaterialTheme.colorScheme.secondary,
                     )
                 }
-
-                Text(
-                    stringResource(R.string.previous_users),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-
                 Column {
+                    Text(
+                        stringResource(R.string.previous_users),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
                     Text(
                         stringResource(R.string.total, users),
                         style = MaterialTheme.typography.titleSmall,
