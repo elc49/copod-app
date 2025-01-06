@@ -1,0 +1,3 @@
+query GetIsTitleVerified($titleNo: String!) {
+    getIsTitleVerified(titleNo: $titleNo)
+}

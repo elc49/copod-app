@@ -188,20 +188,27 @@ fun NavigationHost(
             )
         }
         composable(route = AddLandScreenDestination.route) {
-            AddLandScreen(
-                viewModel = onboardingViewModel,
+            AddLandScreen(viewModel = onboardingViewModel,
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
                 onClickAddLand = {
                     navHostController.navigate(UploadLandTitleScreenDestination.route)
-                }
-            )
+                })
         }
         composable(route = SearchScreenDestination.route) {
-            SearchLandScreen(currentDestination = it.destination, onNavigateTo = onNavigateTo)
+            SearchLandScreen(currentDestination = it.destination,
+                onNavigateTo = onNavigateTo,
+                onNavigateToFoundLand = { navHostController.navigate(it) })
         }
-        composable(route = FoundLandScreenDestination.route) {
-            FoundLandScreen()
+        composable(
+            route = FoundLandScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(FoundLandScreenDestination.TITLE_NO_ARG) {
+                type = NavType.StringType
+            }),
+        ) {
+            FoundLandScreen(
+                onGoBack = { navHostController.popBackStack() }
+            )
         }
     }
 }

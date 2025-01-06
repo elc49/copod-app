@@ -67,11 +67,14 @@
     <string name="verify_your_id_copy_text">We\'ll need a photo of your government-issued ID. Make sure the document is visible.</string>
     <string name="upload_dp_copy_text">Let people you transact with know who they are talking to. We recommend a clear, professional photo.</string>
     <string name="continue_text">Continue</string>
-    <string name="search_land">Search for land</string>
+    <string name="search_land">Search land title</string>
     <string name="users_with_usage_rights">Users with Usage Rights</string>
     <string name="land_registration_date">Land Registration Date</string>
     <string name="land_registered_date">Land registered on this date</string>
     <string name="had_usage_rights">%1$s had usage rights</string>
     <string name="total">Total: %1$s</string>
     <string name="previous_users">Previous Users</string>
+    <string name="no_search_results">Your search did not return any results.</string>
+    <string name="no_results_found">No results found</string>
+    <string name="found_this_title">We found this land title</string>
 </resources>

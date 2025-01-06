@@ -6,6 +6,7 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.lomolo.copodapp.ChargeMpesaMutation
 import com.lomolo.copodapp.CreateOnboardingMutation
+import com.lomolo.copodapp.GetIsTitleVerifiedQuery
 import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
@@ -21,6 +22,7 @@ interface IGraphQL {
     fun paymentUpdate(email: String): Flow<ApolloResponse<PaymentUpdateSubscription.Data>>
     suspend fun getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput): ApolloResponse<GetOnboardingByEmailAndVerificationQuery.Data>
     suspend fun createOnboarding(input: CreateOnboardingInput): ApolloResponse<CreateOnboardingMutation.Data>
+    suspend fun getIsTitleVerified(titleNo: String): ApolloResponse<GetIsTitleVerifiedQuery.Data>
 }
 
 class GraphQLServiceImpl(
@@ -45,4 +47,9 @@ class GraphQLServiceImpl(
 
     override suspend fun createOnboarding(input: CreateOnboardingInput) =
         apolloClient.mutation(CreateOnboardingMutation(input)).execute()
+
+    override suspend fun getIsTitleVerified(titleNo: String) =
+        apolloClient.query(GetIsTitleVerifiedQuery(titleNo)).fetchPolicy(
+            FetchPolicy.NetworkFirst
+        ).execute()
 }
