@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 
 interface Props {
-  registerLand: (titleId: string, size: number, unit: string, status: string) => void
+  registerLand: (titleId: string, size: number, unit: string, status: string, registration: number) => void
   registering: boolean
 }
 
@@ -32,13 +32,15 @@ function LandDetails({ registerLand, registering }: Props) {
       size: "",
       unit: undefined,
       status: undefined,
+      registration: undefined,
     },
   })
 
   const onSubmit = (values: any) => {
     if (!registering) {
       try {
-        registerLand(values.titleId, values.size, values.unit[0], values.status[0])
+        const registration = Date.parse(values.registration)
+        registerLand(values.titleId, values.size, values.unit[0], values.status[0], registration) 
       } catch (e) {
         console.error(e)
       }
@@ -123,6 +125,17 @@ function LandDetails({ registerLand, registering }: Props) {
                 </SelectContent>
               </SelectRoot>
             )}
+          />
+        </Field>
+        <Field
+          required
+          label="Registration date"
+          invalid={!!errors.registration}
+          errorText={errors.registration?.message}
+        >
+          <Input
+            {...register("registration")}
+            type="date"
           />
         </Field>
         <Button loading={registering} type="submit">

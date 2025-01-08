@@ -7,6 +7,7 @@ export const landDetailsSchema = yup.object({
   size: yup.string().required(),
   unit: yup.array().required(),
   status: yup.array().required(),
+  registration: yup.date().required(),
 })
 
 export const units = createListCollection({
