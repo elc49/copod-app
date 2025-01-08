@@ -49,11 +49,13 @@ describe("Registry", () => {
 
     it("Query land title", async () => {
       const address = await registryContract.getLandERC721Contract(land.titleNo)
+
       expect(address).to.not.be.equal(ZERO_ADDRESS)
     })
 
     it("Query non-existent land title", async () => {
       const address = await registryContract.getLandERC721Contract("FE/E32")
+
       expect(address).to.be.equal(ZERO_ADDRESS)
     })
   })
