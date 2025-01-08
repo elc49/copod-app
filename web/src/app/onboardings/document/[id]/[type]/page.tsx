@@ -174,7 +174,7 @@ function Page() {
         address: registryContractAddress.default["Registry#Registry"],
         abi: abi?.abi,
         functionName: "register",
-        args: [title, unit, account?.[0], parseUnits(size.toString(), 10), registration],
+        args: [title.toLowerCase(), unit, account?.[0], parseUnits(size.toString(), 10), registration],
       })
       const hash = await privateClient(provider!).writeContract(request)
       const receipt = await publicClient(provider!).waitForTransactionReceipt({ hash })
