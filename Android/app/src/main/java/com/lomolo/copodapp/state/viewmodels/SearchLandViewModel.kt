@@ -41,7 +41,7 @@ class SearchLandViewModel(
             searchingLand = SearchingLand.Loading
             viewModelScope.launch {
                 searchingLand = try {
-                    val res = graphqlApiService.getIsTitleVerified(_searchQuery.value).dataOrThrow()
+                    val res = graphqlApiService.getIsTitleVerified(_searchQuery.value.lowercase()).dataOrThrow()
                     _searchResult.update { res.getIsTitleVerified }
                     SearchingLand.Success
                 } catch (e: ApolloException) {
