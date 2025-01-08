@@ -83,6 +83,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
         }
       } catch (e) {
         console.error(e)
+        logout()
       } finally {
         setInitializing(false)
       }
@@ -132,6 +133,7 @@ const WalletProvider = ({ children }: PropsWithChildren) => {
         setUser(null)
         setIsLoggedIn(false)
         setInitializing(false)
+        router.replace("/")
       } catch (e) {
         console.error(e)
       }

@@ -163,7 +163,7 @@ function Page() {
   }
 
   // TODO: break this down further to simplify
-  const registerLand = async (title: string, size: number, unit: string, status: string) => {
+  const registerLand = async (title: string, size: number, unit: string, status: string, registration: number) => {
     try {
       setRegistering(true)
       const registryContractAddress = await import("../../../../../../../SmartContract/ignition/deployments/chain-11155420/deployed_addresses.json")
@@ -174,7 +174,7 @@ function Page() {
         address: registryContractAddress.default["Registry#Registry"],
         abi: abi?.abi,
         functionName: "register",
-        args: [title, unit, account?.[0], parseUnits(size.toString(), 10)],
+        args: [title, unit, account?.[0], parseUnits(size.toString(), 10), registration],
       })
       const hash = await privateClient(provider!).writeContract(request)
       const receipt = await publicClient(provider!).waitForTransactionReceipt({ hash })
