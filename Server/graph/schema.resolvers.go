@@ -135,7 +135,7 @@ func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context,
 
 // GetIsTitleVerified is the resolver for the getIsTitleVerified field.
 func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) (bool, error) {
-	value, err := r.registryContract.GetLandERC721Contract(nil, titleNo)
+	value, err := r.ethBackend.GetRegistryContract().GetLandERC721Contract(nil, titleNo)
 	if err != nil {
 		r.log.WithError(err).WithFields(logrus.Fields{"title_no": titleNo}).Errorf("resolver: GetIsTitleVerified: GetLandERC721Contract")
 		return false, err
@@ -146,6 +146,16 @@ func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) 
 	}
 
 	return true, nil
+}
+
+// GetLandTitleDetails is the resolver for the getLandTitleDetails field.
+func (r *queryResolver) GetLandTitleDetails(ctx context.Context, titleNo string) (*model.LandTitleDetails, error) {
+	details, err := r.ethBackend.GetLandTitleDetails(titleNo)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.LandTitleDetails{TitleNo: details.TitleNo}, nil
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

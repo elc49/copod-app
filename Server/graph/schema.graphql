@@ -103,6 +103,11 @@ type PaymentUpdate {
   email: String!
 }
 
+# LandTitleDetails
+type LandTitleDetails {
+  titleNo: String!
+}
+
 input PayWithMpesaInput {
   reason: PaymentReason!
   phone: String!
@@ -154,6 +159,7 @@ type Query {
   getDisplayPictureById(id: UUID!): DisplayPicture!
   getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
   getIsTitleVerified(titleNo: String!): Boolean!
+  getLandTitleDetails(titleNo: String!): LandTitleDetails!
 }
 
 type Mutation {
