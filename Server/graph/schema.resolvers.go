@@ -8,6 +8,7 @@ import (
 	"context"
 
 	"github.com/elc49/copod/cache"
+	"github.com/elc49/copod/contracts"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
 	sql "github.com/elc49/copod/sql/sqlc"
@@ -134,7 +135,17 @@ func (r *queryResolver) GetOnboardingByEmailAndVerification(ctx context.Context,
 
 // GetIsTitleVerified is the resolver for the getIsTitleVerified field.
 func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) (bool, error) {
-	return false, nil
+	value, err := r.registryContract.GetLandERC721Contract(nil, titleNo)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"title_no": titleNo}).Errorf("resolver: GetIsTitleVerified: GetLandERC721Contract")
+		return false, err
+	}
+
+	if value.String() == contracts.ZERO_ADDRESS {
+		return false, nil
+	}
+
+	return true, nil
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

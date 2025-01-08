@@ -8,6 +8,10 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+const (
+	ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
+)
+
 var (
 	client           *ethclient.Client
 	registryContract *registry.Registry
