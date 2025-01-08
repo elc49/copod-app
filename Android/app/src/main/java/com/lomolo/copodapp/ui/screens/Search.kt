@@ -33,7 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -128,12 +127,16 @@ fun SearchLandTopBar(
         ) {
             // TODO: show list of found parcels
             Column(
-                Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
+                Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (searchResult) {
-                    ListItem(headlineContent = { Text(searchQuery) },
+                    ListItem(headlineContent = {
+                        Text(
+                            searchQuery, style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                         supportingContent = { Text(stringResource(R.string.found_this_title)) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                         leadingContent = {
                             Icon(
                                 Icons.TwoTone.CheckCircle,
@@ -144,10 +147,10 @@ fun SearchLandTopBar(
                         },
                         modifier = Modifier
                             .clickable {
-                                onNavigateToFoundLand("${FoundLandScreenDestination.route}/${searchQuery}")
+                                onNavigateToFoundLand(FoundLandScreenDestination.route)
                             }
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp))
+                            .padding(horizontal = 4.dp, vertical = 4.dp))
                 } else {
                     if (searchQuery.isNotEmpty()) {
                         Text(

@@ -20,29 +20,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
-import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
-import org.koin.androidx.compose.koinViewModel
 
 object FoundLandScreenDestination : Navigation {
     override val title = null
     override val route = "found_land"
-    const val TITLE_NO_ARG = "titleNo"
-    val routeWithArgs = "$route/{$TITLE_NO_ARG}"
 }
 
 @Composable
 fun FoundLandScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    viewModel: LandTitleDetailsViewModel = koinViewModel<LandTitleDetailsViewModel>(),
 ) {
-    val users = 100
-    val titleNo = viewModel.titleNo
-
     Scaffold(topBar = {
-        TopBar(title = { Text(titleNo) }, navigationIcon = {
+        TopBar(title = { Text(stringResource(R.string.land_title_details)) }, navigationIcon = {
             IconButton(onClick = onGoBack) {
                 Icon(
                     Icons.AutoMirrored.TwoTone.ArrowBack,
@@ -58,7 +50,7 @@ fun FoundLandScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .padding(16.dp)
+                    .padding(8.dp)
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -95,11 +87,11 @@ fun FoundLandScreen(
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Text(
-                        stringResource(R.string.total, users),
+                        stringResource(R.string.total, 0),
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        stringResource(R.string.had_usage_rights, users),
+                        stringResource(R.string.had_usage_rights, 0),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary,
                     )

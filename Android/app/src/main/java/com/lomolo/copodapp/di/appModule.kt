@@ -39,5 +39,5 @@ val appModule = module {
     viewModel { MpesaViewModel(get(), get(), get()) }
     viewModel { OnboardingViewModel(get(), get(), get()) }
     viewModel { SearchLandViewModel(get()) }
-    viewModel { LandTitleDetailsViewModel(get()) }
+    viewModel { LandTitleDetailsViewModel() }
 }
