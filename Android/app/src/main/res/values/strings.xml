@@ -78,4 +78,5 @@
     <string name="no_results_found">No results found</string>
     <string name="found_this_title">We found this land title</string>
     <string name="land_title_details">Land Title Detail</string>
+    <string name="no_history">No history</string>
 </resources>

@@ -90,8 +90,13 @@ fun FoundLandScreen(
                         stringResource(R.string.total, 0),
                         style = MaterialTheme.typography.titleSmall,
                     )
-                    Text(
+                    /*Text(
                         stringResource(R.string.had_usage_rights, 0),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.secondary,
+                    )*/
+                    Text(
+                        stringResource(R.string.no_history),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.secondary,
                     )
