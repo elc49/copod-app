@@ -15,6 +15,7 @@ const land: Land = {
   size: 32,
   unit: "HA",
 }
+const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 describe("Registry", () => {
   before(async () => {
@@ -44,6 +45,16 @@ describe("Registry", () => {
       await expect(
         registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, Date.now())
       ).to.be.reverted
+    })
+
+    it("Query land title", async () => {
+      const address = await registryContract.getLandERC721Contract(land.titleNo)
+      expect(address).to.not.be.equal(ZERO_ADDRESS)
+    })
+
+    it("Query non-existent land title", async () => {
+      const address = await registryContract.getLandERC721Contract("FE/E32")
+      expect(address).to.be.equal(ZERO_ADDRESS)
     })
   })
 })
