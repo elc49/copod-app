@@ -6,7 +6,7 @@ package graph
 
 import (
 	"context"
-	"fmt"
+	"time"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/contracts"
@@ -20,8 +20,10 @@ import (
 )
 
 // Registration is the resolver for the registration field.
-func (r *landDetailsResolver) Registration(ctx context.Context, obj *land.LandDetails) (int, error) {
-	panic(fmt.Errorf("not implemented: Registration - registration"))
+func (r *landDetailsResolver) Registration(ctx context.Context, obj *land.LandDetails) (string, error) {
+	t := time.UnixMilli(obj.Registration.Int64())
+	dateString := t.Format("January 2, 2006")
+	return dateString, nil
 }
 
 // ChargeMpesa is the resolver for the chargeMpesa field.

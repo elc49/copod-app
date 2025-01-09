@@ -49,7 +49,7 @@ input GetUserLandsInput {
 type LandDetails {
   titleNo: String!
 
-  registration: Int!
+  registration: String!
 }
 
 type Mutation {

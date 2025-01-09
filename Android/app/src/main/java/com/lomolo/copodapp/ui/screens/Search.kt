@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.SearchLandViewModel
 import com.lomolo.copodapp.state.viewmodels.SearchingLand
 import com.lomolo.copodapp.ui.common.BottomNavBar
@@ -58,11 +59,13 @@ fun SearchLandScreen(
     onNavigateTo: (String) -> Unit,
     onNavigateToFoundLand: (String) -> Unit,
     viewModel: SearchLandViewModel = koinViewModel<SearchLandViewModel>(),
+    landTitleViewModel: LandTitleDetailsViewModel,
 ) {
     Scaffold(topBar = {
         SearchLandTopBar(
             viewModel = viewModel,
             onNavigateToFoundLand = onNavigateToFoundLand,
+            landTitleViewModel = landTitleViewModel,
         )
     }, bottomBar = {
         BottomNavBar(currentDestination = currentDestination, onNavigateTo = onNavigateTo)
@@ -81,6 +84,7 @@ fun SearchLandTopBar(
     modifier: Modifier = Modifier,
     viewModel: SearchLandViewModel,
     onNavigateToFoundLand: (String) -> Unit,
+    landTitleViewModel: LandTitleDetailsViewModel,
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -97,7 +101,7 @@ fun SearchLandTopBar(
                 .semantics { traversalIndex = 0f },
             inputField = {
                 SearchBarDefaults.InputField(query = searchQuery,
-                    onSearch = { viewModel.searchLandTitle() },
+                    onSearch = { viewModel.searchLandTitle { landTitleViewModel.getLandTitleDetails(it) } },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text(stringResource(R.string.search_land)) },
@@ -120,7 +124,9 @@ fun SearchLandTopBar(
                             }
                         }
                     },
-                    onQueryChange = { viewModel.updateSearchQuery(it) })
+                    onQueryChange = {
+                        viewModel.updateSearchQuery(it)
+                    })
             },
             onExpandedChange = { expanded = it },
             expanded = expanded,

@@ -152,7 +152,7 @@ type ComplexityRoot struct {
 }
 
 type LandDetailsResolver interface {
-	Registration(ctx context.Context, obj *land.LandDetails) (int, error)
+	Registration(ctx context.Context, obj *land.LandDetails) (string, error)
 }
 type MutationResolver interface {
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
@@ -1589,9 +1589,9 @@ func (ec *executionContext) _LandDetails_registration(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_LandDetails_registration(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1601,7 +1601,7 @@ func (ec *executionContext) fieldContext_LandDetails_registration(_ context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7932,21 +7932,6 @@ func (ec *executionContext) unmarshalNGetOnboardingByEmailAndVerificationInput2g
 func (ec *executionContext) unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetUserLandsInput(ctx context.Context, v interface{}) (model.GetUserLandsInput, error) {
 	res, err := ec.unmarshalInputGetUserLandsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
-	res, err := graphql.UnmarshalInt(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	res := graphql.MarshalInt(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
 }
 
 func (ec *executionContext) marshalNLandDetails2githubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v land.LandDetails) graphql.Marshaler {

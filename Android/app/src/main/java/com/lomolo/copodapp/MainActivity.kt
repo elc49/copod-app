@@ -25,6 +25,7 @@ import androidx.navigation.compose.rememberNavController
 import com.lomolo.copodapp.di.appModule
 import com.lomolo.copodapp.ui.theme.CopodAppTheme
 import com.lomolo.copodapp.state.viewmodels.GetDeviceDetails
+import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import org.koin.android.ext.koin.androidContext
@@ -34,6 +35,7 @@ import org.koin.core.context.startKoin
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
     private val onboardingViewModel: OnboardingViewModel by viewModel()
+    private val landTitleViewModel: LandTitleDetailsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +54,7 @@ class MainActivity : ComponentActivity() {
                             rememberNavController(),
                             mainViewModel = mainViewModel,
                             onboardingViewModel = onboardingViewModel,
+                            landTitleViewModel = landTitleViewModel,
                         )
 
                         GetDeviceDetails.Loading -> Column(
