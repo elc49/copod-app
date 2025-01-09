@@ -36,14 +36,14 @@ class SearchLandViewModel(
         if (searchingLand !is SearchingLand.Loading) _searchQuery.update { query }
     }
 
-    fun searchLandTitle() {
+    fun searchLandTitle(cb: (String) -> Unit) {
         if (searchingLand !is SearchingLand.Loading && _searchQuery.value.isNotEmpty()) {
             searchingLand = SearchingLand.Loading
             viewModelScope.launch {
                 searchingLand = try {
                     val res = graphqlApiService.getIsTitleVerified(_searchQuery.value.lowercase()).dataOrThrow()
                     _searchResult.update { res.getIsTitleVerified }
-                    SearchingLand.Success
+                    SearchingLand.Success.also { cb(_searchQuery.value.lowercase()) }
                 } catch (e: ApolloException) {
                     e.printStackTrace()
                     Log.d(TAG, e.message ?: "Something went wrong")

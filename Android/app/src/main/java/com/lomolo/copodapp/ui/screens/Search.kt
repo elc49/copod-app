@@ -33,7 +33,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
@@ -41,6 +40,7 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.SearchLandViewModel
 import com.lomolo.copodapp.state.viewmodels.SearchingLand
 import com.lomolo.copodapp.ui.common.BottomNavBar
@@ -59,11 +59,13 @@ fun SearchLandScreen(
     onNavigateTo: (String) -> Unit,
     onNavigateToFoundLand: (String) -> Unit,
     viewModel: SearchLandViewModel = koinViewModel<SearchLandViewModel>(),
+    landTitleViewModel: LandTitleDetailsViewModel,
 ) {
     Scaffold(topBar = {
         SearchLandTopBar(
             viewModel = viewModel,
             onNavigateToFoundLand = onNavigateToFoundLand,
+            landTitleViewModel = landTitleViewModel,
         )
     }, bottomBar = {
         BottomNavBar(currentDestination = currentDestination, onNavigateTo = onNavigateTo)
@@ -82,6 +84,7 @@ fun SearchLandTopBar(
     modifier: Modifier = Modifier,
     viewModel: SearchLandViewModel,
     onNavigateToFoundLand: (String) -> Unit,
+    landTitleViewModel: LandTitleDetailsViewModel,
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -98,7 +101,7 @@ fun SearchLandTopBar(
                 .semantics { traversalIndex = 0f },
             inputField = {
                 SearchBarDefaults.InputField(query = searchQuery,
-                    onSearch = { viewModel.searchLandTitle() },
+                    onSearch = { viewModel.searchLandTitle { landTitleViewModel.getLandTitleDetails(it) } },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text(stringResource(R.string.search_land)) },
@@ -121,19 +124,25 @@ fun SearchLandTopBar(
                             }
                         }
                     },
-                    onQueryChange = { viewModel.updateSearchQuery(it) })
+                    onQueryChange = {
+                        viewModel.updateSearchQuery(it)
+                    })
             },
             onExpandedChange = { expanded = it },
             expanded = expanded,
         ) {
             // TODO: show list of found parcels
             Column(
-                Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
+                Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 if (searchResult) {
-                    ListItem(headlineContent = { Text(searchQuery) },
+                    ListItem(headlineContent = {
+                        Text(
+                            searchQuery, style = MaterialTheme.typography.titleMedium
+                        )
+                    },
                         supportingContent = { Text(stringResource(R.string.found_this_title)) },
-                        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                        colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.secondaryContainer),
                         leadingContent = {
                             Icon(
                                 Icons.TwoTone.CheckCircle,
@@ -144,10 +153,10 @@ fun SearchLandTopBar(
                         },
                         modifier = Modifier
                             .clickable {
-                                onNavigateToFoundLand("${FoundLandScreenDestination.route}/${searchQuery}")
+                                onNavigateToFoundLand(FoundLandScreenDestination.route)
                             }
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp))
+                            .padding(horizontal = 4.dp, vertical = 4.dp))
                 } else {
                     if (searchQuery.isNotEmpty()) {
                         Text(

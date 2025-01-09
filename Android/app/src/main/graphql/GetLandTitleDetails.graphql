@@ -1,0 +1,6 @@
+query GetLandTitleDetails($titleNo: String!) {
+    getLandTitleDetails(titleNo: $titleNo) {
+        titleNo
+        registration
+    }
+}

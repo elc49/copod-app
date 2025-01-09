@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.lomolo.copodapp.state.viewmodels.InitializeSdk
+import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
@@ -60,6 +61,7 @@ fun NavigationHost(
     navHostController: NavHostController,
     mainViewModel: MainViewModel,
     onboardingViewModel: OnboardingViewModel,
+    landTitleViewModel: LandTitleDetailsViewModel,
 ) {
     val isLoggedIn by mainViewModel.isLoggedIn.collectAsState()
     val startRoute = when (mainViewModel.initializeSdk) {
@@ -198,16 +200,14 @@ fun NavigationHost(
         composable(route = SearchScreenDestination.route) {
             SearchLandScreen(currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
-                onNavigateToFoundLand = { navHostController.navigate(it) })
+                onNavigateToFoundLand = { navHostController.navigate(it) },
+                landTitleViewModel = landTitleViewModel,
+            )
         }
-        composable(
-            route = FoundLandScreenDestination.routeWithArgs,
-            arguments = listOf(navArgument(FoundLandScreenDestination.TITLE_NO_ARG) {
-                type = NavType.StringType
-            }),
-        ) {
+        composable(route = FoundLandScreenDestination.route) {
             FoundLandScreen(
-                onGoBack = { navHostController.popBackStack() }
+                onGoBack = { navHostController.popBackStack() },
+                viewModel = landTitleViewModel,
             )
         }
     }

@@ -46,6 +46,12 @@ input GetUserLandsInput {
   verification: Verification!
 }
 
+type LandDetails {
+  titleNo: String!
+
+  registration: String!
+}
+
 type Mutation {
   chargeMpesa(input: PayWithMpesaInput!): String
 
@@ -154,6 +160,8 @@ type Query {
   getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
 
   getIsTitleVerified(titleNo: String!): Boolean!
+
+  getLandTitleDetails(titleNo: String!): LandDetails!
 }
 
 type Subscription {

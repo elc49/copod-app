@@ -16,6 +16,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
+	"github.com/elc49/copod/contracts/land"
 	"github.com/elc49/copod/graph/model"
 	"github.com/google/uuid"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -42,6 +43,7 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	LandDetails() LandDetailsResolver
 	Mutation() MutationResolver
 	Onboarding() OnboardingResolver
 	Payment() PaymentResolver
@@ -60,6 +62,11 @@ type ComplexityRoot struct {
 		URL       func(childComplexity int) int
 		UpdatedAt func(childComplexity int) int
 		Verified  func(childComplexity int) int
+	}
+
+	LandDetails struct {
+		Registration func(childComplexity int) int
+		TitleNo      func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -104,6 +111,7 @@ type ComplexityRoot struct {
 	Query struct {
 		GetDisplayPictureByID               func(childComplexity int, id uuid.UUID) int
 		GetIsTitleVerified                  func(childComplexity int, titleNo string) int
+		GetLandTitleDetails                 func(childComplexity int, titleNo string) int
 		GetOnboardingByEmailAndVerification func(childComplexity int, input model.GetOnboardingByEmailAndVerificationInput) int
 		GetPaymentsByStatus                 func(childComplexity int, status model.PaymentStatus) int
 		GetSupportingDocByID                func(childComplexity int, id uuid.UUID) int
@@ -143,6 +151,9 @@ type ComplexityRoot struct {
 	}
 }
 
+type LandDetailsResolver interface {
+	Registration(ctx context.Context, obj *land.LandDetails) (string, error)
+}
 type MutationResolver interface {
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
 	CreateOnboarding(ctx context.Context, input model.CreateOnboardingInput) (*model.Onboarding, error)
@@ -168,6 +179,7 @@ type QueryResolver interface {
 	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (*model.DisplayPicture, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error)
 	GetIsTitleVerified(ctx context.Context, titleNo string) (bool, error)
+	GetLandTitleDetails(ctx context.Context, titleNo string) (*land.LandDetails, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
@@ -233,6 +245,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.DisplayPicture.Verified(childComplexity), true
+
+	case "LandDetails.registration":
+		if e.complexity.LandDetails.Registration == nil {
+			break
+		}
+
+		return e.complexity.LandDetails.Registration(childComplexity), true
+
+	case "LandDetails.titleNo":
+		if e.complexity.LandDetails.TitleNo == nil {
+			break
+		}
+
+		return e.complexity.LandDetails.TitleNo(childComplexity), true
 
 	case "Mutation.chargeMpesa":
 		if e.complexity.Mutation.ChargeMpesa == nil {
@@ -471,6 +497,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetIsTitleVerified(childComplexity, args["titleNo"].(string)), true
+
+	case "Query.getLandTitleDetails":
+		if e.complexity.Query.GetLandTitleDetails == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getLandTitleDetails_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetLandTitleDetails(childComplexity, args["titleNo"].(string)), true
 
 	case "Query.getOnboardingByEmailAndVerification":
 		if e.complexity.Query.GetOnboardingByEmailAndVerification == nil {
@@ -1002,6 +1040,29 @@ func (ec *executionContext) field_Query_getIsTitleVerified_argsTitleNo(
 	return zeroVal, nil
 }
 
+func (ec *executionContext) field_Query_getLandTitleDetails_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getLandTitleDetails_argsTitleNo(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["titleNo"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getLandTitleDetails_argsTitleNo(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("titleNo"))
+	if tmp, ok := rawArgs["titleNo"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
 func (ec *executionContext) field_Query_getOnboardingByEmailAndVerification_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1453,6 +1514,94 @@ func (ec *executionContext) fieldContext_DisplayPicture_updated_at(_ context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LandDetails_titleNo(ctx context.Context, field graphql.CollectedField, obj *land.LandDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LandDetails_titleNo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TitleNo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LandDetails_titleNo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LandDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LandDetails_registration(ctx context.Context, field graphql.CollectedField, obj *land.LandDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LandDetails_registration(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.LandDetails().Registration(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LandDetails_registration(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LandDetails",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3301,6 +3450,67 @@ func (ec *executionContext) fieldContext_Query_getIsTitleVerified(ctx context.Co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getIsTitleVerified_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getLandTitleDetails(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getLandTitleDetails(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetLandTitleDetails(rctx, fc.Args["titleNo"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*land.LandDetails)
+	fc.Result = res
+	return ec.marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getLandTitleDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "titleNo":
+				return ec.fieldContext_LandDetails_titleNo(ctx, field)
+			case "registration":
+				return ec.fieldContext_LandDetails_registration(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LandDetails", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getLandTitleDetails_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6438,6 +6648,81 @@ func (ec *executionContext) _DisplayPicture(ctx context.Context, sel ast.Selecti
 	return out
 }
 
+var landDetailsImplementors = []string{"LandDetails"}
+
+func (ec *executionContext) _LandDetails(ctx context.Context, sel ast.SelectionSet, obj *land.LandDetails) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, landDetailsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("LandDetails")
+		case "titleNo":
+			out.Values[i] = ec._LandDetails_titleNo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "registration":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._LandDetails_registration(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -7003,6 +7288,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getIsTitleVerified(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getLandTitleDetails":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getLandTitleDetails(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -7625,6 +7932,20 @@ func (ec *executionContext) unmarshalNGetOnboardingByEmailAndVerificationInput2g
 func (ec *executionContext) unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetUserLandsInput(ctx context.Context, v interface{}) (model.GetUserLandsInput, error) {
 	res, err := ec.unmarshalInputGetUserLandsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNLandDetails2githubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v land.LandDetails) graphql.Marshaler {
+	return ec._LandDetails(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v *land.LandDetails) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._LandDetails(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNOnboarding2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx context.Context, sel ast.SelectionSet, v model.Onboarding) graphql.Marshaler {
