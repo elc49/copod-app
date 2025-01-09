@@ -45,10 +45,6 @@ type GetUserLandsInput struct {
 	Verification Verification `json:"verification"`
 }
 
-type LandTitleDetails struct {
-	TitleNo string `json:"titleNo"`
-}
-
 type Mutation struct {
 }
 

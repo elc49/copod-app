@@ -6,9 +6,11 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/contracts"
+	"github.com/elc49/copod/contracts/land"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
 	sql "github.com/elc49/copod/sql/sqlc"
@@ -16,6 +18,11 @@ import (
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
+
+// Registration is the resolver for the registration field.
+func (r *landDetailsResolver) Registration(ctx context.Context, obj *land.LandDetails) (int, error) {
+	panic(fmt.Errorf("not implemented: Registration - registration"))
+}
 
 // ChargeMpesa is the resolver for the chargeMpesa field.
 func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
@@ -149,13 +156,13 @@ func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) 
 }
 
 // GetLandTitleDetails is the resolver for the getLandTitleDetails field.
-func (r *queryResolver) GetLandTitleDetails(ctx context.Context, titleNo string) (*model.LandTitleDetails, error) {
+func (r *queryResolver) GetLandTitleDetails(ctx context.Context, titleNo string) (*land.LandDetails, error) {
 	details, err := r.ethBackend.GetLandTitleDetails(titleNo)
 	if err != nil {
 		return nil, err
 	}
 
-	return &model.LandTitleDetails{TitleNo: details.TitleNo}, nil
+	return &land.LandDetails{TitleNo: details.TitleNo, Registration: details.Registration}, nil
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
@@ -180,6 +187,9 @@ func (r *subscriptionResolver) PaymentUpdate(ctx context.Context, email string) 
 	return ch, nil
 }
 
+// LandDetails returns LandDetailsResolver implementation.
+func (r *Resolver) LandDetails() LandDetailsResolver { return &landDetailsResolver{r} }
+
 // Mutation returns MutationResolver implementation.
 func (r *Resolver) Mutation() MutationResolver { return &mutationResolver{r} }
 
@@ -195,6 +205,7 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 // Subscription returns SubscriptionResolver implementation.
 func (r *Resolver) Subscription() SubscriptionResolver { return &subscriptionResolver{r} }
 
+type landDetailsResolver struct{ *Resolver }
 type mutationResolver struct{ *Resolver }
 type onboardingResolver struct{ *Resolver }
 type paymentResolver struct{ *Resolver }
