@@ -1,0 +1,20 @@
+# flyctl launch added from .gitignore
+# In all directories
+**/.env
+**/.env.example
+**/.env.development
+**/.vscode
+**/.idea
+**/.git
+**/.github
+**/node_modules
+**/.DS_Store
+**/src/.DS_Store
+# Deploy configurations
+fly.toml
+fly-staging.toml
+# Client side
+**/web
+**/Android
+# Smart contract
+**/SmartContract
