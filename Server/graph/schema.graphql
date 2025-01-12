@@ -107,6 +107,8 @@ type PaymentUpdate {
 type LandDetails {
   titleNo: String!
   registration: String!
+  symbol: String!
+  size: Int!
 }
 
 input PayWithMpesaInput {

@@ -66,6 +66,8 @@ type ComplexityRoot struct {
 
 	LandDetails struct {
 		Registration func(childComplexity int) int
+		Size         func(childComplexity int) int
+		Symbol       func(childComplexity int) int
 		TitleNo      func(childComplexity int) int
 	}
 
@@ -153,6 +155,8 @@ type ComplexityRoot struct {
 
 type LandDetailsResolver interface {
 	Registration(ctx context.Context, obj *land.LandDetails) (string, error)
+
+	Size(ctx context.Context, obj *land.LandDetails) (int, error)
 }
 type MutationResolver interface {
 	ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error)
@@ -252,6 +256,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.LandDetails.Registration(childComplexity), true
+
+	case "LandDetails.size":
+		if e.complexity.LandDetails.Size == nil {
+			break
+		}
+
+		return e.complexity.LandDetails.Size(childComplexity), true
+
+	case "LandDetails.symbol":
+		if e.complexity.LandDetails.Symbol == nil {
+			break
+		}
+
+		return e.complexity.LandDetails.Symbol(childComplexity), true
 
 	case "LandDetails.titleNo":
 		if e.complexity.LandDetails.TitleNo == nil {
@@ -1602,6 +1620,94 @@ func (ec *executionContext) fieldContext_LandDetails_registration(_ context.Cont
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LandDetails_symbol(ctx context.Context, field graphql.CollectedField, obj *land.LandDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LandDetails_symbol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Symbol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LandDetails_symbol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LandDetails",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LandDetails_size(ctx context.Context, field graphql.CollectedField, obj *land.LandDetails) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LandDetails_size(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.LandDetails().Size(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_LandDetails_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "LandDetails",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3499,6 +3605,10 @@ func (ec *executionContext) fieldContext_Query_getLandTitleDetails(ctx context.C
 				return ec.fieldContext_LandDetails_titleNo(ctx, field)
 			case "registration":
 				return ec.fieldContext_LandDetails_registration(ctx, field)
+			case "symbol":
+				return ec.fieldContext_LandDetails_symbol(ctx, field)
+			case "size":
+				return ec.fieldContext_LandDetails_size(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type LandDetails", field.Name)
 		},
@@ -6700,6 +6810,47 @@ func (ec *executionContext) _LandDetails(ctx context.Context, sel ast.SelectionS
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "symbol":
+			out.Values[i] = ec._LandDetails_symbol(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "size":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._LandDetails_size(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -7932,6 +8083,21 @@ func (ec *executionContext) unmarshalNGetOnboardingByEmailAndVerificationInput2g
 func (ec *executionContext) unmarshalNGetUserLandsInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐGetUserLandsInput(ctx context.Context, v interface{}) (model.GetUserLandsInput, error) {
 	res, err := ec.unmarshalInputGetUserLandsInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}) (int, error) {
+	res, err := graphql.UnmarshalInt(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
+	res := graphql.MarshalInt(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNLandDetails2githubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v land.LandDetails) graphql.Marshaler {

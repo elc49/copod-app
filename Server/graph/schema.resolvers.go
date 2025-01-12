@@ -26,6 +26,12 @@ func (r *landDetailsResolver) Registration(ctx context.Context, obj *land.LandDe
 	return dateString, nil
 }
 
+// Size is the resolver for the size field.
+func (r *landDetailsResolver) Size(ctx context.Context, obj *land.LandDetails) (int, error) {
+	v := obj.Size.Int64()
+	return int(v), nil
+}
+
 // ChargeMpesa is the resolver for the chargeMpesa field.
 func (r *mutationResolver) ChargeMpesa(ctx context.Context, input model.PayWithMpesaInput) (*string, error) {
 	charge := paystack.MpesaCharge{
@@ -164,7 +170,12 @@ func (r *queryResolver) GetLandTitleDetails(ctx context.Context, titleNo string)
 		return nil, err
 	}
 
-	return &land.LandDetails{TitleNo: details.TitleNo, Registration: details.Registration}, nil
+	return &land.LandDetails{
+		TitleNo:      details.TitleNo,
+		Registration: details.Registration,
+		Size:         details.Size,
+		Symbol:       details.Symbol,
+	}, nil
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.
