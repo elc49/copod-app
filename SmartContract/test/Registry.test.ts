@@ -41,7 +41,7 @@ describe("Registry", () => {
       expect(result.registration).to.be.equal(registration)
     })
 
-    it("Dont't register same land parcel", async () => {
+    it("Don't register same land parcel", async () => {
       await expect(
         registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, Date.parse("2002/01/15"))
       ).to.be.reverted
