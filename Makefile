@@ -33,3 +33,7 @@ registry-contract:
 # Make land contract
 land-contract:
 	cd SmartContract && npx hardhat compile && solc --base-path . --include-path node_modules --abi --bin --overwrite contracts/Land.sol -o ../SmartContract/ignition/abi && cd ../Server && abigen --abi ../SmartContract/ignition/abi/Land.abi --bin ../SmartContract/ignition/abi/Land.bin --pkg land --out contracts/land/land.go
+
+# Make landing page
+land-page:
+	cd landing-page && npm run dev
