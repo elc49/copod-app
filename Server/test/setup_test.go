@@ -73,4 +73,7 @@ func init() {
 	// Display picture
 	dc := controller.DisplayPicture{}
 	dc.Init(q)
+	// Early signup
+	es := controller.EarlySignup{}
+	es.Init(q)
 }

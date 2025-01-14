@@ -21,6 +21,13 @@ type DisplayPicture struct {
 	UpdatedAt    time.Time `json:"updated_at"`
 }
 
+type EarlySignup struct {
+	ID        uuid.UUID `json:"id"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 type Onboarding struct {
 	ID               uuid.UUID      `json:"id"`
 	TitleID          uuid.UUID      `json:"title_id"`
