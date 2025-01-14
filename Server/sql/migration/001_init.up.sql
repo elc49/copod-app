@@ -71,6 +71,7 @@ CREATE INDEX IF NOT EXISTS idx_onboarding_id ON payments(onboarding_id);
 CREATE TABLE IF NOT EXISTS early_signups(
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   email TEXT NOT NULL,
+  onboarded TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
