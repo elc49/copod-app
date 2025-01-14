@@ -3,6 +3,7 @@ import { space_grotesk } from "../fonts/fonts";
 import "./globals.css";
 import { Provider } from "@/components/ui/provider";
 import { Toaster } from "@/components/ui/toaster";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "Copod",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <Provider>
           <Toaster />
           {children}
+          <GoogleAnalytics gaId={`${process.env.NEXT_PUBLIC_GA_ID}`} />
         </Provider>
       </body>
     </html>
