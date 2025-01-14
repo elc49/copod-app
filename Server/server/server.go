@@ -91,6 +91,7 @@ func (s *Server) MountRouter() *chi.Mux {
 			r.Use(middleware.AllowContentType("application/json"))
 			r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
 			r.Handle("/ipinfo", handlers.Ipinfo())
+			r.Handle("/early", handlers.EarlySignup())
 		})
 	})
 	return r
@@ -115,6 +116,9 @@ func (s *Server) MountController() {
 	// Display picture
 	dc := controller.DisplayPicture{}
 	dc.Init(s.sql)
+	// Early signup
+	ec := controller.EarlySignup{}
+	ec.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {
