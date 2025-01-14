@@ -86,6 +86,7 @@ func (s *Server) MountRouter() *chi.Mux {
 	r.Handle("/graphql", handlers.GraphQL())
 	r.Route("/api", func(r chi.Router) {
 		r.Handle("/upload", handlers.UploadDoc())
+		r.Handle("/early", handlers.EarlySignup())
 		r.Group(func(r chi.Router) {
 			// Allow json content for below endpoints
 			r.Use(middleware.AllowContentType("application/json"))
@@ -115,6 +116,9 @@ func (s *Server) MountController() {
 	// Display picture
 	dc := controller.DisplayPicture{}
 	dc.Init(s.sql)
+	// Early signup
+	ec := controller.EarlySignup{}
+	ec.Init(s.sql)
 }
 
 func (s *Server) Database(opt postgres.Postgres) {

@@ -12,12 +12,14 @@ import (
 
 type Querier interface {
 	CreateDisplayPicture(ctx context.Context, arg CreateDisplayPictureParams) (DisplayPicture, error)
+	CreateEarlySignup(ctx context.Context, email string) (EarlySignup, error)
 	CreateOnboarding(ctx context.Context, arg CreateOnboardingParams) (Onboarding, error)
 	CreatePayment(ctx context.Context, arg CreatePaymentParams) (Payment, error)
 	CreateSupportDoc(ctx context.Context, arg CreateSupportDocParams) (SupportDoc, error)
 	CreateTitle(ctx context.Context, arg CreateTitleParams) (TitleDeed, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (User, error)
 	GetDisplayPictureByID(ctx context.Context, id uuid.UUID) (DisplayPicture, error)
+	GetEarlySignupByEmail(ctx context.Context, email string) (string, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error)
 	GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboarding, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
