@@ -1,12 +1,4 @@
-import { Roboto_Mono, Space_Grotesk } from "next/font/google"
-
-const roboto_mono = Roboto_Mono({
-  weight: "400",
-  variable: "--font-roboto-mono",
-  style: "normal",
-  subsets: ["latin"],
-  display: "swap",
-})
+import { Space_Grotesk } from "next/font/google"
 
 const space_grotesk = Space_Grotesk({
   weight: "500",
@@ -15,4 +7,4 @@ const space_grotesk = Space_Grotesk({
   display: "swap",
 })
 
-export { roboto_mono, space_grotesk }
+export { space_grotesk }

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { roboto_mono, space_grotesk } from "../fonts/fonts";
+import { space_grotesk } from "../fonts/fonts";
 import "./globals.css";
 import { Provider } from "@/components/ui/provider";
 
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${space_grotesk.variable} ${roboto_mono.variable} antialiased`}>
+    <html lang="en" suppressHydrationWarning className={`${space_grotesk.variable} antialiased`}>
       <body>
         <Provider>{children}</Provider>
       </body>
