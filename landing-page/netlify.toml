@@ -2,7 +2,7 @@
 command = "next build"
 publish = ".next"
 
-[[plugin]]
+[[plugins]]
 package = "@netlify/plugin-nextjs"
 
 
