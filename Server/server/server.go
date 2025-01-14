@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"embed"
 	"log"
 	"net/http"
 	"os"
@@ -40,8 +41,8 @@ func New() *Server {
 	return s
 }
 
-func (s *Server) Start() {
-	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter()}
+func (s *Server) Start(static embed.FS) {
+	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter(static)}
 	// Server ctx
 	sCtx, sStopCtx := context.WithCancel(context.Background())
 	// Listen for syscall signals(interrupt/quit)
@@ -71,7 +72,7 @@ func (s *Server) Start() {
 	<-sCtx.Done()
 }
 
-func (s *Server) MountRouter() *chi.Mux {
+func (s *Server) MountRouter(static embed.FS) *chi.Mux {
 	r := chi.NewRouter()
 
 	r.Use(cors.AllowAll().Handler)
@@ -94,6 +95,8 @@ func (s *Server) MountRouter() *chi.Mux {
 			r.Handle("/ipinfo", handlers.Ipinfo())
 		})
 	})
+	r.Handle("/favicon.ico", handlers.Favicon())
+	r.Handle("/static/*", http.FileServer(http.FS(static)))
 	return r
 }
 

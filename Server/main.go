@@ -1,9 +1,13 @@
 package main
 
 import (
+	"embed"
+
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/server"
 )
+
+var static embed.FS
 
 func main() {
 	s := server.New()
@@ -14,5 +18,5 @@ func main() {
 	s.IpinfoService()
 	s.MountController()
 	s.NewEthereumService()
-	s.Start()
+	s.Start(static)
 }
