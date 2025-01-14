@@ -24,8 +24,8 @@ describe("Registry", () => {
     registryContract = await hre.ethers.deployContract("Registry")
   })
 
-  describe("register", async () => {
-    it("register success", async () => {
+  describe("Register", async () => {
+    it("Register", async () => {
       const registration = Date.parse("2002/01/15")
       await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size, registration)
 
