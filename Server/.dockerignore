@@ -16,5 +16,6 @@ fly-staging.toml
 # Client side
 **/web
 **/Android
+**/landing-page
 # Smart contract
 **/SmartContract
