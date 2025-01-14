@@ -22,7 +22,7 @@ export const EmailForm = () => {
     },
   })
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values) => {
     if (!submitting) {
       setSubmitting(true)
       try {
