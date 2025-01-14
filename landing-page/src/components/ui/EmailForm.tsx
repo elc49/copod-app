@@ -8,6 +8,7 @@ import { toaster } from "@/components/ui/toaster";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { object, string } from "yup";
+import { sendGAEvent } from "@next/third-parties/google";
 
 const emailFormSchema = object({
   email: string().email("Invalid email").required("Email is required"),
@@ -26,7 +27,7 @@ export const EmailForm = () => {
     if (!submitting) {
       setSubmitting(true)
       try {
-        await fetch("https://boss-freely-koi.ngrok-free.app/api/early", {
+        await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API}/early`, {
           method: "POST",
           mode: "no-cors",
           headers: {
@@ -39,8 +40,14 @@ export const EmailForm = () => {
           duration: 4000,
           title: "Email received",
         })
+        sendGAEvent("early_signup", "formSubmission")
       } catch (e) {
         console.error(e)
+        toaster.create({
+          type: "error",
+          duration: 4000,
+          title: `${(e as Error).message}`,
+        })
       } finally {
         setSubmitting(false)
       }
