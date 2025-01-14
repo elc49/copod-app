@@ -4,14 +4,16 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/util"
+	"github.com/sirupsen/logrus"
 )
 
 func EarlySignup() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.GetLogger()
-		//ec := controller.GetEarlySignupController()
+		ec := controller.GetEarlySignupController()
 		var email string
 
 		body, err := io.ReadAll(r.Body)
@@ -28,7 +30,12 @@ func EarlySignup() http.Handler {
 			return
 		}
 
-		log.Infoln(email)
+		if _, err := ec.CreateEarlySignup(r.Context(), email); err != nil {
+			log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("handlers: CreateEarlySignup")
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
 		util.WriteHttp(w, nil, http.StatusOK)
 	})
 }

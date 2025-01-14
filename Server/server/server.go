@@ -86,12 +86,12 @@ func (s *Server) MountRouter() *chi.Mux {
 	r.Handle("/graphql", handlers.GraphQL())
 	r.Route("/api", func(r chi.Router) {
 		r.Handle("/upload", handlers.UploadDoc())
+		r.Handle("/early", handlers.EarlySignup())
 		r.Group(func(r chi.Router) {
 			// Allow json content for below endpoints
 			r.Use(middleware.AllowContentType("application/json"))
 			r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
 			r.Handle("/ipinfo", handlers.Ipinfo())
-			r.Handle("/early", handlers.EarlySignup())
 		})
 	})
 	return r
