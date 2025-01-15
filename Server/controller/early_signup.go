@@ -42,7 +42,7 @@ func (c *EarlySignup) CreateEarlySignup(ctx context.Context, email string) (*str
 		emailRequest := &resend.SendEmailRequest{
 			From:    "Chanzu <chanzu@info.copodap.com>",
 			To:      []string{email},
-			Html:    "<p>Hello,</p><p>I am building something great and I am happy to have you onboard to try it out.</p><p>Don't hesitate to reach out if something is not working/you have an idea of how I can make your experience on Copod better.</p><br /><strong>Best,</strong><p>Edwin Chanzu</p><a href='https://x.com/gugachanzu' target='_blank'>X</a>",
+			Html:    "<p>Hello,</p><p>I am building something great and I am happy to have you onboard to try it out.</p><p>Don't hesitate to reach out if something is not working/you have an idea of how I can make your experience on Copod better.</p><br /><strong>Best,</strong><p>Edwin Chanzu.</p><a href='https://x.com/gugachanzu' target='_blank'>X</a>",
 			Subject: "Welcome onboard!",
 		}
 
