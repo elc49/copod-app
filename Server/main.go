@@ -11,12 +11,13 @@ var static embed.FS
 
 func main() {
 	s := server.New()
-	s.TigrisService()
+	s.NewTigrisService()
 	s.Database(config.C.Database.Rdbms)
-	s.CacheService()
-	s.PaystackService()
-	s.IpinfoService()
+	s.NewCacheService()
+	s.NewPaystackService()
+	s.NewIpinfoService()
 	s.MountController()
 	s.NewEthereumService()
+	s.NewResendEmailService()
 	s.Start(static)
 }
