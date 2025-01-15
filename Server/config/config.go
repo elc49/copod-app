@@ -21,6 +21,7 @@ type config struct {
 	Paystack Paystack
 	Ipinfo   Ipinfo
 	Ethereum Ethereum
+	Resend   Resend
 }
 
 func env() {
@@ -39,6 +40,7 @@ func New() {
 	c.Paystack = paystackConfig()
 	c.Ipinfo = ipinfoConfig()
 	c.Ethereum = ethereumConfig()
+	c.Resend = resendConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
@@ -111,6 +113,14 @@ func ethereumConfig() Ethereum {
 
 	config.InfuraApi = strings.TrimSpace(os.Getenv("INFURA_API"))
 	config.RegistryContractAddress = strings.TrimSpace(os.Getenv("REGISTRY_CONTRACT_ADDRESS"))
+
+	return config
+}
+
+func resendConfig() Resend {
+	var config Resend
+
+	config.ApiKey = strings.TrimSpace(os.Getenv("RESEND_API_KEY"))
 
 	return config
 }

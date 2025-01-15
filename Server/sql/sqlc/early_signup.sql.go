@@ -14,7 +14,7 @@ INSERT INTO early_signups (
   email
 ) VALUES (
   $1
-) RETURNING id, email, created_at, updated_at
+) RETURNING id, email, onboarded, created_at, updated_at
 `
 
 func (q *Queries) CreateEarlySignup(ctx context.Context, email string) (EarlySignup, error) {
@@ -23,6 +23,7 @@ func (q *Queries) CreateEarlySignup(ctx context.Context, email string) (EarlySig
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.Onboarded,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -30,12 +31,38 @@ func (q *Queries) CreateEarlySignup(ctx context.Context, email string) (EarlySig
 }
 
 const getEarlySignupByEmail = `-- name: GetEarlySignupByEmail :one
-SELECT email FROM early_signups
-WHERE email = $1 LIMIT 1
+SELECT id, email, onboarded, created_at, updated_at FROM early_signups
+WHERE email = $1
 `
 
-func (q *Queries) GetEarlySignupByEmail(ctx context.Context, email string) (string, error) {
+func (q *Queries) GetEarlySignupByEmail(ctx context.Context, email string) (EarlySignup, error) {
 	row := q.db.QueryRowContext(ctx, getEarlySignupByEmail, email)
-	err := row.Scan(&email)
-	return email, err
+	var i EarlySignup
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Onboarded,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const onboardEarlySignup = `-- name: OnboardEarlySignup :one
+UPDATE early_signups SET onboarded = NOW()
+WHERE email = $1
+RETURNING id, email, onboarded, created_at, updated_at
+`
+
+func (q *Queries) OnboardEarlySignup(ctx context.Context, email string) (EarlySignup, error) {
+	row := q.db.QueryRowContext(ctx, onboardEarlySignup, email)
+	var i EarlySignup
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Onboarded,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

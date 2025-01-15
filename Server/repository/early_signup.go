@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	db "database/sql"
+	"errors"
 
 	"github.com/elc49/copod/logger"
 	sql "github.com/elc49/copod/sql/sqlc"
@@ -21,7 +22,8 @@ func (r *EarlySignup) Init(sql *sql.Queries) {
 
 func (r *EarlySignup) CreateEarlySignup(ctx context.Context, email string) (*string, error) {
 	exists, err := r.sql.GetEarlySignupByEmail(ctx, email)
-	if err != nil && err == db.ErrNoRows {
+	if err != nil && errors.Is(err, db.ErrNoRows) {
+		// Create early signup
 		e, err := r.sql.CreateEarlySignup(ctx, email)
 		if err != nil {
 			r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: CreateEarlySignup")
@@ -32,5 +34,5 @@ func (r *EarlySignup) CreateEarlySignup(ctx context.Context, email string) (*str
 		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetEarlySignupByEmail")
 		return nil, err
 	}
-	return &exists, nil
+	return &exists.Email, nil
 }

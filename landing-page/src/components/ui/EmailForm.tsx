@@ -27,20 +27,27 @@ export const EmailForm = () => {
     if (!submitting) {
       setSubmitting(true)
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API}/early`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_LOCAL_API}/early`, {
           method: "POST",
-          mode: "no-cors",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(values.email),
         })
-        toaster.create({
-          type: "success",
-          duration: 4000,
-          title: "Email received",
-        })
-        sendGAEvent("early_signup", "formSubmission")
+        if (res.status === 200) {
+          toaster.create({
+            type: "success",
+            duration: 4000,
+            title: "Email received",
+          })
+          sendGAEvent("early_signup", "formSubmission")
+        } else {
+          toaster.create({
+            type: "error",
+            duration: 4000,
+            title: "Something went wrong",
+          })
+        }
       } catch (e) {
         console.error(e)
         toaster.create({

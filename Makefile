@@ -1,6 +1,10 @@
 # Run server/api tests
-test-copod:
-	cd Server && go test ./test && cd ../SmartContract && npm run test
+test-contracts:
+	cd SmartContract && npm run test
+
+# Test api
+test-api:
+	cd Server && go test ./test
 
 # Tidy server
 tidy:

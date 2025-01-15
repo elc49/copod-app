@@ -16,6 +16,14 @@ func Test_Early_Signup_Controller(t *testing.T) {
 
 		assert.Nil(t, err)
 		assert.Equal(t, *e, email)
+
+	})
+
+	t.Run("onboard_early_signup", func(t *testing.T) {
+		e, err := q.OnboardEarlySignup(context.Background(), email)
+
+		assert.Nil(t, err)
+		assert.True(t, e.Onboarded.Valid)
 	})
 
 	t.Run("don't_recreate_early_signup", func(t *testing.T) {

@@ -16,6 +16,7 @@ import (
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/contracts"
 	"github.com/elc49/copod/controller"
+	"github.com/elc49/copod/email"
 	"github.com/elc49/copod/handlers"
 	"github.com/elc49/copod/handlers/webhook"
 	"github.com/elc49/copod/ip"
@@ -129,22 +130,28 @@ func (s *Server) Database(opt postgres.Postgres) {
 	s.sql = sqlStore
 }
 
-func (s *Server) TigrisService() {
+func (s *Server) NewTigrisService() {
 	tigris.New()
 }
 
-func (s *Server) PaystackService() {
+func (s *Server) NewPaystackService() {
 	paystack.New(s.sql)
 }
 
-func (s *Server) CacheService() {
+func (s *Server) NewCacheService() {
 	cache.New()
 }
 
-func (s *Server) IpinfoService() {
+func (s *Server) NewIpinfoService() {
 	ip.New()
 }
 
 func (s *Server) NewEthereumService() {
 	contracts.NewEthBackend()
+}
+
+func (s *Server) NewResendEmailService() {
+	if config.IsProd() {
+		email.NewResend(s.sql)
+	}
 }

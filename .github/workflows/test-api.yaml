@@ -2,7 +2,7 @@ name: Test
 on: [push]
 jobs:
   deploy:
-    name: test-copod
+    name: test-api
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -33,11 +33,5 @@ jobs:
         psql --version
         PGPASSWORD=demo1234 psql -h localhost -U postgres -c 'DROP DATABASE IF EXISTS test;'
         PGPASSWORD=demo1234 psql -h localhost -U postgres -c 'CREATE DATABASE test;'
-    - name: Use Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20.x'
-    - name: Install dependencies
-      run: cd SmartContract && npm ci
     - name: test
-      run: make test-copod
+      run: make test-api
