@@ -6,5 +6,10 @@ INSERT INTO early_signups (
 ) RETURNING *;
 
 -- name: GetEarlySignupByEmail :one
-SELECT email FROM early_signups
-WHERE email = $1 LIMIT 1;
+SELECT * FROM early_signups
+WHERE email = $1;
+
+-- name: OnboardEarlySignup :one
+UPDATE early_signups SET onboarded = NOW()
+WHERE email = $1
+RETURNING *;
