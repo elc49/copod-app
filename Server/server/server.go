@@ -151,6 +151,7 @@ func (s *Server) NewEthereumService() {
 }
 
 func (s *Server) NewResendEmailService() {
-	// TODO turn this on in staging/prod env
-	email.NewResend(s.sql)
+	if config.IsProd() {
+		email.NewResend(s.sql)
+	}
 }
