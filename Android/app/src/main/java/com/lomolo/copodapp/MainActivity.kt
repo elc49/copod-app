@@ -31,6 +31,7 @@ import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
+import io.sentry.Sentry
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
@@ -39,6 +40,15 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    // waiting for view to draw to better represent a captured error with a screenshot
+    findViewById<android.view.View>(android.R.id.content).viewTreeObserver.addOnGlobalLayoutListener {
+      try {
+        throw Exception("This app uses Sentry! :)")
+      } catch (e: Exception) {
+        Sentry.captureException(e)
+      }
+    }
+
         startKoin {
             androidContext(this@MainActivity)
             modules(appModule)

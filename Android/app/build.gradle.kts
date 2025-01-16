@@ -8,6 +8,8 @@ plugins {
     id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
     id("org.jetbrains.kotlin.plugin.compose") version "2.0.0"
     //id("com.google.gms.google-services")
+
+    id("io.sentry.android.gradle") version "4.14.1"
 }
 
 android {
@@ -112,4 +114,13 @@ secrets {
     // "sdk.dir" is ignored by default.
     ignoreList.add("keyToIgnore") // Ignore the key "keyToIgnore"
     ignoreList.add("sdk.*")       // Ignore all keys matching the regexp "sdk.*"
+}
+
+sentry {
+    org.set("copod")
+    projectName.set("copod-android")
+
+    // this will upload your source code to Sentry to show it as part of the stack traces
+    // disable if you don't want to expose your sources
+    includeSourceContext.set(true)
 }
