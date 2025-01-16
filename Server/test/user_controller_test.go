@@ -43,4 +43,15 @@ func Test_User_Controller(t *testing.T) {
 
 		assert.True(t, errors.Is(err, sql.ErrNoRows))
 	})
+
+	t.Run("email_onboard_user", func(t *testing.T) {
+		f, err := q.GetUserByEmail(context.Background(), email)
+		assert.Nil(t, err)
+		assert.False(t, f.EmailOnboarded)
+
+		u, err := q.UpdateUserEmailOnboardByID(context.Background(), db.UpdateUserEmailOnboardByIDParams{ID: f.ID, EmailOnboarded: true})
+
+		assert.Nil(t, err)
+		assert.True(t, u.EmailOnboarded)
+	})
 }
