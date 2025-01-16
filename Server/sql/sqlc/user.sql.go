@@ -9,12 +9,23 @@ import (
 	"context"
 )
 
+const countUsers = `-- name: CountUsers :one
+SELECT COUNT(*) FROM users
+`
+
+func (q *Queries) CountUsers(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countUsers)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
   email, firstname, lastname
 ) VALUES (
   $1, $2, $3
-) RETURNING id, firstname, lastname, email, created_at, updated_at
+) RETURNING id, firstname, lastname, email, email_onboarded, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -31,6 +42,27 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Firstname,
 		&i.Lastname,
 		&i.Email,
+		&i.EmailOnboarded,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUserByEmail = `-- name: GetUserByEmail :one
+SELECT id, firstname, lastname, email, email_onboarded, created_at, updated_at FROM users
+WHERE email = $1
+`
+
+func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByEmail, email)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Firstname,
+		&i.Lastname,
+		&i.Email,
+		&i.EmailOnboarded,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

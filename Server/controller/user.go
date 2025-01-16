@@ -30,5 +30,15 @@ func GetUserController() UserController {
 }
 
 func (c *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*model.User, error) {
-	return c.r.CreateUser(ctx, args)
+	// Check if user exists
+	u, err := c.r.GetUserByEmail(ctx, args.Email)
+	switch {
+	case u == nil && err == nil:
+		// Create new user and email onboard
+		newU, err := c.r.CreateUser(ctx, args)
+		// TODO email onboard
+		return newU, err
+	default:
+		return u, err
+	}
 }

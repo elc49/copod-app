@@ -4,3 +4,10 @@ INSERT INTO users (
 ) VALUES (
   $1, $2, $3
 ) RETURNING *;
+
+-- name: GetUserByEmail :one
+SELECT * FROM users
+WHERE email = $1;
+
+-- name: CountUsers :one
+SELECT COUNT(*) FROM users;
