@@ -11,3 +11,8 @@ WHERE email = $1;
 
 -- name: CountUsers :one
 SELECT COUNT(*) FROM users;
+
+-- name: UpdateUserEmailOnboardByID :one
+UPDATE users SET email_onboarded = $1
+WHERE id = $2
+RETURNING *;

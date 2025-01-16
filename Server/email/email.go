@@ -34,29 +34,9 @@ func GetResendEmailService() Resend {
 }
 
 func (r *rClient) Send(ctx context.Context, params *resend.SendEmailRequest) error {
-	// Onboard early signup email- don't re-onboard
-	e, err := r.sql.GetEarlySignupByEmail(ctx, params.To[0])
-	if err != nil {
-		r.log.WithError(err).WithFields(logrus.Fields{"params": params}).Errorf("email: GetEarlySignupByemail")
+	if _, err := r.client.Emails.Send(params); err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"params": params}).Errorf("email: Send")
 		return err
-	}
-
-	if !e.Onboarded {
-		// Send early signup comms
-		if _, err := r.client.Emails.Send(params); err != nil {
-			r.log.WithError(err).WithFields(logrus.Fields{"params": params}).Errorf("email: Send")
-			return err
-		}
-
-		// Finish onboarding
-		args := sql.OnboardEarlySignupParams{
-			Email:     params.To[0],
-			Onboarded: true,
-		}
-		if _, err := r.sql.OnboardEarlySignup(ctx, args); err != nil {
-			r.log.WithError(err).WithFields(logrus.Fields{"email": params.To[0]}).Errorf("email: sql.OnboardEarlySignup: Send")
-			return err
-		}
 	}
 
 	return nil

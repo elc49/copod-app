@@ -42,6 +42,7 @@ type Querier interface {
 	UpdateSupportDocVerificationByID(ctx context.Context, arg UpdateSupportDocVerificationByIDParams) (SupportDoc, error)
 	UpdateTitleByID(ctx context.Context, arg UpdateTitleByIDParams) (TitleDeed, error)
 	UpdateTitleVerificationByID(ctx context.Context, arg UpdateTitleVerificationByIDParams) (TitleDeed, error)
+	UpdateUserEmailOnboardByID(ctx context.Context, arg UpdateUserEmailOnboardByIDParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

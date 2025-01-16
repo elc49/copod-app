@@ -54,3 +54,19 @@ func (r *User) GetUserByEmail(ctx context.Context, email string) (*model.User, e
 		UpdatedAt:      u.UpdatedAt,
 	}, nil
 }
+
+func (r *User) UpdateUserEmailOnboardByID(ctx context.Context, args sql.UpdateUserEmailOnboardByIDParams) (*model.User, error) {
+	u, err := r.sql.UpdateUserEmailOnboardByID(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateUserEmailOnboardByID")
+		return nil, err
+	}
+
+	return &model.User{
+		ID:             u.ID,
+		Email:          u.Email,
+		EmailOnboarded: u.EmailOnboarded,
+		CreatedAt:      u.CreatedAt,
+		UpdatedAt:      u.UpdatedAt,
+	}, nil
+}
