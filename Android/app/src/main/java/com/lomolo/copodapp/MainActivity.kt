@@ -23,15 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.rememberNavController
 import com.lomolo.copodapp.di.appModule
-import com.lomolo.copodapp.ui.theme.CopodAppTheme
 import com.lomolo.copodapp.state.viewmodels.GetDeviceDetails
 import com.lomolo.copodapp.state.viewmodels.LandTitleDetailsViewModel
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.ui.theme.CopodAppTheme
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.startKoin
-import io.sentry.Sentry
 
 class MainActivity : ComponentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
@@ -40,14 +39,6 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-    // waiting for view to draw to better represent a captured error with a screenshot
-    findViewById<android.view.View>(android.R.id.content).viewTreeObserver.addOnGlobalLayoutListener {
-      try {
-        throw Exception("This app uses Sentry! :)")
-      } catch (e: Exception) {
-        Sentry.captureException(e)
-      }
-    }
 
         startKoin {
             androidContext(this@MainActivity)
