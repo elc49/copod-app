@@ -10,6 +10,6 @@ SELECT * FROM early_signups
 WHERE email = $1;
 
 -- name: OnboardEarlySignup :one
-UPDATE early_signups SET onboarded = NOW()
-WHERE email = $1
+UPDATE early_signups SET onboarded = $1
+WHERE email = $2
 RETURNING *;

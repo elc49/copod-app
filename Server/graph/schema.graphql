@@ -55,6 +55,7 @@ type User {
   firstname: String
   lastname: String
   email: String!
+  email_onboarded: Boolean!
   created_at: Time!
   updated_at: Time!
 }

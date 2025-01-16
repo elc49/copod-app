@@ -122,12 +122,13 @@ type UpdateTitleVerificationByIDInput struct {
 }
 
 type User struct {
-	ID        uuid.UUID `json:"id"`
-	Firstname *string   `json:"firstname,omitempty"`
-	Lastname  *string   `json:"lastname,omitempty"`
-	Email     string    `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID             uuid.UUID `json:"id"`
+	Firstname      *string   `json:"firstname,omitempty"`
+	Lastname       *string   `json:"lastname,omitempty"`
+	Email          string    `json:"email"`
+	EmailOnboarded bool      `json:"email_onboarded"`
+	CreatedAt      time.Time `json:"created_at"`
+	UpdatedAt      time.Time `json:"updated_at"`
 }
 
 type PaidFor string

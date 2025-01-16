@@ -11,6 +11,7 @@ import (
 )
 
 type Querier interface {
+	CountUsers(ctx context.Context) (int64, error)
 	CreateDisplayPicture(ctx context.Context, arg CreateDisplayPictureParams) (DisplayPicture, error)
 	CreateEarlySignup(ctx context.Context, email string) (EarlySignup, error)
 	CreateOnboarding(ctx context.Context, arg CreateOnboardingParams) (Onboarding, error)
@@ -31,7 +32,8 @@ type Querier interface {
 	GetTitleByEmail(ctx context.Context, email string) (TitleDeed, error)
 	GetTitleByID(ctx context.Context, id uuid.UUID) (TitleDeed, error)
 	GetTitlesByEmailAndVerification(ctx context.Context, arg GetTitlesByEmailAndVerificationParams) ([]TitleDeed, error)
-	OnboardEarlySignup(ctx context.Context, email string) (EarlySignup, error)
+	GetUserByEmail(ctx context.Context, email string) (User, error)
+	OnboardEarlySignup(ctx context.Context, arg OnboardEarlySignupParams) (EarlySignup, error)
 	UpdateDisplayPictureByID(ctx context.Context, arg UpdateDisplayPictureByIDParams) (DisplayPicture, error)
 	UpdateDisplayPictureVerificationByID(ctx context.Context, arg UpdateDisplayPictureVerificationByIDParams) (DisplayPicture, error)
 	UpdateOnboardingVerificationByID(ctx context.Context, arg UpdateOnboardingVerificationByIDParams) (Onboarding, error)
@@ -40,6 +42,7 @@ type Querier interface {
 	UpdateSupportDocVerificationByID(ctx context.Context, arg UpdateSupportDocVerificationByIDParams) (SupportDoc, error)
 	UpdateTitleByID(ctx context.Context, arg UpdateTitleByIDParams) (TitleDeed, error)
 	UpdateTitleVerificationByID(ctx context.Context, arg UpdateTitleVerificationByIDParams) (TitleDeed, error)
+	UpdateUserEmailOnboardByID(ctx context.Context, arg UpdateUserEmailOnboardByIDParams) (User, error)
 }
 
 var _ Querier = (*Queries)(nil)

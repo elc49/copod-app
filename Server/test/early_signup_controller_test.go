@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/elc49/copod/controller"
+	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,10 +21,13 @@ func Test_Early_Signup_Controller(t *testing.T) {
 	})
 
 	t.Run("onboard_early_signup", func(t *testing.T) {
-		e, err := q.OnboardEarlySignup(context.Background(), email)
+		e, err := q.OnboardEarlySignup(context.Background(), sql.OnboardEarlySignupParams{
+			Email:     email,
+			Onboarded: true,
+		})
 
 		assert.Nil(t, err)
-		assert.True(t, e.Onboarded.Valid)
+		assert.True(t, e.Onboarded)
 	})
 
 	t.Run("don't_recreate_early_signup", func(t *testing.T) {

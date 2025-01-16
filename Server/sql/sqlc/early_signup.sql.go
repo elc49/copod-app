@@ -49,13 +49,18 @@ func (q *Queries) GetEarlySignupByEmail(ctx context.Context, email string) (Earl
 }
 
 const onboardEarlySignup = `-- name: OnboardEarlySignup :one
-UPDATE early_signups SET onboarded = NOW()
-WHERE email = $1
+UPDATE early_signups SET onboarded = $1
+WHERE email = $2
 RETURNING id, email, onboarded, created_at, updated_at
 `
 
-func (q *Queries) OnboardEarlySignup(ctx context.Context, email string) (EarlySignup, error) {
-	row := q.db.QueryRowContext(ctx, onboardEarlySignup, email)
+type OnboardEarlySignupParams struct {
+	Onboarded bool   `json:"onboarded"`
+	Email     string `json:"email"`
+}
+
+func (q *Queries) OnboardEarlySignup(ctx context.Context, arg OnboardEarlySignupParams) (EarlySignup, error) {
+	row := q.db.QueryRowContext(ctx, onboardEarlySignup, arg.Onboarded, arg.Email)
 	var i EarlySignup
 	err := row.Scan(
 		&i.ID,

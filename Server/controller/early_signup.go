@@ -5,9 +5,11 @@ import (
 
 	"github.com/elc49/copod/config"
 	emailSvc "github.com/elc49/copod/email"
+	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/repository"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/resend/resend-go/v2"
+	"github.com/sirupsen/logrus"
 )
 
 var earlySignupController *EarlySignup
@@ -17,13 +19,17 @@ type EarlySignupController interface {
 }
 
 type EarlySignup struct {
-	r *repository.EarlySignup
+	r   *repository.EarlySignup
+	sql *sql.Queries
+	log *logrus.Logger
 }
 
 func (c *EarlySignup) Init(sql *sql.Queries) {
 	r := &repository.EarlySignup{}
 	r.Init(sql)
 	c.r = r
+	c.sql = sql
+	c.log = logger.GetLogger()
 	earlySignupController = c
 }
 
@@ -37,8 +43,25 @@ func (c *EarlySignup) CreateEarlySignup(ctx context.Context, email string) (*str
 		return nil, err
 	}
 
+	// Onboard early signup - this runs only in prod
 	if config.IsProd() {
-		rs := emailSvc.GetResendEmailService()
+		go func() {
+			if err := c.emailOnboard(context.Background(), email); err != nil {
+				return
+			}
+		}()
+	}
+
+	return e, nil
+}
+
+func (c *EarlySignup) emailOnboard(ctx context.Context, email string) error {
+	e, err := c.sql.GetEarlySignupByEmail(ctx, email)
+	if err != nil {
+		c.log.WithError(err).Errorf("controller: GetEarlySignupByEmail: emailOnboard")
+		return err
+	}
+	if !e.Onboarded {
 		emailRequest := &resend.SendEmailRequest{
 			From:    "Chanzu <chanzu@info.copodap.com>",
 			To:      []string{email},
@@ -46,10 +69,20 @@ func (c *EarlySignup) CreateEarlySignup(ctx context.Context, email string) (*str
 			Subject: "Welcome onboard!",
 		}
 
-		if err := rs.Send(ctx, emailRequest); err != nil {
-			return nil, err
+		if err := emailSvc.GetResendEmailService().Send(ctx, emailRequest); err != nil {
+			return err
+		}
+
+		// Onboard early signup async
+		args := sql.OnboardEarlySignupParams{
+			Email:     email,
+			Onboarded: true,
+		}
+		if _, err := c.sql.OnboardEarlySignup(ctx, args); err != nil {
+			c.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("email: sql.OnboardEarlySignup: emailOnboard")
+			return err
 		}
 	}
 
-	return e, nil
+	return nil
 }
