@@ -94,6 +94,7 @@ func (s *Server) MountRouter(static embed.FS) *chi.Mux {
 			r.Use(middleware.AllowContentType("application/json"))
 			r.With(copodMiddleware.Paystack).Handle("/webhook/paystack", webhook.Paystack())
 			r.Handle("/ipinfo", handlers.Ipinfo())
+			r.Handle("/signup", handlers.UserSignup())
 		})
 	})
 	r.Handle("/favicon.ico", handlers.Favicon())

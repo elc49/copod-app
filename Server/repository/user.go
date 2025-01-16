@@ -38,14 +38,19 @@ func (r *User) CreateUser(ctx context.Context, args sql.CreateUserParams) (*mode
 
 func (r *User) GetUserByEmail(ctx context.Context, email string) (*model.User, error) {
 	u, err := r.sql.GetUserByEmail(ctx, email)
-	if err != nil && errors.Is(err, db.ErrNoRows) {
+	switch {
+	case err != nil && errors.Is(err, db.ErrNoRows):
 		return nil, nil
+	case err != nil:
+		r.log.WithError(err).WithFields(logrus.Fields{"email": email}).Errorf("repository: GetUserByEmail")
+		return nil, err
 	}
 
 	return &model.User{
-		ID:        u.ID,
-		Email:     u.Email,
-		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
+		ID:             u.ID,
+		Email:          u.Email,
+		EmailOnboarded: u.EmailOnboarded,
+		CreatedAt:      u.CreatedAt,
+		UpdatedAt:      u.UpdatedAt,
 	}, nil
 }
