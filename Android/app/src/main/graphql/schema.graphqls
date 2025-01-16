@@ -50,6 +50,10 @@ type LandDetails {
   titleNo: String!
 
   registration: String!
+
+  symbol: String!
+
+  size: Int!
 }
 
 type Mutation {
@@ -220,6 +224,8 @@ type User {
   lastname: String
 
   email: String!
+
+  email_onboarded: Boolean!
 
   created_at: Time!
 

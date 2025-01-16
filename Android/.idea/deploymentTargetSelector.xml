@@ -7,10 +7,10 @@
       </SelectionState>
       <SelectionState runConfigName="Copod_App.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-10T15:53:54.191351Z">
+        <DropdownSelection timestamp="2025-01-16T13:57:29.950879Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/lomolo/.android/avd/Pixel_Tablet_API_28.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/lomolo/.android/avd/Pixel_4_API_28.avd" />
             </handle>
           </Target>
         </DropdownSelection>
