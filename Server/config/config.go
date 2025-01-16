@@ -6,8 +6,8 @@ import (
 
 	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/config/redis"
-	"github.com/elc49/copod/logger"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -22,6 +22,7 @@ type config struct {
 	Ipinfo   Ipinfo
 	Ethereum Ethereum
 	Resend   Resend
+	Sentry   Sentry
 }
 
 func env() {
@@ -30,7 +31,7 @@ func env() {
 
 func New() {
 	env()
-	log := logger.GetLogger()
+	log := logrus.New()
 	c := config{}
 	log.Infoln("Collecting configurations...")
 
@@ -41,6 +42,7 @@ func New() {
 	c.Ipinfo = ipinfoConfig()
 	c.Ethereum = ethereumConfig()
 	c.Resend = resendConfig()
+	c.Sentry = sentryConfig()
 
 	C = &c
 	log.Infoln("Configurations...OK")
@@ -121,6 +123,14 @@ func resendConfig() Resend {
 	var config Resend
 
 	config.ApiKey = strings.TrimSpace(os.Getenv("RESEND_API_KEY"))
+
+	return config
+}
+
+func sentryConfig() Sentry {
+	var config Sentry
+
+	config.Dsn = strings.TrimSpace(os.Getenv("SENTRY_DSN"))
 
 	return config
 }

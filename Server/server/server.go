@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"embed"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -13,7 +12,6 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/elc49/copod/cache"
 	"github.com/elc49/copod/config"
-	"github.com/elc49/copod/config/postgres"
 	"github.com/elc49/copod/contracts"
 	"github.com/elc49/copod/controller"
 	"github.com/elc49/copod/email"
@@ -25,9 +23,11 @@ import (
 	db "github.com/elc49/copod/sql"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/tigris"
+	"github.com/getsentry/sentry-go"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/sirupsen/logrus"
 )
 
 type Server struct {
@@ -56,18 +56,18 @@ func (s *Server) Start(static embed.FS) {
 		go func() {
 			<-shutCtx.Done()
 			if shutCtx.Err() == context.DeadlineExceeded {
-				log.Fatalln("shutdown grace period tiemout")
+				logrus.Fatalln("shutdown grace period tiemout")
 			}
 		}()
 		// Trigger shutdown
 		err := server.Shutdown(shutCtx)
 		if err != nil {
-			log.Fatalln(err)
+			logrus.Fatalln(err)
 		}
 		sStopCtx()
 	}()
 	if err := server.ListenAndServe(); err != nil {
-		log.Fatalln(err)
+		logrus.Fatalln(err)
 	}
 	// Wait for server ctx to be stopped
 	<-sCtx.Done()
@@ -83,6 +83,7 @@ func (s *Server) MountRouter(static embed.FS) *chi.Mux {
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
+	r.Use(copodMiddleware.Sentry)
 
 	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	r.Handle("/graphql", handlers.GraphQL())
@@ -126,7 +127,7 @@ func (s *Server) MountController() {
 	ec.Init(s.sql)
 }
 
-func (s *Server) Database(opt postgres.Postgres) {
+func (s *Server) Database() {
 	sqlStore := db.InitDB(config.C.Database.Rdbms)
 	s.sql = sqlStore
 }
@@ -154,5 +155,17 @@ func (s *Server) NewEthereumService() {
 func (s *Server) NewResendEmailService() {
 	if config.IsProd() {
 		email.NewResend(s.sql)
+	}
+}
+
+func (s *Server) NewSentryService() {
+	// Enable in staging/prod
+	if config.IsProd() {
+		if err := sentry.Init(sentry.ClientOptions{
+			Dsn:              config.C.Sentry.Dsn,
+			TracesSampleRate: 1.0,
+		}); err != nil {
+			logrus.WithError(err).Errorf("server: sentry.Init")
+		}
 	}
 }
