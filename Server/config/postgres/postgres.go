@@ -14,6 +14,7 @@ type Postgres struct {
 	DbPassword  string
 	DbMigrate   bool
 	DbMigration string
+	Ssl         string
 }
 
 func PostgresConfig() Postgres {
@@ -30,6 +31,7 @@ func PostgresConfig() Postgres {
 	}
 	config.DbMigrate = forceMigrate
 	config.DbMigration = strings.TrimSpace(os.Getenv("POSTGRES_MIGRATION"))
+	config.Ssl = strings.TrimSpace(os.Getenv("POSTGRES_SSL"))
 
 	return config
 }

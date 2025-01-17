@@ -30,6 +30,7 @@ func init() {
 		DbMigrate:   true,
 		DbHost:      "127.0.0.1",
 		DbDriver:    "postgres",
+		Ssl:         "disable",
 	}
 
 	// Database
