@@ -8,20 +8,21 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.twotone.ArrowBack
-import androidx.compose.material.icons.twotone.Close
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -42,7 +43,6 @@ fun UploadDocument(
     modifier: Modifier = Modifier,
     onNext: () -> Unit,
     title: @Composable (() -> Unit),
-    titleSize: String = "",
     onGoBack: () -> Unit,
     onSelectImage: () -> Unit,
     savingDoc: Boolean,
@@ -53,41 +53,16 @@ fun UploadDocument(
     val context = LocalContext.current
 
     Scaffold(topBar = {
-        if (titleSize == "large") {
-            LargeTopAppBar(
-                title = title, navigationIcon = {
-                if (titleSize == "large") {
-                    IconButton(
-                        onClick = onGoBack,
-                    ) {
-                        Icon(
-                            Icons.TwoTone.Close,
-                            contentDescription = stringResource(R.string.close)
-                        )
-                    }
-                } else {
-                    IconButton(
-                        onClick = onGoBack,
-                    ) {
-                        Icon(
-                            Icons.AutoMirrored.TwoTone.ArrowBack,
-                            contentDescription = stringResource(R.string.go_back),
-                        )
-                    }
-                }
-            })
-        } else {
-            TopAppBar(title = title, navigationIcon = {
-                IconButton(
-                    onClick = onGoBack,
-                ) {
-                    Icon(
-                        Icons.AutoMirrored.TwoTone.ArrowBack,
-                        contentDescription = stringResource(R.string.go_back),
-                    )
-                }
-            })
-        }
+        TopAppBar(title = title, navigationIcon = {
+            IconButton(
+                onClick = onGoBack,
+            ) {
+                Icon(
+                    Icons.AutoMirrored.TwoTone.ArrowBack,
+                    contentDescription = stringResource(R.string.go_back),
+                )
+            }
+        })
     }, bottomBar = {
         BottomAppBar {
             Button(
@@ -114,23 +89,49 @@ fun UploadDocument(
                 .padding(8.dp),
         ) {
             Column(
-                Modifier.padding(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                Modifier.padding(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Box(
                     contentAlignment = Alignment.Center,
                 ) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context).data(image).crossfade(true).build(),
-                        contentScale = if (!newUpload) ContentScale.Crop else ContentScale.Fit,
-                        placeholder = painterResource(R.drawable.loading_img),
-                        error = painterResource(R.drawable.ic_broken_image),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(MaterialTheme.shapes.small)
-                            .clickable { onSelectImage() },
-                        contentDescription = stringResource(R.string.image),
-                    )
+                    if (newUpload) {
+                        OutlinedCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(360.dp),
+                            onClick = onSelectImage,
+                        ) {
+                            Box(
+                                Modifier
+                                    .fillMaxSize()
+                                    .padding(12.dp)
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.doc_paper),
+                                    modifier = Modifier.size(32.dp).align(Alignment.Center),
+                                    contentDescription = stringResource(R.string.upload)
+                                )
+                                Text(
+                                    stringResource(R.string.click_to_upload),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    modifier = Modifier.align(Alignment.TopCenter),
+                                )
+                            }
+                        }
+                    } else {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context).data(image).crossfade(true)
+                                .build(),
+                            contentScale = ContentScale.Crop,
+                            placeholder = painterResource(R.drawable.loading_img),
+                            error = painterResource(R.drawable.ic_broken_image),
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(MaterialTheme.shapes.small)
+                                .clickable { onSelectImage() },
+                            contentDescription = stringResource(R.string.image),
+                        )
+                    }
                 }
             }
         }

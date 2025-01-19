@@ -225,7 +225,8 @@ fun NavigationHost(
                 },
                 onNavigateToUploadDp = {
                     navHostController.navigate(UploadDisplayPictureDestination.route)
-                }
+                },
+                onboardingViewModel = onboardingViewModel,
             )
         }
     }

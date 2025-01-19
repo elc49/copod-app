@@ -78,7 +78,6 @@ fun UploadGovtIssuedId(
 
     UploadDocument(
         modifier = modifier,
-        titleSize = "large",
         title = @Composable {
             Column {
                 Text(stringResource(R.string.verify_your_id))

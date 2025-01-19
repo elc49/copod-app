@@ -22,12 +22,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 
@@ -43,7 +46,11 @@ fun OnboardingScreen(
     onNavigateToUploadLandTitle: () -> Unit,
     onNavigateToUploadGovtId: () -> Unit,
     onNavigateToUploadDp: () -> Unit,
+    onboardingViewModel: OnboardingViewModel,
 ) {
+    val land by onboardingViewModel.landTitle.collectAsState()
+    val govtId by onboardingViewModel.supportingDoc.collectAsState()
+
     Scaffold(topBar = {
         TopBar(
             title = {
@@ -119,9 +126,9 @@ fun OnboardingScreen(
                     }
                 }
                 OutlinedCard(
-                    Modifier
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .height(360.dp)
+                        .height(360.dp),
                 ) {
                     Box(
                         Modifier
@@ -153,6 +160,7 @@ fun OnboardingScreen(
                         OutlinedIconButton(
                             onClick = onNavigateToUploadGovtId,
                             modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                            enabled = land.isNotEmpty(),
                         ) {
                             Icon(
                                 painterResource(R.drawable.doc_paper),
@@ -197,6 +205,7 @@ fun OnboardingScreen(
                         OutlinedIconButton(
                             onClick = onNavigateToUploadDp,
                             modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                            enabled = land.isNotEmpty() && govtId.isNotEmpty(),
                         ) {
                             Icon(
                                 painterResource(R.drawable.doc_paper),
