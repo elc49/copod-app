@@ -16,7 +16,7 @@ const emailFormSchema = object({
 
 export const EmailForm = () => {
   const [submitting, setSubmitting] = useState(false)
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: yupResolver(emailFormSchema),
     defaultValues: {
       email: "",
@@ -57,6 +57,7 @@ export const EmailForm = () => {
         })
       } finally {
         setSubmitting(false)
+        reset()
       }
     }
   }
