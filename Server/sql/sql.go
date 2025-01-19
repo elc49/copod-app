@@ -20,7 +20,7 @@ import (
 
 func InitDB(opt postgres.Postgres) *sql.Queries {
 	log := logger.GetLogger()
-	uri := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s", opt.DbUser, opt.DbPassword, opt.DbHost, opt.DbName, opt.Ssl)
+	uri := fmt.Sprintf("user=%s password=%s host=%s dbname=%s sslmode=%s port=%s", opt.DbUser, opt.DbPassword, opt.DbHost, opt.DbName, opt.Ssl, opt.Port)
 
 	conn, _ := db.Open(opt.DbDriver, uri)
 

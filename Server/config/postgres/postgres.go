@@ -15,6 +15,7 @@ type Postgres struct {
 	DbMigrate   bool
 	DbMigration string
 	Ssl         string
+	Port        string
 }
 
 func PostgresConfig() Postgres {
@@ -32,6 +33,7 @@ func PostgresConfig() Postgres {
 	config.DbMigrate = forceMigrate
 	config.DbMigration = strings.TrimSpace(os.Getenv("POSTGRES_MIGRATION"))
 	config.Ssl = strings.TrimSpace(os.Getenv("POSTGRES_SSL"))
+	config.Port = strings.TrimSpace(os.Getenv("POSTGRES_PORT"))
 
 	return config
 }

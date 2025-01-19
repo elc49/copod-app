@@ -31,6 +31,7 @@ func init() {
 		DbHost:      "127.0.0.1",
 		DbDriver:    "postgres",
 		Ssl:         "disable",
+		Port:        "5432",
 	}
 
 	// Database
