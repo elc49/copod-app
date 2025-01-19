@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -102,6 +103,16 @@ fun OnboardingScreen(
                             stringResource(R.string.land_uplod_copy_text),
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
+                        OutlinedIconButton(
+                            onClick = {},
+                            modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.doc_paper),
+                                modifier = Modifier.size(32.dp),
+                                contentDescription = stringResource(R.string.upload)
+                            )
+                        }
                     }
                 }
                 OutlinedCard(
@@ -119,7 +130,7 @@ fun OnboardingScreen(
                                 .align(Alignment.TopStart),
                         ) {
                             Icon(
-                                painterResource(R.drawable.doc_paper),
+                                painterResource(R.drawable.govt_id),
                                 modifier = Modifier.size(32.dp),
                                 contentDescription = stringResource(R.string.upload_govt_issued_id),
                             )
@@ -136,6 +147,16 @@ fun OnboardingScreen(
                             stringResource(R.string.verify_your_id_copy_text),
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
+                        OutlinedIconButton(
+                            onClick = {},
+                            modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.doc_paper),
+                                modifier = Modifier.size(32.dp),
+                                contentDescription = stringResource(R.string.upload)
+                            )
+                        }
                     }
                 }
                 OutlinedCard(
@@ -153,7 +174,7 @@ fun OnboardingScreen(
                                 .align(Alignment.TopStart),
                         ) {
                             Icon(
-                                painterResource(R.drawable.doc_paper),
+                                painterResource(R.drawable.account),
                                 modifier = Modifier.size(32.dp),
                                 contentDescription = stringResource(R.string.display_picture),
                             )
@@ -170,6 +191,16 @@ fun OnboardingScreen(
                             stringResource(R.string.upload_dp_copy_text),
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
+                        OutlinedIconButton(
+                            onClick = {},
+                            modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.doc_paper),
+                                modifier = Modifier.size(32.dp),
+                                contentDescription = stringResource(R.string.upload)
+                            )
+                        }
                     }
                 }
             }

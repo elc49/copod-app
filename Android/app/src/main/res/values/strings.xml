@@ -82,4 +82,5 @@
     <string name="onboarding">Onboarding</string>
     <string name="earth">Earth</string>
     <string name="upload_govt_issued_title">Government issued</string>
+    <string name="upload">Upload</string>
 </resources>
