@@ -40,6 +40,9 @@ object OnboardingScreenDestination : Navigation {
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
+    onNavigateToUploadLandTitle: () -> Unit,
+    onNavigateToUploadGovtId: () -> Unit,
+    onNavigateToUploadDp: () -> Unit,
 ) {
     Scaffold(topBar = {
         TopBar(
@@ -104,7 +107,7 @@ fun OnboardingScreen(
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
                         OutlinedIconButton(
-                            onClick = {},
+                            onClick = onNavigateToUploadLandTitle,
                             modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
                         ) {
                             Icon(
@@ -148,7 +151,7 @@ fun OnboardingScreen(
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
                         OutlinedIconButton(
-                            onClick = {},
+                            onClick = onNavigateToUploadGovtId,
                             modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
                         ) {
                             Icon(
@@ -192,7 +195,7 @@ fun OnboardingScreen(
                             modifier = Modifier.align(Alignment.CenterStart),
                         )
                         OutlinedIconButton(
-                            onClick = {},
+                            onClick = onNavigateToUploadDp,
                             modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
                         ) {
                             Icon(

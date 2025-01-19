@@ -95,7 +95,7 @@ fun UploadLandTitle(
                 )
             }
         }
-    }, copyText = stringResource(R.string.land_uplod_copy_text), buttonText = @Composable {
+    }, buttonText = @Composable {
         Text(
             stringResource(R.string.proceed),
             style = MaterialTheme.typography.titleMedium,

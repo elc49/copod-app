@@ -104,7 +104,6 @@ fun UploadDisplayPicture(
                 }
             }
         },
-        copyText = stringResource(R.string.upload_dp_copy_text),
         buttonText = @Composable {
             Text(
                 stringResource(R.string.continue_text),

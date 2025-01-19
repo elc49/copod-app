@@ -22,7 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,7 +43,6 @@ fun UploadDocument(
     onNext: () -> Unit,
     title: @Composable (() -> Unit),
     titleSize: String = "",
-    copyText: String = "",
     onGoBack: () -> Unit,
     onSelectImage: () -> Unit,
     savingDoc: Boolean,
@@ -119,7 +117,6 @@ fun UploadDocument(
                 Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(copyText)
                 Box(
                     contentAlignment = Alignment.Center,
                 ) {

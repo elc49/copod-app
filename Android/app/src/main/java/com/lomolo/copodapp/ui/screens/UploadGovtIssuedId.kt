@@ -103,7 +103,6 @@ fun UploadGovtIssuedId(
                 }
             }
         },
-        copyText = stringResource(R.string.verify_your_id_copy_text),
         savingDoc = viewModel.uploadingGovtId is UploadingDoc.Loading,
         buttonText = @Composable {
             Text(

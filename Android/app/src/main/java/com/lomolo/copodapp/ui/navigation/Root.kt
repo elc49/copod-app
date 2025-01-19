@@ -216,6 +216,15 @@ fun NavigationHost(
             OnboardingScreen(
                 onGoBack = {
                     navHostController.popBackStack()
+                },
+                onNavigateToUploadLandTitle = {
+                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                },
+                onNavigateToUploadGovtId = {
+                    navHostController.navigate(UploadGovtIssuedIdScreenDestination.route)
+                },
+                onNavigateToUploadDp = {
+                    navHostController.navigate(UploadDisplayPictureDestination.route)
                 }
             )
         }
