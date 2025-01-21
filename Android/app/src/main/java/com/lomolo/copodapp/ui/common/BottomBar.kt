@@ -52,13 +52,6 @@ sealed class Screen(
         "add_land",
         false,
     )
-    data object Search: Screen(
-        R.string.search,
-        R.drawable.search,
-        R.drawable.search_filled,
-        "search_land",
-        false,
-    )
 }
 
 
@@ -67,7 +60,7 @@ fun BottomNavBar(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
 ) {
-    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Create, Screen.Search, Screen.Account)
+    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Create, Screen.Account)
 
     NavigationBar {
         navItems.forEachIndexed { _, item ->
