@@ -157,7 +157,7 @@ fun NavigationHost(
                 },
                 viewModel = onboardingViewModel,
                 onNext = { onboardingId ->
-                    navHostController.navigate("${MpesaScreenDestination.route}/${onboardingId}")
+                    navHostController.navigate(AddLandScreenDestination.route)
                 },
             )
         }

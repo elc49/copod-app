@@ -105,7 +105,7 @@ fun UploadDisplayPicture(
         },
         buttonText = @Composable {
             Text(
-                stringResource(R.string.continue_text),
+                stringResource(R.string.save),
                 style = MaterialTheme.typography.titleMedium,
             )
         })

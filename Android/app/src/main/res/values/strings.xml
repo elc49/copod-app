@@ -84,4 +84,5 @@
     <string name="upload_govt_issued_title">Government issued</string>
     <string name="upload">Upload</string>
     <string name="click_to_upload">Click to Upload</string>
+    <string name="save">Save</string>
 </resources>

@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -100,11 +101,11 @@ fun AddLandScreen(
                             Button(
                                 onClick = onClickAddLand,
                                 contentPadding = PaddingValues(16.dp),
-                                shape = MaterialTheme.shapes.extraSmall,
-                                modifier = Modifier.align(Alignment.End),
+                                modifier = Modifier.fillMaxWidth(),
                             ) {
                                 Icon(
                                     Icons.TwoTone.Add,
+                                    modifier = Modifier.size(24.dp),
                                     contentDescription = stringResource(R.string.add),
                                 )
                                 Spacer(Modifier.size(8.dp))

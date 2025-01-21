@@ -56,7 +56,6 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter),
-                shape = MaterialTheme.shapes.extraSmall,
                 contentPadding = PaddingValues(16.dp),
             ) {
                 when(mainViewModel.loginSdk) {

@@ -122,7 +122,7 @@ fun UploadDocument(
                         AsyncImage(
                             model = ImageRequest.Builder(context).data(image).crossfade(true)
                                 .build(),
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Fit,
                             placeholder = painterResource(R.drawable.loading_img),
                             error = painterResource(R.drawable.ic_broken_image),
                             modifier = Modifier
