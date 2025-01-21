@@ -81,87 +81,104 @@ fun AddLandScreen(
             when (viewModel.gettingCurrentOnboarding) {
                 GetCurrentOnboarding.Success -> {
                     if (currentOnboarding == null) {
-                        Column(
-                            modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Text(stringResource(R.string.new_land_copy))
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data(R.drawable._9872287).crossfade(true).build(),
-                                modifier = Modifier.clip(MaterialTheme.shapes.medium),
-                                placeholder = painterResource(R.drawable.loading_img),
-                                error = painterResource(R.drawable.ic_broken_image),
-                                contentDescription = stringResource(R.string.land)
-                            )
-                            Button(
-                                onClick = onClickAddLand,
-                                contentPadding = PaddingValues(16.dp),
-                                modifier = Modifier.fillMaxWidth(),
-                            ) {
-                                Icon(
-                                    Icons.TwoTone.Add,
-                                    modifier = Modifier.size(24.dp),
-                                    contentDescription = stringResource(R.string.add),
-                                )
-                                Spacer(Modifier.size(8.dp))
-                                Text(
-                                    stringResource(R.string.start_onboarding),
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                            }
-                        }
+                       NoYourListings(innerPadding = innerPadding, onClickAddLand = onClickAddLand)
                     } else {
-                        Column(
-                            Modifier
-                                .fillMaxSize()
-                                .padding(innerPadding)
-                                .padding(8.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text(
-                                stringResource(R.string.your_registration_status),
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            Row(
-                                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Box(
-                                    Modifier
-                                        .background(
-                                            MaterialTheme.colorScheme.secondaryContainer,
-                                            MaterialTheme.shapes.extraSmall,
-                                        )
-                                        .padding(16.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Icon(
-                                        Icons.TwoTone.Check,
-                                        contentDescription = stringResource(R.string.check)
-                                    )
-                                }
-                                Column {
-                                    Text(
-                                        stringResource(R.string.pending_review),
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
-                                    Text(
-                                        stringResource(R.string.review_copy)
-                                    )
-                                }
-                            }
-                        }
+                        UnderReview(innerPadding = innerPadding)
                     }
                 }
 
                 GetCurrentOnboarding.Loading -> LoadingScreen()
                 is GetCurrentOnboarding.Error -> ErrorScreen()
             }
+        }
+    }
+}
+
+@Composable
+fun UnderReview(
+    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Text(
+            stringResource(R.string.your_registration_status),
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                Modifier
+                    .background(
+                        MaterialTheme.colorScheme.secondaryContainer,
+                        MaterialTheme.shapes.extraSmall,
+                    )
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    Icons.TwoTone.Check,
+                    contentDescription = stringResource(R.string.check)
+                )
+            }
+            Column {
+                Text(
+                    stringResource(R.string.pending_review),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    stringResource(R.string.review_copy)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun NoYourListings(
+    modifier: Modifier = Modifier,
+    innerPadding: PaddingValues,
+    onClickAddLand: () -> Unit,
+) {
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(stringResource(R.string.new_land_copy))
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(R.drawable._9872287).crossfade(true).build(),
+            modifier = Modifier.clip(MaterialTheme.shapes.medium),
+            placeholder = painterResource(R.drawable.loading_img),
+            error = painterResource(R.drawable.ic_broken_image),
+            contentDescription = stringResource(R.string.land)
+        )
+        Button(
+            onClick = onClickAddLand,
+            contentPadding = PaddingValues(16.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Icon(
+                Icons.TwoTone.Add,
+                modifier = Modifier.size(24.dp),
+                contentDescription = stringResource(R.string.add),
+            )
+            Spacer(Modifier.size(8.dp))
+            Text(
+                stringResource(R.string.start_onboarding),
+                style = MaterialTheme.typography.titleMedium,
+            )
         }
     }
 }
