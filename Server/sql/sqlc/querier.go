@@ -23,6 +23,7 @@ type Querier interface {
 	GetEarlySignupByEmail(ctx context.Context, email string) (EarlySignup, error)
 	GetOnboardingByEmailAndVerification(ctx context.Context, arg GetOnboardingByEmailAndVerificationParams) (Onboarding, error)
 	GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboarding, error)
+	GetOnboardingsByStatus(ctx context.Context, verification string) ([]Onboarding, error)
 	GetPaymentByReferenceID(ctx context.Context, referenceID string) (Payment, error)
 	GetPaymentOnboardingByID(ctx context.Context, id uuid.UUID) (Onboarding, error)
 	GetPaymentsByStatus(ctx context.Context, status string) ([]Payment, error)

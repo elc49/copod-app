@@ -17,3 +17,7 @@ WHERE id = $1;
 UPDATE onboardings SET verification = $1
 WHERE id = $2
 RETURNING *;
+
+-- name: GetOnboardingsByStatus :many
+SELECT * FROM onboardings
+WHERE verification = $1;

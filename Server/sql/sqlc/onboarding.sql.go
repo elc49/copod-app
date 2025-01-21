@@ -97,6 +97,44 @@ func (q *Queries) GetOnboardingByID(ctx context.Context, id uuid.UUID) (Onboardi
 	return i, err
 }
 
+const getOnboardingsByStatus = `-- name: GetOnboardingsByStatus :many
+SELECT id, title_id, support_doc_id, display_picture_id, email, verification, payment_status, created_at, updated_at FROM onboardings
+WHERE verification = $1
+`
+
+func (q *Queries) GetOnboardingsByStatus(ctx context.Context, verification string) ([]Onboarding, error) {
+	rows, err := q.db.QueryContext(ctx, getOnboardingsByStatus, verification)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []Onboarding{}
+	for rows.Next() {
+		var i Onboarding
+		if err := rows.Scan(
+			&i.ID,
+			&i.TitleID,
+			&i.SupportDocID,
+			&i.DisplayPictureID,
+			&i.Email,
+			&i.Verification,
+			&i.PaymentStatus,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateOnboardingVerificationByID = `-- name: UpdateOnboardingVerificationByID :one
 UPDATE onboardings SET verification = $1
 WHERE id = $2

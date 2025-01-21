@@ -66,4 +66,11 @@ func Test_Onboarding_Controller(t *testing.T) {
 		assert.Nil(t, err)
 		assert.Equal(t, o.Verification, model.VerificationVerified.String())
 	})
+
+	t.Run("get_onboardings_by_status", func(t *testing.T) {
+		obs, err := oc.GetOnboardingsByStatus(ctx, model.VerificationVerified)
+
+		assert.Nil(t, err)
+		assert.True(t, len(obs) > 0)
+	})
 }

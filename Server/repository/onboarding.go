@@ -104,3 +104,27 @@ func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*mode
 		UpdatedAt:        o.UpdatedAt,
 	}, nil
 }
+
+func (r *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Verification) ([]*model.Onboarding, error) {
+	var onboardings []*model.Onboarding
+
+	obs, err := r.sql.GetOnboardingsByStatus(ctx, status.String())
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"status": status}).Errorf("repository: GetOnboardingsByStatus")
+		return nil, err
+	}
+
+	for _, item := range obs {
+		ob := &model.Onboarding{
+			ID:               item.ID,
+			TitleID:          item.TitleID,
+			SupportDocID:     item.SupportDocID,
+			DisplayPictureID: item.DisplayPictureID,
+			CreatedAt:        item.CreatedAt,
+			UpdatedAt:        item.UpdatedAt,
+		}
+
+		onboardings = append(onboardings, ob)
+	}
+	return onboardings, nil
+}
