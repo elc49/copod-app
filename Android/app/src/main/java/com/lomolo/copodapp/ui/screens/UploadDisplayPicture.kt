@@ -76,7 +76,6 @@ fun UploadDisplayPicture(
     }
 
     UploadDocument(modifier = modifier,
-        titleSize = "large",
         title = @Composable {
             Column {
                 Text(stringResource(R.string.display_picture))
@@ -104,10 +103,9 @@ fun UploadDisplayPicture(
                 }
             }
         },
-        copyText = stringResource(R.string.upload_dp_copy_text),
         buttonText = @Composable {
             Text(
-                stringResource(R.string.continue_text),
+                stringResource(R.string.save),
                 style = MaterialTheme.typography.titleMedium,
             )
         })

@@ -91,17 +91,22 @@ fun SearchLandTopBar(
     val searchResult by viewModel.searchResult.collectAsState()
 
     BackHandler {}
-    Box(
-        modifier
-            .fillMaxSize()
-            .semantics { isTraversalGroup = true }) {
+    Box(modifier
+        .fillMaxSize()
+        .semantics { isTraversalGroup = true }) {
         SearchBar(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .semantics { traversalIndex = 0f },
             inputField = {
                 SearchBarDefaults.InputField(query = searchQuery,
-                    onSearch = { viewModel.searchLandTitle { landTitleViewModel.getLandTitleDetails(it) } },
+                    onSearch = {
+                        viewModel.searchLandTitle {
+                            landTitleViewModel.getLandTitleDetails(
+                                it
+                            )
+                        }
+                    },
                     expanded = expanded,
                     onExpandedChange = { expanded = it },
                     placeholder = { Text(stringResource(R.string.search_land)) },

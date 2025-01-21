@@ -33,6 +33,8 @@ import com.lomolo.copodapp.ui.screens.LoadingScreen
 import com.lomolo.copodapp.ui.screens.LoadingScreenDestination
 import com.lomolo.copodapp.ui.screens.MpesaScreen
 import com.lomolo.copodapp.ui.screens.MpesaScreenDestination
+import com.lomolo.copodapp.ui.screens.OnboardingScreen
+import com.lomolo.copodapp.ui.screens.OnboardingScreenDestination
 import com.lomolo.copodapp.ui.screens.SearchLandScreen
 import com.lomolo.copodapp.ui.screens.SearchScreenDestination
 import com.lomolo.copodapp.ui.screens.SuccessScreen
@@ -123,7 +125,7 @@ fun NavigationHost(
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
                 onClickAddLand = {
-                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                    navHostController.navigate(AddLandScreenDestination.route)
                 })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
@@ -155,7 +157,7 @@ fun NavigationHost(
                 },
                 viewModel = onboardingViewModel,
                 onNext = { onboardingId ->
-                    navHostController.navigate("${MpesaScreenDestination.route}/${onboardingId}")
+                    navHostController.navigate(AddLandScreenDestination.route)
                 },
             )
         }
@@ -194,7 +196,7 @@ fun NavigationHost(
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
                 onClickAddLand = {
-                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                    navHostController.navigate(OnboardingScreenDestination.route)
                 })
         }
         composable(route = SearchScreenDestination.route) {
@@ -208,6 +210,23 @@ fun NavigationHost(
             FoundLandScreen(
                 onGoBack = { navHostController.popBackStack() },
                 viewModel = landTitleViewModel,
+            )
+        }
+        composable(route = OnboardingScreenDestination.route) {
+            OnboardingScreen(
+                onGoBack = {
+                    navHostController.popBackStack()
+                },
+                onNavigateToUploadLandTitle = {
+                    navHostController.navigate(UploadLandTitleScreenDestination.route)
+                },
+                onNavigateToUploadGovtId = {
+                    navHostController.navigate(UploadGovtIssuedIdScreenDestination.route)
+                },
+                onNavigateToUploadDp = {
+                    navHostController.navigate(UploadDisplayPictureDestination.route)
+                },
+                onboardingViewModel = onboardingViewModel,
             )
         }
     }

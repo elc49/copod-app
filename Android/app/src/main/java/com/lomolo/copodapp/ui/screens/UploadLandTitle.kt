@@ -77,32 +77,40 @@ fun UploadLandTitle(
         }
     }
 
-    UploadDocument(modifier = modifier, titleSize = "large", title = @Composable {
-        Column {
-            Text(stringResource(R.string.land_title_document))
-        }
-    }, image = landTitle, newUpload = image.isEmpty(), savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading, onNext = {
-        if (image.isNotEmpty()) {
-            onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
-        }
-    }, onGoBack = onGoBack, onSelectImage = {
-        if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
-            scope.launch {
-                pickLandTitleMedia.launch(
-                    PickVisualMediaRequest(
-                        ActivityResultContracts.PickVisualMedia.ImageOnly,
-                    )
-                )
+    UploadDocument(modifier = modifier,
+        title = @Composable {
+            Column {
+                Text(stringResource(R.string.land_title_document))
             }
-        }
-    }, copyText = stringResource(R.string.land_uplod_copy_text), buttonText = @Composable {
-        Text(
-            stringResource(R.string.proceed),
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Icon(
-            Icons.AutoMirrored.TwoTone.ArrowForward,
-            contentDescription = stringResource(R.string.proceed),
-        )
-    })
+        },
+        image = landTitle,
+        newUpload = image.isEmpty(),
+        savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading,
+        onNext = {
+            if (image.isNotEmpty()) {
+                onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
+            }
+        },
+        onGoBack = onGoBack,
+        onSelectImage = {
+            if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
+                scope.launch {
+                    pickLandTitleMedia.launch(
+                        PickVisualMediaRequest(
+                            ActivityResultContracts.PickVisualMedia.ImageOnly,
+                        )
+                    )
+                }
+            }
+        },
+        buttonText = @Composable {
+            Text(
+                stringResource(R.string.proceed),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Icon(
+                Icons.AutoMirrored.TwoTone.ArrowForward,
+                contentDescription = stringResource(R.string.proceed),
+            )
+        })
 }

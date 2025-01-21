@@ -7,7 +7,7 @@
     <string name="start_by_email">Email</string>
     <string name="get_started">Get Started</string>
     <string name="land">Land</string>
-    <string name="home_headline">Register land. Search land. Rent land space</string>
+    <string name="home_headline">Own land. Search land. Use land space</string>
     <string name="explore">Explore</string>
     <string name="user">user</string>
     <string name="close">close</string>
@@ -17,7 +17,7 @@
     <string name="something_wrong">Something went wrong</string>
     <string name="register_land">Register land</string>
     <string name="submit">Submit</string>
-    <string name="govt_issued_id">Supporting document</string>
+    <string name="govt_issued_id">Support Doc</string>
     <string name="land_title_document">Land title</string>
     <string name="image">image</string>
     <string name="govt_issued_title">Upload govt issued title</string>
@@ -32,7 +32,7 @@
     <string name="ok">OK</string>
     <string name="pay">Pay %1$s %2$s</string>
     <string name="google">Google</string>
-    <string name="google_sign_in">Google Signin</string>
+    <string name="google_sign_in">Signin with Google</string>
     <string name="land_title">Land title</string>
     <string name="your_lands">Your lands</string>
     <string name="display_picture">Display Picture</string>
@@ -62,7 +62,7 @@
     <string name="no_lands_available">No Lands available</string>
     <string name="you_can_create_a_listing">You can create a listing</string>
     <string name="next">Next</string>
-    <string name="land_uplod_copy_text">Upload a photo of your land title. Text should be clear and not blurred out. We accept JPG, and PNG files.</string>
+    <string name="land_uplod_copy_text">Upload your land title doc. Text should be clear and not blurred out.</string>
     <string name="verify_your_id">Verify your ID</string>
     <string name="verify_your_id_copy_text">We\'ll need a photo of your government-issued ID. Make sure the document is visible.</string>
     <string name="upload_dp_copy_text">Let people you transact with know who they are talking to. We recommend a clear, professional photo.</string>
@@ -79,4 +79,10 @@
     <string name="found_this_title">We found this land title</string>
     <string name="land_title_details">Land Title Detail</string>
     <string name="no_history">No history</string>
+    <string name="onboarding">Onboarding</string>
+    <string name="earth">Earth</string>
+    <string name="upload_govt_issued_title">Government issued</string>
+    <string name="upload">Upload</string>
+    <string name="click_to_upload">Click to Upload</string>
+    <string name="save">Save</string>
 </resources>
