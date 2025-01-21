@@ -1,11 +1,17 @@
 package ethereum
 
 import (
+	"context"
+	"crypto/ecdsa"
+	"math/big"
+
 	"github.com/elc49/copod/config"
 	"github.com/elc49/copod/ethereum/land"
 	"github.com/elc49/copod/ethereum/registry"
 	"github.com/elc49/copod/logger"
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
 )
@@ -21,12 +27,22 @@ var (
 type EthBackend interface {
 	GetRegistryContract() *registry.Registry
 	GetLandTitleDetails(string) (*land.LandDetails, error)
+	RegisterLand(context.Context, LandDetails) error
+}
+
+type LandDetails struct {
+	TitleNo          string
+	Symbol           string
+	Owner            common.Address
+	Size             *big.Int
+	RegistrationDate *big.Int
 }
 
 type ethBackend struct {
 	client           *ethclient.Client
 	registryContract *registry.Registry
 	log              *logrus.Logger
+	signingAccount   *ecdsa.PrivateKey
 }
 
 func NewEthBackend() {
@@ -39,6 +55,12 @@ func NewEthBackend() {
 		log.Infoln("registry:Connected to Ethereum client")
 	}
 
+	// Signing account
+	privateKey, err := crypto.HexToECDSA(config.C.Ethereum.SigningAccountKey)
+	if err != nil {
+		log.WithError(err).Fatalln("ethereum: crypto.HexToECDSA: RegisterLand")
+	}
+
 	// Registry contract instance
 	r, err := registry.NewRegistry(common.HexToAddress(config.C.Ethereum.RegistryContractAddress), conn)
 	if err != nil {
@@ -47,7 +69,7 @@ func NewEthBackend() {
 		log.Infoln("registry:Instantiated Registry smart contract")
 	}
 
-	eth = &ethBackend{conn, r, logger.GetLogger()}
+	eth = &ethBackend{conn, r, logger.GetLogger(), privateKey}
 }
 
 func GetEthBackend() EthBackend {
@@ -78,4 +100,49 @@ func (e *ethBackend) GetLandTitleDetails(titleNo string) (*land.LandDetails, err
 	}
 
 	return &l, nil
+}
+
+// signingPublicKey get public key from private key
+func (e *ethBackend) signingPublicKey() common.Address {
+	publicKey := e.signingAccount.Public()
+	pkEcdsa, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		e.log.Fatalln("error casting public key to ecdsa")
+	}
+
+	return crypto.PubkeyToAddress(*pkEcdsa)
+}
+
+// getChainID for the current chain
+func (e *ethBackend) getChainID(ctx context.Context) (*big.Int, error) {
+	chainId, err := e.client.ChainID(ctx)
+	if err != nil {
+		e.log.WithError(err).Errorf("ethereum: ethclient.ChainID: getChainID")
+		return nil, err
+	}
+
+	return chainId, nil
+}
+
+// Register land using registry contract
+func (e *ethBackend) RegisterLand(ctx context.Context, l LandDetails) error {
+	c, err := e.getChainID(ctx)
+	if err != nil {
+		return err
+	}
+
+	auth, err := bind.NewKeyedTransactorWithChainID(e.signingAccount, c)
+	if err != nil {
+		e.log.WithError(err).Errorf("ethereum: bind.NewKeyedTransactorWithChainID: RegisterLand")
+		return err
+	}
+
+	tx, err := e.registryContract.Register(auth, l.TitleNo, l.Symbol, l.Owner, l.Size, l.RegistrationDate)
+	if err != nil {
+		e.log.WithError(err).WithFields(logrus.Fields{"land": l}).Errorf("registry: e.registryContract.Register: RegisterLand")
+		return err
+	}
+	e.log.WithFields(logrus.Fields{"tx": tx}).Infoln("success: register land")
+
+	return nil
 }

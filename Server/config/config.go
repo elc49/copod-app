@@ -115,6 +115,7 @@ func ethereumConfig() Ethereum {
 
 	config.InfuraApi = strings.TrimSpace(os.Getenv("INFURA_API"))
 	config.RegistryContractAddress = strings.TrimSpace(os.Getenv("REGISTRY_CONTRACT_ADDRESS"))
+	config.SigningAccountKey = strings.TrimSpace(os.Getenv("SIGNING_ACCOUNT_KEY"))
 
 	return config
 }
