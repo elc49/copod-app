@@ -164,6 +164,7 @@ type Query {
   getOnboardingByEmailAndVerification(input: GetOnboardingByEmailAndVerificationInput!): Onboarding
   getIsTitleVerified(titleNo: String!): Boolean!
   getLandTitleDetails(titleNo: String!): LandDetails!
+  getOnboardingsByStatus(status: Verification!): [Onboarding!]!
 }
 
 type Mutation {

@@ -9,8 +9,8 @@ import (
 	"time"
 
 	"github.com/elc49/copod/cache"
-	"github.com/elc49/copod/contracts"
-	"github.com/elc49/copod/contracts/land"
+	"github.com/elc49/copod/ethereum"
+	"github.com/elc49/copod/ethereum/land"
 	"github.com/elc49/copod/graph/model"
 	"github.com/elc49/copod/paystack"
 	sql "github.com/elc49/copod/sql/sqlc"
@@ -156,7 +156,7 @@ func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) 
 		return false, err
 	}
 
-	if value.String() == contracts.ZERO_ADDRESS {
+	if value.String() == ethereum.ZERO_ADDRESS {
 		return false, nil
 	}
 
@@ -176,6 +176,11 @@ func (r *queryResolver) GetLandTitleDetails(ctx context.Context, titleNo string)
 		Size:         details.Size,
 		Symbol:       details.Symbol,
 	}, nil
+}
+
+// GetOnboardingsByStatus is the resolver for the getOnboardingsByStatus field.
+func (r *queryResolver) GetOnboardingsByStatus(ctx context.Context, status model.Verification) ([]*model.Onboarding, error) {
+	return r.onboardingController.GetOnboardingsByStatus(ctx, status)
 }
 
 // PaymentUpdate is the resolver for the paymentUpdate field.

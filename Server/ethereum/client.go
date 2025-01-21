@@ -1,9 +1,9 @@
-package contracts
+package ethereum
 
 import (
 	"github.com/elc49/copod/config"
-	"github.com/elc49/copod/contracts/land"
-	"github.com/elc49/copod/contracts/registry"
+	"github.com/elc49/copod/ethereum/land"
+	"github.com/elc49/copod/ethereum/registry"
 	"github.com/elc49/copod/logger"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"

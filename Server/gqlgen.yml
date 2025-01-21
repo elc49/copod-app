@@ -100,7 +100,7 @@ models:
       - github.com/99designs/gqlgen/graphql.UUID
   LandDetails:
     model:
-      - github.com/elc49/copod/contracts/land.LandDetails
+      - github.com/elc49/copod/ethereum/land.LandDetails
   Payment:
     fields:
       onboarding:

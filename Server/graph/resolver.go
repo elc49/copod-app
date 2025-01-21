@@ -2,8 +2,8 @@ package graph
 
 import (
 	"github.com/elc49/copod/cache"
-	"github.com/elc49/copod/contracts"
 	"github.com/elc49/copod/controller"
+	"github.com/elc49/copod/ethereum"
 	"github.com/elc49/copod/logger"
 	"github.com/elc49/copod/paystack"
 	"github.com/redis/go-redis/v9"
@@ -26,7 +26,7 @@ type Resolver struct {
 	userController           controller.UserController
 	onboardingController     controller.OnboardingController
 	displayPictureController controller.DisplayPictureController
-	ethBackend               contracts.EthBackend
+	ethBackend               ethereum.EthBackend
 }
 
 func New() Config {
@@ -40,7 +40,7 @@ func New() Config {
 		controller.GetUserController(),
 		controller.GetOnboardingController(),
 		controller.GetDisplayPictureController(),
-		contracts.GetEthBackend(),
+		ethereum.GetEthBackend(),
 	}
 	return Config{Resolvers: r}
 }

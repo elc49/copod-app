@@ -16,7 +16,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/introspection"
-	"github.com/elc49/copod/contracts/land"
+	"github.com/elc49/copod/ethereum/land"
 	"github.com/elc49/copod/graph/model"
 	"github.com/google/uuid"
 	gqlparser "github.com/vektah/gqlparser/v2"
@@ -115,6 +115,7 @@ type ComplexityRoot struct {
 		GetIsTitleVerified                  func(childComplexity int, titleNo string) int
 		GetLandTitleDetails                 func(childComplexity int, titleNo string) int
 		GetOnboardingByEmailAndVerification func(childComplexity int, input model.GetOnboardingByEmailAndVerificationInput) int
+		GetOnboardingsByStatus              func(childComplexity int, status model.Verification) int
 		GetPaymentsByStatus                 func(childComplexity int, status model.PaymentStatus) int
 		GetSupportingDocByID                func(childComplexity int, id uuid.UUID) int
 		GetTitleByID                        func(childComplexity int, id uuid.UUID) int
@@ -185,6 +186,7 @@ type QueryResolver interface {
 	GetOnboardingByEmailAndVerification(ctx context.Context, input model.GetOnboardingByEmailAndVerificationInput) (*model.Onboarding, error)
 	GetIsTitleVerified(ctx context.Context, titleNo string) (bool, error)
 	GetLandTitleDetails(ctx context.Context, titleNo string) (*land.LandDetails, error)
+	GetOnboardingsByStatus(ctx context.Context, status model.Verification) ([]*model.Onboarding, error)
 }
 type SubscriptionResolver interface {
 	PaymentUpdate(ctx context.Context, email string) (<-chan *model.PaymentUpdate, error)
@@ -540,6 +542,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetOnboardingByEmailAndVerification(childComplexity, args["input"].(model.GetOnboardingByEmailAndVerificationInput)), true
+
+	case "Query.getOnboardingsByStatus":
+		if e.complexity.Query.GetOnboardingsByStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getOnboardingsByStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetOnboardingsByStatus(childComplexity, args["status"].(model.Verification)), true
 
 	case "Query.getPaymentsByStatus":
 		if e.complexity.Query.GetPaymentsByStatus == nil {
@@ -1109,6 +1123,29 @@ func (ec *executionContext) field_Query_getOnboardingByEmailAndVerification_args
 	}
 
 	var zeroVal model.GetOnboardingByEmailAndVerificationInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_getOnboardingsByStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_getOnboardingsByStatus_argsStatus(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["status"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Query_getOnboardingsByStatus_argsStatus(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.Verification, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+	if tmp, ok := rawArgs["status"]; ok {
+		return ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, tmp)
+	}
+
+	var zeroVal model.Verification
 	return zeroVal, nil
 }
 
@@ -3600,7 +3637,7 @@ func (ec *executionContext) _Query_getLandTitleDetails(ctx context.Context, fiel
 	}
 	res := resTmp.(*land.LandDetails)
 	fc.Result = res
-	return ec.marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx, field.Selections, res)
+	return ec.marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋethereumᚋlandᚐLandDetails(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getLandTitleDetails(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3631,6 +3668,85 @@ func (ec *executionContext) fieldContext_Query_getLandTitleDetails(ctx context.C
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getLandTitleDetails_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getOnboardingsByStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getOnboardingsByStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetOnboardingsByStatus(rctx, fc.Args["status"].(model.Verification))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Onboarding)
+	fc.Result = res
+	return ec.marshalNOnboarding2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboardingᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getOnboardingsByStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Onboarding_id(ctx, field)
+			case "email":
+				return ec.fieldContext_Onboarding_email(ctx, field)
+			case "titleId":
+				return ec.fieldContext_Onboarding_titleId(ctx, field)
+			case "title":
+				return ec.fieldContext_Onboarding_title(ctx, field)
+			case "supportDocId":
+				return ec.fieldContext_Onboarding_supportDocId(ctx, field)
+			case "supportingDoc":
+				return ec.fieldContext_Onboarding_supportingDoc(ctx, field)
+			case "displayPictureId":
+				return ec.fieldContext_Onboarding_displayPictureId(ctx, field)
+			case "displayPicture":
+				return ec.fieldContext_Onboarding_displayPicture(ctx, field)
+			case "verification":
+				return ec.fieldContext_Onboarding_verification(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Onboarding_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Onboarding_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Onboarding", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getOnboardingsByStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -7527,6 +7643,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getOnboardingsByStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getOnboardingsByStatus(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
@@ -8159,11 +8297,11 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalNLandDetails2githubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v land.LandDetails) graphql.Marshaler {
+func (ec *executionContext) marshalNLandDetails2githubᚗcomᚋelc49ᚋcopodᚋethereumᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v land.LandDetails) graphql.Marshaler {
 	return ec._LandDetails(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋcontractsᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v *land.LandDetails) graphql.Marshaler {
+func (ec *executionContext) marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopodᚋethereumᚋlandᚐLandDetails(ctx context.Context, sel ast.SelectionSet, v *land.LandDetails) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -8175,6 +8313,50 @@ func (ec *executionContext) marshalNLandDetails2ᚖgithubᚗcomᚋelc49ᚋcopod�
 
 func (ec *executionContext) marshalNOnboarding2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx context.Context, sel ast.SelectionSet, v model.Onboarding) graphql.Marshaler {
 	return ec._Onboarding(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOnboarding2ᚕᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboardingᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Onboarding) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx context.Context, sel ast.SelectionSet, v *model.Onboarding) graphql.Marshaler {

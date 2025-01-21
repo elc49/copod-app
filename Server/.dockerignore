@@ -10,6 +10,7 @@
 **/node_modules
 **/.DS_Store
 **/src/.DS_Store
+**/tools.go
 # Deploy configurations
 fly.toml
 fly-staging.toml
