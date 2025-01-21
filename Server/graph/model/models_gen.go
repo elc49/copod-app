@@ -117,8 +117,13 @@ type UpdateDisplayPictureVerificationByIDInput struct {
 }
 
 type UpdateTitleVerificationByIDInput struct {
-	TitleID      uuid.UUID    `json:"titleId"`
-	Verification Verification `json:"verification"`
+	TitleID          uuid.UUID    `json:"titleId"`
+	Verification     Verification `json:"verification"`
+	TitleNo          string       `json:"titleNo"`
+	Symbol           string       `json:"symbol"`
+	Owner            string       `json:"owner"`
+	Size             int          `json:"size"`
+	RegistrationDate time.Time    `json:"registrationDate"`
 }
 
 type User struct {

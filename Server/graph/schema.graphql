@@ -135,6 +135,11 @@ input GetUserLandsInput {
 input UpdateTitleVerificationByIdInput {
   titleId: UUID!
   verification: Verification!
+  titleNo: String!
+  symbol: String!
+  owner: String!
+  size: Int!
+  registrationDate: Time!
 }
 
 input CreateUserInput {

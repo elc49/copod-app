@@ -6829,7 +6829,7 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx c
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"titleId", "verification"}
+	fieldsInOrder := [...]string{"titleId", "verification", "titleNo", "symbol", "owner", "size", "registrationDate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6850,6 +6850,41 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx c
 				return it, err
 			}
 			it.Verification = data
+		case "titleNo":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("titleNo"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TitleNo = data
+		case "symbol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("symbol"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Symbol = data
+		case "owner":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("owner"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Owner = data
+		case "size":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("size"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Size = data
+		case "registrationDate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("registrationDate"))
+			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RegistrationDate = data
 		}
 	}
 

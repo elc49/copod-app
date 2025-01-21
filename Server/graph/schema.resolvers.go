@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"math/big"
 	"time"
 
 	"github.com/elc49/copod/cache"
@@ -15,6 +16,7 @@ import (
 	"github.com/elc49/copod/paystack"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/elc49/copod/util"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -60,7 +62,15 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 		ID:           input.TitleID,
 		Verification: input.Verification.String(),
 	}
-	return r.titleController.UpdateTitleVerificationByID(ctx, args)
+	landDetails := ethereum.LandDetails{
+		TitleNo:          input.TitleNo,
+		Symbol:           input.Symbol,
+		Owner:            common.HexToAddress(input.Owner),
+		Size:             big.NewInt(int64(input.Size)),
+		RegistrationDate: big.NewInt(input.RegistrationDate.Unix()),
+	}
+
+	return r.titleController.UpdateTitleVerificationByID(ctx, args, landDetails)
 }
 
 // CreateUser is the resolver for the createUser field.
