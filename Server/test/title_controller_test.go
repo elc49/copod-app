@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/elc49/copod/controller"
+	"github.com/elc49/copod/ethereum"
 	"github.com/elc49/copod/graph/model"
 	sql "github.com/elc49/copod/sql/sqlc"
 	"github.com/stretchr/testify/assert"
@@ -61,7 +62,7 @@ func Test_Title_Controller(t *testing.T) {
 		tl, err := tc.UpdateTitleVerificationByID(ctx, sql.UpdateTitleVerificationByIDParams{
 			ID:           title.ID,
 			Verification: model.VerificationVerified.String(),
-		})
+		}, ethereum.LandDetails{})
 
 		assert.Nil(t, err)
 		assert.Equal(t, tl.Verified, model.VerificationVerified)
