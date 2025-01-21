@@ -125,7 +125,7 @@ fun NavigationHost(
                 currentDestination = it.destination,
                 userInfo = mainViewModel.userInfo,
                 onClickAddLand = {
-                    navHostController.navigate(OnboardingScreenDestination.route)
+                    navHostController.navigate(AddLandScreenDestination.route)
                 })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
