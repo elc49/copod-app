@@ -142,7 +142,7 @@ func (e *ethBackend) RegisterLand(ctx context.Context, l LandDetails) error {
 		e.log.WithError(err).WithFields(logrus.Fields{"land": l}).Errorf("registry: e.registryContract.Register: RegisterLand")
 		return err
 	}
-	e.log.WithFields(logrus.Fields{"tx": tx}).Infoln("success: register land")
+	e.log.WithFields(logrus.Fields{"hash": tx.Hash()}).Infoln("success: register land")
 
 	return nil
 }

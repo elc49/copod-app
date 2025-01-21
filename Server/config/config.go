@@ -29,6 +29,22 @@ func env() {
 	godotenv.Load()
 }
 
+func IsProd() bool {
+	return C != nil && (C.Server.Env == "staging" || C.Server.Env == "prod")
+}
+
+func IsDev() bool {
+	if C == nil {
+		return false
+	}
+
+	return C.Server.Env == "dev"
+}
+
+func IsTest() bool {
+	return C == nil || C.Server.Env == "test"
+}
+
 func New() {
 	env()
 	log := logrus.New()
@@ -85,10 +101,6 @@ func databaseConfig() Database {
 	config.Redis = redis.RedisConfig()
 
 	return config
-}
-
-func IsProd() bool {
-	return C != nil && (C.Server.Env == "staging" || C.Server.Env == "prod")
 }
 
 func paystackConfig() Paystack {
