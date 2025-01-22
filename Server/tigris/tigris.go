@@ -48,6 +48,7 @@ func New() {
 	})
 
 	T = &tigrisClient{log, manager.NewUploader(c), c}
+	log.Infoln("tigrisservice: Connected")
 }
 
 func (tc *tigrisClient) Upload(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader) (*string, error) {

@@ -48,6 +48,7 @@ func New(sqlStore *sql.Queries) {
 		controller.GetPaymentController(),
 		cache.GetCache().Redis(),
 	}
+	log.Infoln("paystackservice: Connected")
 }
 
 func GetPaystackService() Paystack {

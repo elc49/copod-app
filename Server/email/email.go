@@ -27,6 +27,7 @@ func NewResend(sql *sql.Queries) {
 	client := resend.NewClient(config.C.Resend.ApiKey)
 
 	r = &rClient{client, log, sql}
+	log.Infoln("emailservice: Connected")
 }
 
 func GetResendEmailService() Resend {

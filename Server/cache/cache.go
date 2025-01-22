@@ -35,6 +35,8 @@ func New() {
 
 	if err := rdb.Ping(context.Background()).Err(); err != nil {
 		log.WithError(err).Fatalln("cache: redis.Ping")
+	} else {
+		log.Infoln("cacheservice: Connected")
 	}
 
 	c = &cacheClient{log, rdb}

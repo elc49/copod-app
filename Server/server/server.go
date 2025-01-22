@@ -169,6 +169,8 @@ func (s *Server) NewSentryService() {
 			TracesSampleRate: 1.0,
 		}); err != nil {
 			logrus.WithError(err).Errorf("server: sentry.Init")
+		} else {
+			logrus.Infoln("main:sentry: Connected")
 		}
 	}
 }

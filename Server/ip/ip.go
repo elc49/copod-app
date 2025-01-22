@@ -38,6 +38,7 @@ func New() {
 	client := ipinfo.NewClient(nil, ipinfo.NewCache(cache), config.C.Ipinfo.ApiKey)
 
 	ip = &ipClient{log, client, copodCache.GetCache(), &http.Client{}}
+	log.Infoln("ipservice: Connected")
 }
 
 func GetIpService() IP {
