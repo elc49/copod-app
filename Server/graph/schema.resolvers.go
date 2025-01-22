@@ -62,12 +62,20 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 		ID:           input.TitleID,
 		Verification: input.Verification.String(),
 	}
+
+	// Parse land reg date
+	t, err := time.Parse(time.RFC3339, input.RegistrationDate)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"date": input.RegistrationDate}).Errorf("resolver: time.Parse: UpdateTitleverificationByID")
+		return nil, err
+	}
+
 	landDetails := ethereum.LandDetails{
 		TitleNo:          input.TitleNo,
 		Symbol:           input.Symbol,
 		Owner:            common.HexToAddress(input.Owner),
 		Size:             big.NewInt(int64(input.Size)),
-		RegistrationDate: big.NewInt(input.RegistrationDate.Unix()),
+		RegistrationDate: big.NewInt(t.Unix()),
 	}
 
 	return r.titleController.UpdateTitleVerificationByID(ctx, args, landDetails)

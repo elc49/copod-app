@@ -20,9 +20,7 @@ const (
 	ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 )
 
-var (
-	eth EthBackend
-)
+var eth *ethClient
 
 type EthBackend interface {
 	GetRegistryContract() *registry.Registry
@@ -38,7 +36,7 @@ type LandDetails struct {
 	RegistrationDate *big.Int
 }
 
-type ethBackend struct {
+type ethClient struct {
 	client           *ethclient.Client
 	registryContract *registry.Registry
 	log              *logrus.Logger
@@ -69,18 +67,19 @@ func NewEthBackend() {
 		log.Infoln("registry:Instantiated Registry smart contract")
 	}
 
-	eth = &ethBackend{conn, r, logger.GetLogger(), privateKey}
+	// Initialize
+	eth = &ethClient{conn, r, logger.GetLogger(), privateKey}
 }
 
 func GetEthBackend() EthBackend {
 	return eth
 }
 
-func (e *ethBackend) GetRegistryContract() *registry.Registry {
+func (e *ethClient) GetRegistryContract() *registry.Registry {
 	return e.registryContract
 }
 
-func (e *ethBackend) GetLandTitleDetails(titleNo string) (*land.LandDetails, error) {
+func (e *ethClient) GetLandTitleDetails(titleNo string) (*land.LandDetails, error) {
 	contractAddress, err := e.registryContract.GetLandERC721Contract(nil, titleNo)
 	if err != nil {
 		e.log.WithError(err).WithFields(logrus.Fields{"title_no": titleNo}).Errorf("contract: GetLandERC721Contract: GetLandTitleDetails")
@@ -103,7 +102,7 @@ func (e *ethBackend) GetLandTitleDetails(titleNo string) (*land.LandDetails, err
 }
 
 // signingPublicKey get public key from private key
-func (e *ethBackend) signingPublicKey() common.Address {
+func (e *ethClient) signingPublicKey() common.Address {
 	publicKey := e.signingAccount.Public()
 	pkEcdsa, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
@@ -114,7 +113,7 @@ func (e *ethBackend) signingPublicKey() common.Address {
 }
 
 // getChainID for the current chain
-func (e *ethBackend) getChainID(ctx context.Context) (*big.Int, error) {
+func (e *ethClient) getChainID(ctx context.Context) (*big.Int, error) {
 	chainId, err := e.client.ChainID(ctx)
 	if err != nil {
 		e.log.WithError(err).Errorf("ethereum: ethclient.ChainID: getChainID")
@@ -125,7 +124,7 @@ func (e *ethBackend) getChainID(ctx context.Context) (*big.Int, error) {
 }
 
 // Register land using registry contract
-func (e *ethBackend) RegisterLand(ctx context.Context, l LandDetails) error {
+func (e *ethClient) RegisterLand(ctx context.Context, l LandDetails) error {
 	c, err := e.getChainID(ctx)
 	if err != nil {
 		return err

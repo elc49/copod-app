@@ -83,7 +83,9 @@ func (s *Server) MountRouter(static embed.FS) *chi.Mux {
 	r.Use(middleware.CleanPath)
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
-	r.Use(copodMiddleware.Sentry)
+	if config.IsProd() {
+		r.Use(copodMiddleware.Sentry)
+	}
 
 	r.Handle("/", playground.Handler("GraphQL playground", "/graphql"))
 	r.Handle("/graphql", handlers.GraphQL())
@@ -125,6 +127,7 @@ func (s *Server) MountController() {
 	// Early signup
 	ec := controller.EarlySignup{}
 	ec.Init(s.sql)
+	logrus.Infoln("controllers: Connected")
 }
 
 func (s *Server) Database() {

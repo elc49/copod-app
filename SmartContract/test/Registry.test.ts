@@ -26,7 +26,7 @@ describe("Registry", () => {
 
   describe("Register", async () => {
     it("Register", async () => {
-      const registration = Date.parse("2002/01/15")
+      const registration = Date.parse("2002-01-15")
       await registryContract.register(land.titleNo, land.unit, await owner.getAddress(), land.size, registration)
 
       landContract = (await ethers.getContractFactory("Land")).attach(await registryContract.getLandERC721Contract(land.titleNo))
@@ -43,7 +43,7 @@ describe("Registry", () => {
 
     it("Don't register same land parcel", async () => {
       await expect(
-        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, Date.parse("2002/01/15"))
+        registryContract.register(land.titleNo, land.unit, await owner.getAddress(), 34, Date.parse("2002-01-15"))
       ).to.be.reverted
     })
 

@@ -120,6 +120,7 @@ func (r *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Ve
 			TitleID:          item.TitleID,
 			SupportDocID:     item.SupportDocID,
 			DisplayPictureID: item.DisplayPictureID,
+			Verification:     model.Verification(item.Verification),
 			CreatedAt:        item.CreatedAt,
 			UpdatedAt:        item.UpdatedAt,
 		}

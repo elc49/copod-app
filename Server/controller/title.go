@@ -34,8 +34,8 @@ func (c *Title) Init(sql *sql.Queries) {
 	r := &repository.Title{}
 	r.Init(sql)
 	c.r = r
-	titleController = c
 	c.ethBackend = ethereum.GetEthBackend()
+	titleController = c
 }
 
 func (c *Title) CreateTitle(ctx context.Context, args sql.CreateTitleParams) (*model.Title, error) {
@@ -57,11 +57,9 @@ func (c *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, e
 func (c *Title) UpdateTitleVerificationByID(ctx context.Context, args sql.UpdateTitleVerificationByIDParams, landDetails ethereum.LandDetails) (*model.Title, error) {
 	// Avoid running ethereum in test env
 	if args.Verification == model.VerificationVerified.String() && !config.IsTest() {
-		go func() {
-			if err := c.ethBackend.RegisterLand(context.Background(), landDetails); err != nil {
-				return
-			}
-		}()
+		if err := c.ethBackend.RegisterLand(context.Background(), landDetails); err != nil {
+			return nil, err
+		}
 	}
 
 	return c.r.UpdateTitleVerificationByID(ctx, args)

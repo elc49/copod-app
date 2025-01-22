@@ -123,7 +123,7 @@ type UpdateTitleVerificationByIDInput struct {
 	Symbol           string       `json:"symbol"`
 	Owner            string       `json:"owner"`
 	Size             int          `json:"size"`
-	RegistrationDate time.Time    `json:"registrationDate"`
+	RegistrationDate string       `json:"registrationDate"`
 }
 
 type User struct {

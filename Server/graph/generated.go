@@ -6880,7 +6880,7 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx c
 			it.Size = data
 		case "registrationDate":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("registrationDate"))
-			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}

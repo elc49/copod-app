@@ -139,7 +139,7 @@ input UpdateTitleVerificationByIdInput {
   symbol: String!
   owner: String!
   size: Int!
-  registrationDate: Time!
+  registrationDate: String!
 }
 
 input CreateUserInput {
