@@ -58,13 +58,13 @@ func Test_Onboarding_Controller(t *testing.T) {
 	})
 
 	t.Run("update_onboarding_verification", func(t *testing.T) {
-		o, err := q.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
+		o, err := oc.UpdateOnboardingVerificationByID(ctx, sql.UpdateOnboardingVerificationByIDParams{
 			ID:           ob.ID,
 			Verification: model.VerificationVerified.String(),
 		})
 
 		assert.Nil(t, err)
-		assert.Equal(t, o.Verification, model.VerificationVerified.String())
+		assert.Equal(t, o.Verification.String(), model.VerificationVerified.String())
 	})
 
 	t.Run("get_onboardings_by_status", func(t *testing.T) {

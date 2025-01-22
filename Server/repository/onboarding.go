@@ -129,3 +129,21 @@ func (r *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Ve
 	}
 	return onboardings, nil
 }
+
+func (r *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
+	ob, err := r.sql.UpdateOnboardingVerificationByID(ctx, args)
+	if err != nil {
+		r.log.WithError(err).WithFields(logrus.Fields{"args": args}).Errorf("repository: UpdateOnboardingVerificationByID")
+		return nil, err
+	}
+
+	return &model.Onboarding{
+		ID:               ob.ID,
+		TitleID:          ob.TitleID,
+		SupportDocID:     ob.SupportDocID,
+		DisplayPictureID: ob.DisplayPictureID,
+		Verification:     model.Verification(ob.Verification),
+		CreatedAt:        ob.CreatedAt,
+		UpdatedAt:        ob.UpdatedAt,
+	}, nil
+}

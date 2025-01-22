@@ -18,6 +18,7 @@ type OnboardingController interface {
 	GetOnboardingByID(context.Context, uuid.UUID) (*model.Onboarding, error)
 	GetOnboardingByEmailAndVerification(context.Context, sql.GetOnboardingByEmailAndVerificationParams) (*model.Onboarding, error)
 	GetOnboardingsByStatus(context.Context, model.Verification) ([]*model.Onboarding, error)
+	UpdateOnboardingVerificationByID(context.Context, sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error)
 }
 
 type Onboarding struct {
@@ -134,4 +135,8 @@ func (c *Onboarding) areDocsOnboarded(ctx context.Context, o *model.Onboarding) 
 
 func (c *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Verification) ([]*model.Onboarding, error) {
 	return c.r.GetOnboardingsByStatus(ctx, status)
+}
+
+func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
+	return c.r.UpdateOnboardingVerificationByID(ctx, args)
 }

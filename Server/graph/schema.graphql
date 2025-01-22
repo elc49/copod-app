@@ -160,6 +160,11 @@ input GetOnboardingByEmailAndVerificationInput {
   verification: Verification!
 }
 
+input UpdateOnboardingVerificationByIDInput {
+  id: UUID!
+  verification: Verification!
+}
+
 type Query {
   getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
@@ -178,6 +183,7 @@ type Mutation {
   updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
   createUser(input: CreateUserInput!): User!
   updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!
+  updateOnboardingVerificationByID(input: UpdateOnboardingVerificationByIDInput!): Onboarding!
 }
 
 type Subscription {

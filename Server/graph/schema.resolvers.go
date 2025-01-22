@@ -108,6 +108,15 @@ func (r *mutationResolver) UpdateDisplayPictureVerificationByID(ctx context.Cont
 	return r.displayPictureController.UpdateDisplayPictureVerificationByID(ctx, args)
 }
 
+// UpdateOnboardingVerificationByID is the resolver for the updateOnboardingVerificationByID field.
+func (r *mutationResolver) UpdateOnboardingVerificationByID(ctx context.Context, input model.UpdateOnboardingVerificationByIDInput) (*model.Onboarding, error) {
+	args := sql.UpdateOnboardingVerificationByIDParams{
+		ID:           input.ID,
+		Verification: input.Verification.String(),
+	}
+	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
+}
+
 // Title is the resolver for the title field.
 func (r *onboardingResolver) Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error) {
 	return r.titleController.GetTitleByID(ctx, obj.TitleID)

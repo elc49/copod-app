@@ -76,6 +76,7 @@ type ComplexityRoot struct {
 		CreateOnboarding                     func(childComplexity int, input model.CreateOnboardingInput) int
 		CreateUser                           func(childComplexity int, input model.CreateUserInput) int
 		UpdateDisplayPictureVerificationByID func(childComplexity int, input model.UpdateDisplayPictureVerificationByIDInput) int
+		UpdateOnboardingVerificationByID     func(childComplexity int, input model.UpdateOnboardingVerificationByIDInput) int
 		UpdateTitleVerificationByID          func(childComplexity int, input model.UpdateTitleVerificationByIDInput) int
 	}
 
@@ -166,6 +167,7 @@ type MutationResolver interface {
 	UpdateTitleVerificationByID(ctx context.Context, input model.UpdateTitleVerificationByIDInput) (*model.Title, error)
 	CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error)
 	UpdateDisplayPictureVerificationByID(ctx context.Context, input model.UpdateDisplayPictureVerificationByIDInput) (*model.DisplayPicture, error)
+	UpdateOnboardingVerificationByID(ctx context.Context, input model.UpdateOnboardingVerificationByIDInput) (*model.Onboarding, error)
 }
 type OnboardingResolver interface {
 	Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error)
@@ -328,6 +330,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateDisplayPictureVerificationByID(childComplexity, args["input"].(model.UpdateDisplayPictureVerificationByIDInput)), true
+
+	case "Mutation.updateOnboardingVerificationByID":
+		if e.complexity.Mutation.UpdateOnboardingVerificationByID == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateOnboardingVerificationByID_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateOnboardingVerificationByID(childComplexity, args["input"].(model.UpdateOnboardingVerificationByIDInput)), true
 
 	case "Mutation.updateTitleVerificationById":
 		if e.complexity.Mutation.UpdateTitleVerificationByID == nil {
@@ -762,6 +776,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGetUserLandsInput,
 		ec.unmarshalInputPayWithMpesaInput,
 		ec.unmarshalInputUpdateDisplayPictureVerificationByIdInput,
+		ec.unmarshalInputUpdateOnboardingVerificationByIDInput,
 		ec.unmarshalInputUpdateTitleVerificationByIdInput,
 	)
 	first := true
@@ -985,6 +1000,29 @@ func (ec *executionContext) field_Mutation_updateDisplayPictureVerificationById_
 	}
 
 	var zeroVal model.UpdateDisplayPictureVerificationByIDInput
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateOnboardingVerificationByID_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Mutation_updateOnboardingVerificationByID_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateOnboardingVerificationByID_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.UpdateOnboardingVerificationByIDInput, error) {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateOnboardingVerificationByIDInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateOnboardingVerificationByIDInput(ctx, tmp)
+	}
+
+	var zeroVal model.UpdateOnboardingVerificationByIDInput
 	return zeroVal, nil
 }
 
@@ -2092,6 +2130,85 @@ func (ec *executionContext) fieldContext_Mutation_updateDisplayPictureVerificati
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateDisplayPictureVerificationById_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateOnboardingVerificationByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateOnboardingVerificationByID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateOnboardingVerificationByID(rctx, fc.Args["input"].(model.UpdateOnboardingVerificationByIDInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.Onboarding)
+	fc.Result = res
+	return ec.marshalNOnboarding2ᚖgithubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐOnboarding(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateOnboardingVerificationByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Onboarding_id(ctx, field)
+			case "email":
+				return ec.fieldContext_Onboarding_email(ctx, field)
+			case "titleId":
+				return ec.fieldContext_Onboarding_titleId(ctx, field)
+			case "title":
+				return ec.fieldContext_Onboarding_title(ctx, field)
+			case "supportDocId":
+				return ec.fieldContext_Onboarding_supportDocId(ctx, field)
+			case "supportingDoc":
+				return ec.fieldContext_Onboarding_supportingDoc(ctx, field)
+			case "displayPictureId":
+				return ec.fieldContext_Onboarding_displayPictureId(ctx, field)
+			case "displayPicture":
+				return ec.fieldContext_Onboarding_displayPicture(ctx, field)
+			case "verification":
+				return ec.fieldContext_Onboarding_verification(ctx, field)
+			case "created_at":
+				return ec.fieldContext_Onboarding_created_at(ctx, field)
+			case "updated_at":
+				return ec.fieldContext_Onboarding_updated_at(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Onboarding", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateOnboardingVerificationByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6822,6 +6939,40 @@ func (ec *executionContext) unmarshalInputUpdateDisplayPictureVerificationByIdIn
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputUpdateOnboardingVerificationByIDInput(ctx context.Context, obj interface{}) (model.UpdateOnboardingVerificationByIDInput, error) {
+	var it model.UpdateOnboardingVerificationByIDInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "verification"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "verification":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
+			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Verification = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx context.Context, obj interface{}) (model.UpdateTitleVerificationByIDInput, error) {
 	var it model.UpdateTitleVerificationByIDInput
 	asMap := map[string]interface{}{}
@@ -7126,6 +7277,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateDisplayPictureVerificationById":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateDisplayPictureVerificationById(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateOnboardingVerificationByID":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateOnboardingVerificationByID(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -8616,6 +8774,11 @@ func (ec *executionContext) marshalNUUID2githubᚗcomᚋgoogleᚋuuidᚐUUID(ctx
 
 func (ec *executionContext) unmarshalNUpdateDisplayPictureVerificationByIdInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateDisplayPictureVerificationByIDInput(ctx context.Context, v interface{}) (model.UpdateDisplayPictureVerificationByIDInput, error) {
 	res, err := ec.unmarshalInputUpdateDisplayPictureVerificationByIdInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdateOnboardingVerificationByIDInput2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐUpdateOnboardingVerificationByIDInput(ctx context.Context, v interface{}) (model.UpdateOnboardingVerificationByIDInput, error) {
+	res, err := ec.unmarshalInputUpdateOnboardingVerificationByIDInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
