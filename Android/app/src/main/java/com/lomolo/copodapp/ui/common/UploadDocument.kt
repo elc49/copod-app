@@ -106,16 +106,23 @@ fun UploadDocument(
                                     .fillMaxSize()
                                     .padding(12.dp)
                             ) {
-                                Icon(
-                                    painterResource(R.drawable.doc_paper),
-                                    modifier = Modifier.size(32.dp).align(Alignment.Center),
-                                    contentDescription = stringResource(R.string.upload)
-                                )
-                                Text(
-                                    stringResource(R.string.click_to_upload),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.align(Alignment.TopCenter),
-                                )
+                                when (savingDoc) {
+                                    false -> {
+                                        Text(
+                                            stringResource(R.string.click_to_upload),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            modifier = Modifier.align(Alignment.TopCenter),
+                                        )
+                                        Icon(
+                                            painterResource(R.drawable.doc_paper),
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .align(Alignment.Center),
+                                            contentDescription = stringResource(R.string.upload)
+                                        )
+                                    }
+                                    true -> CircularProgressIndicator(Modifier.size(20.dp).align(Alignment.Center))
+                                }
                             }
                         }
                     } else {
