@@ -9,15 +9,12 @@ import (
 	"github.com/elc49/copod/ethereum/land"
 	"github.com/elc49/copod/ethereum/registry"
 	"github.com/elc49/copod/logger"
+	"github.com/elc49/copod/util"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/sirupsen/logrus"
-)
-
-const (
-	ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 )
 
 var eth EthBackend
@@ -135,6 +132,10 @@ func (e *ethClient) RegisterLand(ctx context.Context, l LandDetails) error {
 		e.log.WithError(err).Errorf("ethereum: bind.NewKeyedTransactorWithChainID: RegisterLand")
 		return err
 	}
+
+	// Convert land size to wei
+	lSize := util.ToWei(l.Size, 18)
+	l.Size = lSize
 
 	tx, err := e.registryContract.Register(auth, l.TitleNo, l.Symbol, l.Owner, l.Size, l.RegistrationDate)
 	if err != nil {

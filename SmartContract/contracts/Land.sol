@@ -18,6 +18,8 @@ struct LandDetails {
 contract Land is ERC721, Ownable {
     // Land details
     LandDetails private land;
+    // How back can this property be divisible
+    uint256 private _decimals = 18;
 
     constructor(string memory titleNo_, string memory symbol_, address owner_, uint256 size_, uint256 tokenId_, uint256 registration_) ERC721(titleNo_, symbol_) Ownable(owner_) {
         land = LandDetails(titleNo_, size_, symbol_, payable(owner_), tokenId_, registration_);
@@ -28,5 +30,10 @@ contract Land is ERC721, Ownable {
     // Get land
     function getLand() public view returns (LandDetails memory) {
         return land;
+    }
+
+    // Decimals property divisibility unit
+    function decimals() public view returns (uint256) {
+        return _decimals;
     }
 }
