@@ -20,7 +20,7 @@ const (
 	ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 )
 
-var eth *ethClient
+var eth EthBackend
 
 type EthBackend interface {
 	GetRegistryContract() *registry.Registry
