@@ -61,7 +61,7 @@ describe("Registry", () => {
 
     it("Query land size divisibility decimal", async () => {
       const address = await registryContract.getLandERC721Contract(land.titleNo)
-      const landContract: any = (await ethers.getContractFactory("Land")).attach(address)
+      landContract = (await ethers.getContractFactory("Land")).attach(address)
       const decimals = await landContract.decimals()
       
       expect(decimals).to.be.equal(18)
