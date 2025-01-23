@@ -59,7 +59,7 @@ func Test_Title_Controller(t *testing.T) {
 	})
 
 	t.Run("update_title_verification_by_id", func(t *testing.T) {
-		tl, err := tc.UpdateTitleVerificationByID(ctx, sql.UpdateTitleVerificationByIDParams{
+		tl, err := tc.UpdateTitleVerificationByID(ctx, email, sql.UpdateTitleVerificationByIDParams{
 			ID:           title.ID,
 			Verification: model.VerificationVerified.String(),
 		}, ethereum.LandDetails{})
