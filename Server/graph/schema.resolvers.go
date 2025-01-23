@@ -78,7 +78,7 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 		RegistrationDate: big.NewInt(t.Unix()),
 	}
 
-	return r.titleController.UpdateTitleVerificationByID(ctx, args, landDetails)
+	return r.titleController.UpdateTitleVerificationByID(ctx, input.Email, args, landDetails)
 }
 
 // CreateUser is the resolver for the createUser field.

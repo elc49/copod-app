@@ -118,11 +118,13 @@ type UpdateDisplayPictureVerificationByIDInput struct {
 
 type UpdateOnboardingVerificationByIDInput struct {
 	ID           uuid.UUID    `json:"id"`
+	Email        string       `json:"email"`
 	Verification Verification `json:"verification"`
 }
 
 type UpdateTitleVerificationByIDInput struct {
 	TitleID          uuid.UUID    `json:"titleId"`
+	Email            string       `json:"email"`
 	Verification     Verification `json:"verification"`
 	TitleNo          string       `json:"titleNo"`
 	Symbol           string       `json:"symbol"`

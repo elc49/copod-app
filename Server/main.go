@@ -16,8 +16,8 @@ func main() {
 	s.NewPaystackService()
 	s.NewIpinfoService()
 	s.NewEthereumService()
-	s.MountController()
 	s.NewResendEmailService()
 	s.NewSentryService()
+	s.MountController()
 	s.Start(static)
 }

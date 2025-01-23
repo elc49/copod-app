@@ -134,6 +134,7 @@ input GetUserLandsInput {
 
 input UpdateTitleVerificationByIdInput {
   titleId: UUID!
+  email: String!
   verification: Verification!
   titleNo: String!
   symbol: String!
@@ -162,6 +163,7 @@ input GetOnboardingByEmailAndVerificationInput {
 
 input UpdateOnboardingVerificationByIDInput {
   id: UUID!
+  email: String!
   verification: Verification!
 }
 

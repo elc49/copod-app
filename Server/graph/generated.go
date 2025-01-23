@@ -6946,7 +6946,7 @@ func (ec *executionContext) unmarshalInputUpdateOnboardingVerificationByIDInput(
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"id", "verification"}
+	fieldsInOrder := [...]string{"id", "email", "verification"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6960,6 +6960,13 @@ func (ec *executionContext) unmarshalInputUpdateOnboardingVerificationByIDInput(
 				return it, err
 			}
 			it.ID = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
 		case "verification":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
 			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
@@ -6980,7 +6987,7 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx c
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"titleId", "verification", "titleNo", "symbol", "owner", "size", "registrationDate"}
+	fieldsInOrder := [...]string{"titleId", "email", "verification", "titleNo", "symbol", "owner", "size", "registrationDate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6994,6 +7001,13 @@ func (ec *executionContext) unmarshalInputUpdateTitleVerificationByIdInput(ctx c
 				return it, err
 			}
 			it.TitleID = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
 		case "verification":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("verification"))
 			data, err := ec.unmarshalNVerification2githubᚗcomᚋelc49ᚋcopodᚋgraphᚋmodelᚐVerification(ctx, v)
