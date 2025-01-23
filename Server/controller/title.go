@@ -72,7 +72,7 @@ func (c *Title) UpdateTitleVerificationByID(ctx context.Context, email string, a
 	}
 
 	// Comms rejected doc
-	if config.IsProd() || config.IsDev() {
+	if config.IsProd() {
 		go func() {
 			req := &resend.SendEmailRequest{
 				From:    "Chanzu <chanzu@info.copodap.com>",

@@ -79,7 +79,7 @@ func (c *SupportingDoc) UpdateSupportDocVerificationByID(ctx context.Context, em
 	}
 
 	// Comms rejected doc
-	if config.IsProd() || config.IsDev() {
+	if config.IsProd() {
 		go func() {
 			switch u.Verified {
 			case model.VerificationRejected:

@@ -93,7 +93,7 @@ func (c *Onboarding) CreateOnboarding(ctx context.Context, input model.CreateOnb
 	}
 
 	// Comms submission success
-	if config.IsProd() || config.IsDev() {
+	if config.IsProd() {
 		go func() {
 			req := &resend.SendEmailRequest{
 				From:    "Chanzu <chanzu@info.copodap.com>",
@@ -132,7 +132,7 @@ func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args 
 	// Comms onboarding status
 	switch u.Verification {
 	case model.VerificationVerified:
-		if config.IsProd() || config.IsDev() {
+		if config.IsProd() {
 			go func() {
 				req := &resend.SendEmailRequest{
 					From:    "Chanzu <chanzu@info.copodap.com>",

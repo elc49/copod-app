@@ -57,7 +57,7 @@ func (c *DisplayPicture) UpdateDisplayPictureVerificationByID(ctx context.Contex
 	}
 
 	// Comms rejected doc
-	if config.IsProd() || config.IsDev() {
+	if config.IsProd() {
 		go func() {
 			switch u.Verified {
 			case model.VerificationRejected:
