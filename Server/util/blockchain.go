@@ -7,7 +7,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 )
 
-// Validate eth address
+// IsValidAddress validate eth address
 func IsValidAddress(address interface{}) bool {
 	re := regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 	switch v := address.(type) {
@@ -20,7 +20,7 @@ func IsValidAddress(address interface{}) bool {
 	}
 }
 
-// Validate if zero eth address
+// IsZeroAddress validate if zero eth address
 func IsZeroAddress(a interface{}) bool {
 	if !IsValidAddress(a) {
 		return false
