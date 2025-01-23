@@ -47,7 +47,7 @@ func Test_Display_Picture_Controller(t *testing.T) {
 	})
 
 	t.Run("update_display_picture_verification_by_id", func(t *testing.T) {
-		dp, err := dc.UpdateDisplayPictureVerificationByID(ctx, sql.UpdateDisplayPictureVerificationByIDParams{
+		dp, err := dc.UpdateDisplayPictureVerificationByID(ctx, email, sql.UpdateDisplayPictureVerificationByIDParams{
 			ID:           displayPicture.ID,
 			Verification: model.VerificationVerified.String(),
 		})

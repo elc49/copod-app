@@ -57,7 +57,7 @@ func Test_SupportDoc_Controller(t *testing.T) {
 	})
 
 	t.Run("udpate_support_doc_verification_by_id", func(t *testing.T) {
-		u, err := sc.UpdateSupportDocVerificationByID(ctx, sql.UpdateSupportDocVerificationByIDParams{
+		u, err := sc.UpdateSupportDocVerificationByID(ctx, email, sql.UpdateSupportDocVerificationByIDParams{
 			ID:           supportdoc.ID,
 			Verification: model.VerificationVerified.String(),
 		})

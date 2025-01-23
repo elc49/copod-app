@@ -59,9 +59,9 @@ func (c *Title) GetTitleByID(ctx context.Context, id uuid.UUID) (*model.Title, e
 }
 
 func (c *Title) UpdateTitleVerificationByID(ctx context.Context, email string, args sql.UpdateTitleVerificationByIDParams, landDetails ethereum.LandDetails) (*model.Title, error) {
-	// Avoid running ethereum in test env
+	// Avoid running ethereum in test env - TODO figure how later
 	if args.Verification == model.VerificationVerified.String() && !config.IsTest() {
-		if err := c.ethBackend.RegisterLand(context.Background(), landDetails); err != nil {
+		if err := c.ethBackend.RegisterLand(ctx, landDetails); err != nil {
 			return nil, err
 		}
 	}
@@ -74,17 +74,15 @@ func (c *Title) UpdateTitleVerificationByID(ctx context.Context, email string, a
 	// Comms rejected doc
 	if config.IsProd() || config.IsDev() {
 		go func() {
-			ctx := context.Background()
-
 			req := &resend.SendEmailRequest{
-				From:    "Chanzu <chanzu@info.copodap.com",
+				From:    "Chanzu <chanzu@info.copodap.com>",
 				To:      []string{email},
-				Subject: "Copod Documents Verification Status",
+				Subject: "Copod- Documents Verification Status",
+				Html:    "<p>Land title document submitted could not be verified or is not valid. Please re-submit again using the app.</p>",
 			}
 			switch u.Verified {
 			case model.VerificationRejected:
-				req.Html = "<p>Land title document submitted could not be verified or is not valid. Please re-submit again using the app.</p>"
-				if err := c.emailService.Send(ctx, req); err != nil {
+				if err := c.emailService.Send(context.Background(), req); err != nil {
 					return
 				}
 			}
