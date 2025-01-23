@@ -138,7 +138,7 @@ func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args 
 					From:    "Chanzu <chanzu@info.copodap.com>",
 					To:      []string{u.Email},
 					Subject: "Copod- Documents Verification Status",
-					Html:    "<strong>Congratulation!</strong><br><p>Your land is verified and registered to the blockchain.</p>",
+					Html:    "<strong>Congratulation!</strong><br><p>Your land is verified and registered to the blockchain. You can now view your land in the app.</p>",
 				}
 				if err := c.emailService.Send(context.Background(), req); err != nil {
 					return
