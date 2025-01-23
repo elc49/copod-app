@@ -16,10 +16,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-const (
-	ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
-)
-
 var eth EthBackend
 
 type EthBackend interface {

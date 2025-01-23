@@ -192,7 +192,7 @@ func (r *queryResolver) GetIsTitleVerified(ctx context.Context, titleNo string) 
 		return false, err
 	}
 
-	if value.String() == ethereum.ZERO_ADDRESS {
+	if util.IsZeroAddress(value.String()) {
 		return false, nil
 	}
 
