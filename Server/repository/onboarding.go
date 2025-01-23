@@ -117,6 +117,7 @@ func (r *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Ve
 	for _, item := range obs {
 		ob := &model.Onboarding{
 			ID:               item.ID,
+			Email:            item.Email,
 			TitleID:          item.TitleID,
 			SupportDocID:     item.SupportDocID,
 			DisplayPictureID: item.DisplayPictureID,
@@ -139,6 +140,7 @@ func (r *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args 
 
 	return &model.Onboarding{
 		ID:               ob.ID,
+		Email:            ob.Email,
 		TitleID:          ob.TitleID,
 		SupportDocID:     ob.SupportDocID,
 		DisplayPictureID: ob.DisplayPictureID,

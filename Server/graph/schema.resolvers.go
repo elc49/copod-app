@@ -81,14 +81,9 @@ func (r *mutationResolver) UpdateTitleVerificationByID(ctx context.Context, inpu
 	return r.titleController.UpdateTitleVerificationByID(ctx, input.Email, args, landDetails)
 }
 
-// CreateUser is the resolver for the createUser field.
-func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
-	args := sql.CreateUserParams{
-		Email:     input.Email,
-		Firstname: input.Firstname,
-		Lastname:  input.Lastname,
-	}
-	_, err := r.supportDocController.UpdateSupportDocVerificationByID(ctx, sql.UpdateSupportDocVerificationByIDParams{
+// UpdateSupportingDocVerificationByID is the resolver for the updateSupportingDocVerificationByID field.
+func (r *mutationResolver) UpdateSupportingDocVerificationByID(ctx context.Context, input model.UpdateSupportingDocVerificationByIDInput) (*model.SupportingDoc, error) {
+	du, err := r.supportDocController.UpdateSupportDocVerificationByID(ctx, input.Email, sql.UpdateSupportDocVerificationByIDParams{
 		ID:           input.SupportDocID,
 		Verification: input.SupportDocVerification.String(),
 	})
@@ -96,7 +91,21 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUse
 		r.log.WithError(err).WithFields(logrus.Fields{"input": input}).Errorf("resolver: UpdateSupportDocVerificationByID")
 		return nil, err
 	}
-	return r.userController.CreateUser(ctx, args)
+	// Don't create user if doc is reject
+	switch du.Verified {
+	case model.VerificationVerified:
+		go func() {
+			if _, err := r.userController.CreateUser(ctx, sql.CreateUserParams{
+				Email:     input.Email,
+				Firstname: input.Firstname,
+				Lastname:  input.Lastname,
+			}); err != nil {
+				return
+			}
+		}()
+	}
+
+	return du, nil
 }
 
 // UpdateDisplayPictureVerificationByID is the resolver for the updateDisplayPictureVerificationById field.
@@ -105,7 +114,7 @@ func (r *mutationResolver) UpdateDisplayPictureVerificationByID(ctx context.Cont
 		ID:           input.DisplayPictureID,
 		Verification: input.Verification.String(),
 	}
-	return r.displayPictureController.UpdateDisplayPictureVerificationByID(ctx, args)
+	return r.displayPictureController.UpdateDisplayPictureVerificationByID(ctx, input.Email, args)
 }
 
 // UpdateOnboardingVerificationByID is the resolver for the updateOnboardingVerificationByID field.

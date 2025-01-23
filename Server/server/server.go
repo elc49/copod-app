@@ -156,7 +156,7 @@ func (s *Server) NewEthereumService() {
 }
 
 func (s *Server) NewResendEmailService() {
-	if config.IsProd() {
+	if config.IsProd() || config.IsDev() {
 		email.NewResend(s.sql)
 	}
 }
