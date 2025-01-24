@@ -1,10 +1,16 @@
-import { Space_Grotesk } from "next/font/google"
+import { Bricolage_Grotesque, Space_Grotesk } from "next/font/google"
+
+const bricolage_grotesque = Bricolage_Grotesque({
+  variable: "--font-bricolage",
+  subsets: ["latin"],
+  weight: "500",
+})
 
 const space_grotesk = Space_Grotesk({
   weight: "500",
-  variable: "--font-space-grotesk",
+  variable: "--font-space",
   subsets: ["latin"],
   display: "swap",
 })
 
-export { space_grotesk }
+export { bricolage_grotesque, space_grotesk }
