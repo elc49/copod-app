@@ -16,9 +16,9 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var T tigris
+var t Tigris
 
-type tigris interface {
+type Tigris interface {
 	Upload(context.Context, multipart.File, *multipart.FileHeader) (*string, error)
 	DeleteObjects(context.Context) error
 }
@@ -33,8 +33,8 @@ func New() {
 	log := logger.GetLogger()
 	uploaderSdkConfig, err := config.LoadDefaultConfig(context.TODO(), config.WithCredentialsProvider(
 		credentials.NewStaticCredentialsProvider(
-			cfg.C.Tigris.AccessKeyId,
-			cfg.C.Tigris.SecretAccessKey,
+			cfg.AppConfig().Tigris.AccessKeyId,
+			cfg.AppConfig().Tigris.SecretAccessKey,
 			"",
 		),
 	))
@@ -43,19 +43,23 @@ func New() {
 	}
 
 	c := s3.NewFromConfig(uploaderSdkConfig, func(o *s3.Options) {
-		o.Region = cfg.C.Tigris.Region
-		o.BaseEndpoint = aws.String(cfg.C.Tigris.S3Endpoint)
+		o.Region = cfg.AppConfig().Tigris.Region
+		o.BaseEndpoint = aws.String(cfg.AppConfig().Tigris.S3Endpoint)
 	})
 
-	T = &tigrisClient{log, manager.NewUploader(c), c}
+	t = &tigrisClient{log, manager.NewUploader(c), c}
 	log.Infoln("tigrisservice: Connected")
+}
+
+func GetTigrisService() Tigris {
+	return t
 }
 
 func (tc *tigrisClient) Upload(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader) (*string, error) {
 	buf := make([]byte, fileHeader.Size)
 	file.Read(buf)
 	params := &s3.PutObjectInput{
-		Bucket: aws.String(cfg.C.Tigris.BucketName),
+		Bucket: aws.String(cfg.AppConfig().Tigris.BucketName),
 		Key:    aws.String(fileHeader.Filename),
 		Body:   bytes.NewReader(buf),
 	}
@@ -72,7 +76,7 @@ func (tc *tigrisClient) Upload(ctx context.Context, file multipart.File, fileHea
 func (tc *tigrisClient) DeleteObjects(ctx context.Context) error {
 	// Get bucket content
 	content, err := tc.s3Client.ListObjectsV2(ctx, &s3.ListObjectsV2Input{
-		Bucket: aws.String(cfg.C.Tigris.BucketName),
+		Bucket: aws.String(cfg.AppConfig().Tigris.BucketName),
 	})
 	if err != nil {
 		tc.log.WithError(err).Errorf("tigris: ListObjectsV2")
@@ -90,7 +94,7 @@ func (tc *tigrisClient) DeleteObjects(ctx context.Context) error {
 	// Proceed to delete
 	if len(objectsToDelete) > 0 {
 		_, err := tc.s3Client.DeleteObjects(ctx, &s3.DeleteObjectsInput{
-			Bucket: aws.String(cfg.C.Tigris.BucketName),
+			Bucket: aws.String(cfg.AppConfig().Tigris.BucketName),
 			Delete: &types.Delete{
 				Objects: objectsToDelete,
 				Quiet:   aws.Bool(true),
@@ -100,7 +104,7 @@ func (tc *tigrisClient) DeleteObjects(ctx context.Context) error {
 			tc.log.WithError(err).Error("tigris: s3.DeleteObjects")
 			return err
 		}
-		tc.log.Printf("Deleted %d objects from bucket %s\n", len(objectsToDelete), cfg.C.Tigris.BucketName)
+		tc.log.Printf("Deleted %d objects from bucket %s\n", len(objectsToDelete), cfg.AppConfig().Tigris.BucketName)
 	} else {
 		tc.log.Infoln("No objects to delete")
 	}

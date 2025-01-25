@@ -26,7 +26,7 @@ type cacheClient struct {
 
 func New() {
 	log := logger.GetLogger()
-	opt, err := redis.ParseURL(config.C.Database.Redis)
+	opt, err := redis.ParseURL(config.AppConfig().Database.Redis)
 	if err != nil {
 		log.WithError(err).Fatalln("cache: redis.ParseURL")
 	}

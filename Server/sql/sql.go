@@ -61,8 +61,8 @@ func runMigration(opt postgres.Postgres, conn *db.DB, log *logrus.Logger) error 
 			return err
 		}
 
-		if config.C != nil {
-			if err := tigris.T.DeleteObjects(context.Background()); err != nil {
+		if config.AppConfig() != nil {
+			if err := tigris.GetTigrisService().DeleteObjects(context.Background()); err != nil {
 				log.WithError(err).Fatalln("sql: DeleteObjects")
 				return err
 			}

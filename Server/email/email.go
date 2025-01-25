@@ -24,7 +24,7 @@ type rClient struct {
 
 func NewResend(sql *sql.Queries) {
 	log := logger.GetLogger()
-	client := resend.NewClient(config.C.Resend.ApiKey)
+	client := resend.NewClient(config.AppConfig().Resend.ApiKey)
 
 	r = &rClient{client, log, sql}
 	log.Infoln("emailservice: Connected")

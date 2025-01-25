@@ -43,7 +43,7 @@ func New() *Server {
 }
 
 func (s *Server) Start(static embed.FS) {
-	server := &http.Server{Addr: "0.0.0.0:" + config.C.Server.Port, Handler: s.MountRouter(static)}
+	server := &http.Server{Addr: "0.0.0.0:" + config.AppConfig().Server.Port, Handler: s.MountRouter(static)}
 	// Server ctx
 	sCtx, sStopCtx := context.WithCancel(context.Background())
 	// Listen for syscall signals(interrupt/quit)
@@ -131,7 +131,7 @@ func (s *Server) MountController() {
 }
 
 func (s *Server) Database() {
-	sqlStore := db.InitDB(config.C.Database.Rdbms)
+	sqlStore := db.InitDB(config.AppConfig().Database.Rdbms)
 	s.sql = sqlStore
 }
 
@@ -165,7 +165,7 @@ func (s *Server) NewSentryService() {
 	// Enable in staging/prod
 	if config.IsProd() {
 		if err := sentry.Init(sentry.ClientOptions{
-			Dsn:              config.C.Sentry.Dsn,
+			Dsn:              config.AppConfig().Sentry.Dsn,
 			TracesSampleRate: 1.0,
 		}); err != nil {
 			logrus.WithError(err).Errorf("server: sentry.Init")

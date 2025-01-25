@@ -43,7 +43,7 @@ type ethClient struct {
 func NewEthBackend() {
 	log := logger.GetLogger()
 	// Ethereum node connection
-	conn, err := ethclient.Dial(config.C.Ethereum.InfuraApi)
+	conn, err := ethclient.Dial(config.AppConfig().Ethereum.InfuraApi)
 	if err != nil {
 		log.WithError(err).Fatalln("registry:Failed to connect to Ethereum client")
 	} else {
@@ -51,13 +51,13 @@ func NewEthBackend() {
 	}
 
 	// Signing account
-	privateKey, err := crypto.HexToECDSA(config.C.Ethereum.SigningAccountKey)
+	privateKey, err := crypto.HexToECDSA(config.AppConfig().Ethereum.SigningAccountKey)
 	if err != nil {
 		log.WithError(err).Fatalln("ethereum: crypto.HexToECDSA: RegisterLand")
 	}
 
 	// Registry contract instance
-	r, err := registry.NewRegistry(common.HexToAddress(config.C.Ethereum.RegistryContractAddress), conn)
+	r, err := registry.NewRegistry(common.HexToAddress(config.AppConfig().Ethereum.RegistryContractAddress), conn)
 	if err != nil {
 		log.WithError(err).Fatalln("registry:Failed to instantiate a Registry contract")
 	} else {
@@ -137,6 +137,7 @@ func (e *ethClient) RegisterLand(ctx context.Context, l LandDetails) error {
 	lSize := util.ToWei(l.Size, 18)
 	l.Size = lSize
 
+	// Register land
 	tx, err := e.registryContract.Register(auth, l.TitleNo, l.Symbol, l.Owner, l.Size, l.RegistrationDate)
 	if err != nil {
 		e.log.WithError(err).WithFields(logrus.Fields{"land": l}).Errorf("registry: e.registryContract.Register: RegisterLand")

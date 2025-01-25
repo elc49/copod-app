@@ -10,9 +10,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var (
-	C *config
-)
+var c *config
 
 type config struct {
 	Tigris   Tigris
@@ -29,38 +27,42 @@ func env() {
 	godotenv.Load()
 }
 
+func AppConfig() *config {
+	return c
+}
+
 func IsProd() bool {
-	return C != nil && (C.Server.Env == "staging" || C.Server.Env == "prod")
+	return c != nil && (c.Server.Env == "staging" || c.Server.Env == "prod")
 }
 
 func IsDev() bool {
-	if C == nil {
+	if c == nil {
 		return false
 	}
 
-	return C.Server.Env == "dev"
+	return c.Server.Env == "dev"
 }
 
 func IsTest() bool {
-	return C == nil || C.Server.Env == "test"
+	return c == nil || c.Server.Env == "test"
 }
 
 func New() {
 	env()
 	log := logrus.New()
-	c := config{}
+	cfg := config{}
 	log.Infoln("Collecting configurations...")
 
-	c.Server = serverConfig()
-	c.Tigris = tigrisConfig()
-	c.Database = databaseConfig()
-	c.Paystack = paystackConfig()
-	c.Ipinfo = ipinfoConfig()
-	c.Ethereum = ethereumConfig()
-	c.Resend = resendConfig()
-	c.Sentry = sentryConfig()
+	cfg.Server = serverConfig()
+	cfg.Tigris = tigrisConfig()
+	cfg.Database = databaseConfig()
+	cfg.Paystack = paystackConfig()
+	cfg.Ipinfo = ipinfoConfig()
+	cfg.Ethereum = ethereumConfig()
+	cfg.Resend = resendConfig()
+	cfg.Sentry = sentryConfig()
 
-	C = &c
+	c = &cfg
 	log.Infoln("Configurations...OK")
 }
 

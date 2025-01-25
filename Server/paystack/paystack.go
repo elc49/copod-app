@@ -60,18 +60,18 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 	defer p.mu.Unlock()
 
 	var chargeResponse *MpesaChargeResponse
-	chargeApi := config.C.Paystack.BaseApi + "/charge"
+	chargeApi := config.AppConfig().Paystack.BaseApi + "/charge"
 	input.Provider.Provider = "mpesa"
 	if !config.IsProd() {
-		input.Provider.Phone = config.C.Paystack.MobileTestAccount
+		input.Provider.Phone = config.AppConfig().Paystack.MobileTestAccount
 	}
 
 	fees := 0
 	switch input.Reason {
 	case model.PaymentReasonLandRegistry.String():
-		i, err := strconv.Atoi(config.C.Paystack.LandFees)
+		i, err := strconv.Atoi(config.AppConfig().Paystack.LandFees)
 		if err != nil {
-			p.log.WithError(err).WithFields(logrus.Fields{"int": config.C.Paystack.LandFees}).Errorf("paystack: strconv.Atoi fees")
+			p.log.WithError(err).WithFields(logrus.Fields{"int": config.AppConfig().Paystack.LandFees}).Errorf("paystack: strconv.Atoi fees")
 			return nil, err
 		}
 		fees = i
@@ -90,7 +90,7 @@ func (p *paystackClient) ChargeMpesa(ctx context.Context, paymentFor uuid.UUID, 
 		return nil, err
 	}
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("Authorization", "Bearer "+config.C.Paystack.SecretKey)
+	req.Header.Add("Authorization", "Bearer "+config.AppConfig().Paystack.SecretKey)
 
 	res, err := p.http.Do(req)
 	if err != nil {

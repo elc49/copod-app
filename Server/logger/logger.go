@@ -21,7 +21,7 @@ func GetLogger() *logrus.Logger {
 			logrus.ErrorLevel,
 		}
 		hook, err := logrusSentry.New(eLevels, sentry.ClientOptions{
-			Dsn:              config.C.Sentry.Dsn,
+			Dsn:              config.AppConfig().Sentry.Dsn,
 			AttachStacktrace: true,
 		})
 		if err != nil {

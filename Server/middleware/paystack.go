@@ -17,7 +17,7 @@ func Paystack(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		paystackSignature := r.Header.Get("x-paystack-signature")
 
-		hash := hmac.New(sha512.New, []byte(config.C.Paystack.SecretKey))
+		hash := hmac.New(sha512.New, []byte(config.AppConfig().Paystack.SecretKey))
 		body, err := io.ReadAll(r.Body)
 		if err != nil {
 			logrus.WithError(err).Errorf("middleware: paystack: io.ReadAll")

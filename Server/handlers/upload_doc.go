@@ -16,7 +16,7 @@ const (
 func UploadDoc() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		log := logger.GetLogger()
-		tigris := tigris.T
+		tigris := tigris.GetTigrisService()
 		err := r.ParseMultipartForm(MAX_MEMORY)
 		if err != nil {
 			log.WithError(err).Errorf("handlers: ParseMultipartForm")

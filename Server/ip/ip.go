@@ -35,7 +35,7 @@ func New() {
 	log := logger.GetLogger()
 
 	cache := cache.NewInMemory().WithExpiration(time.Hour * 24)
-	client := ipinfo.NewClient(nil, ipinfo.NewCache(cache), config.C.Ipinfo.ApiKey)
+	client := ipinfo.NewClient(nil, ipinfo.NewCache(cache), config.AppConfig().Ipinfo.ApiKey)
 
 	ip = &ipClient{log, client, copodCache.GetCache(), &http.Client{}}
 	log.Infoln("ipservice: Connected")
