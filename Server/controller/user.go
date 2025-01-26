@@ -69,7 +69,7 @@ func (c *User) emailOnboard(ctx context.Context, user model.User) error {
 		From:    "Chanzu <chanzu@info.copodap.com>",
 		To:      []string{user.Email},
 		Subject: "Account created",
-		Html:    "<p>Hello,</p><p>Welcome to Copod!</p><p>This the first step towards the future of land ownership.</p><p>I can't wait to share with you exciting features/updates.</p><br><strong>Best,</strong><p>Edwin Chanzu.</p><a href='https://x.com/gugachanzu' target='_blank'>X</a>",
+		Html:    "<p>Hello,</p><p>Welcome to Copod!</p><p>This the first step towards the future of land ownership.</p><p>I can't wait to share with you exciting features/updates.</p><br><strong>Best,</strong><p>Edwin Chanzu.</p>",
 	}
 	if err := email.GetResendEmailService().Send(ctx, params); err != nil {
 		return err
