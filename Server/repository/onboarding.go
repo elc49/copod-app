@@ -98,6 +98,7 @@ func (r *Onboarding) GetOnboardingByID(ctx context.Context, id uuid.UUID) (*mode
 	return &model.Onboarding{
 		ID:               o.ID,
 		TitleID:          o.TitleID,
+		Verification:     model.Verification(o.Verification),
 		DisplayPictureID: o.DisplayPictureID,
 		SupportDocID:     o.SupportDocID,
 		CreatedAt:        o.CreatedAt,
