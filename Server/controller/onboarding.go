@@ -122,30 +122,78 @@ func (c *Onboarding) GetOnboardingsByStatus(ctx context.Context, status model.Ve
 	return c.r.GetOnboardingsByStatus(ctx, status)
 }
 
-// TODO only verify after all the docs are verified
 func (c *Onboarding) UpdateOnboardingVerificationByID(ctx context.Context, args sql.UpdateOnboardingVerificationByIDParams) (*model.Onboarding, error) {
+	if args.Verification == model.VerificationVerified.String() {
+		docsVerified, err := c.allOnboardingDocsVerified(ctx, args.ID)
+		if err != nil {
+			return nil, err
+		}
+		if *docsVerified {
+			u, err := c.r.UpdateOnboardingVerificationByID(ctx, args)
+			if err != nil {
+				return nil, err
+			}
+			if config.IsProd() {
+				go func() {
+					req := &resend.SendEmailRequest{
+						From:    "Chanzu <chanzu@info.copodap.com>",
+						To:      []string{u.Email},
+						Subject: "Copod- Documents Verification Status",
+						Html:    "<strong>Congratulation!</strong><br><p>Your land is verified and registered to the blockchain. You can now view your land in the app.</p>",
+					}
+					if err := c.emailService.Send(context.Background(), req); err != nil {
+						return
+					}
+				}()
+			}
+			return u, nil
+		} else {
+			return c.GetOnboardingByID(ctx, args.ID)
+		}
+	}
 	u, err := c.r.UpdateOnboardingVerificationByID(ctx, args)
 	if err != nil {
 		return nil, err
 	}
 
-	// Comms onboarding status
-	switch u.Verification {
-	case model.VerificationVerified:
-		if config.IsProd() {
-			go func() {
-				req := &resend.SendEmailRequest{
-					From:    "Chanzu <chanzu@info.copodap.com>",
-					To:      []string{u.Email},
-					Subject: "Copod- Documents Verification Status",
-					Html:    "<strong>Congratulation!</strong><br><p>Your land is verified and registered to the blockchain. You can now view your land in the app.</p>",
-				}
-				if err := c.emailService.Send(context.Background(), req); err != nil {
-					return
-				}
-			}()
-		}
+	return u, nil
+}
+
+func (c *Onboarding) allOnboardingDocsVerified(ctx context.Context, onboardingID uuid.UUID) (*bool, error) {
+	onboarding, err := c.GetOnboardingByID(ctx, onboardingID)
+	if err != nil {
+		return nil, err
+	}
+	v := false
+	// Display picture verified
+	dp, err := c.sql.GetDisplayPictureByID(ctx, onboarding.DisplayPictureID)
+	if err != nil {
+		c.log.WithError(err).WithFields(logrus.Fields{"display_picture_id": onboarding.DisplayPictureID}).Errorf("repository: GetDisplayPictureByID: allOnboardingDocsVerified")
+		return nil, err
+	}
+	if dp.Verification != model.VerificationVerified.String() {
+		return &v, nil
 	}
 
-	return u, nil
+	// Title document verified
+	tt, err := c.sql.GetTitleByID(ctx, onboarding.TitleID)
+	if err != nil {
+		c.log.WithError(err).WithFields(logrus.Fields{"title_id": onboarding.TitleID}).Errorf("repository: GetTitleByID: allOnboardingDocsVerified")
+		return nil, err
+	}
+	if tt.Verification != model.VerificationVerified.String() {
+		return &v, nil
+	}
+
+	// Support doc verified
+	sp, err := c.sql.GetSupportDocByID(ctx, onboarding.SupportDocID)
+	if err != nil {
+		c.log.WithError(err).WithFields(logrus.Fields{"support_doc_id": onboarding.SupportDocID}).Errorf("repository: GetSupportDocByID: allOnboardingDocsVerified")
+		return nil, err
+	}
+	if sp.Verification != model.VerificationVerified.String() {
+		return &v, nil
+	}
+	v = true
+	return &v, nil
 }
