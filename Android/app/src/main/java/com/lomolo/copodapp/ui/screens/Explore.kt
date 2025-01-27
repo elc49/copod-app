@@ -29,6 +29,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetLocalLands
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.MarketViewModel
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
@@ -47,11 +48,17 @@ fun ExploreMarketsScreen(
     marketViewModel: MarketViewModel = koinViewModel<MarketViewModel>(),
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,
+    mainViewModel: MainViewModel,
+    onNext: (String) -> Unit,
 ) {
     val lands by marketViewModel.lands.collectAsState()
 
     Scaffold(topBar = {
         TopBar(
+            onClickAvatar = {
+                onNext(AccountScreenDestination.route)
+            },
+            mainViewModel = mainViewModel,
             title = {
                 Text(stringResource(R.string.markets))
             }

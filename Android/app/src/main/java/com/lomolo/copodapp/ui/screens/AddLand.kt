@@ -36,6 +36,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
+import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
@@ -47,12 +48,14 @@ object AddLandScreenDestination : Navigation {
 }
 
 @Composable
-fun AddLandScreen(
+fun CreateLandScreen(
     modifier: Modifier = Modifier,
     viewModel: OnboardingViewModel,
+    mainViewModel: MainViewModel,
     onNavigateTo: (String) -> Unit,
     currentDestination: NavDestination,
     onClickAddLand: () -> Unit,
+    onNext: (String) -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.getCurrentOnboarding()
@@ -65,7 +68,7 @@ fun AddLandScreen(
     Scaffold(bottomBar = {
         BottomNavBar(currentDestination = currentDestination, onNavigateTo = onNavigateTo)
     }, topBar = {
-        TopBar(title = {
+        TopBar(onClickAvatar = { onNext(AccountScreenDestination.route) }, mainViewModel = mainViewModel, title = {
             if (showTopBar) {
                 if (currentOnboarding == null) {
                     Text(stringResource(R.string.create_new_land))
@@ -81,7 +84,7 @@ fun AddLandScreen(
             when (viewModel.gettingCurrentOnboarding) {
                 GetCurrentOnboarding.Success -> {
                     if (currentOnboarding == null) {
-                       NoYourListings(innerPadding = innerPadding, onClickAddLand = onClickAddLand)
+                        NoYourListings(innerPadding = innerPadding, onClickAddLand = onClickAddLand)
                     } else {
                         UnderReview(innerPadding = innerPadding)
                     }
@@ -124,8 +127,7 @@ fun UnderReview(
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
-                    Icons.TwoTone.Check,
-                    contentDescription = stringResource(R.string.check)
+                    Icons.TwoTone.Check, contentDescription = stringResource(R.string.check)
                 )
             }
             Column {
@@ -157,8 +159,8 @@ fun NoYourListings(
     ) {
         Text(stringResource(R.string.new_land_copy))
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(R.drawable._9872287).crossfade(true).build(),
+            model = ImageRequest.Builder(LocalContext.current).data(R.drawable._9872287)
+                .crossfade(true).build(),
             modifier = Modifier.clip(MaterialTheme.shapes.medium),
             placeholder = painterResource(R.drawable.loading_img),
             error = painterResource(R.drawable.ic_broken_image),

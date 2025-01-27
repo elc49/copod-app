@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowForward
+import androidx.compose.material.icons.automirrored.twotone.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -35,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
@@ -44,7 +43,6 @@ import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetUserLands
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
 import com.lomolo.copodapp.type.Verification
-import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.web3auth.core.types.UserInfo
@@ -59,11 +57,9 @@ object LandScreenDestination : Navigation {
 @Composable
 fun LandScreen(
     modifier: Modifier = Modifier,
-    currentDestination: NavDestination,
-    onNavigateTo: (String) -> Unit,
     viewModel: LandViewModel = koinViewModel<LandViewModel>(),
     userInfo: UserInfo?,
-    onClickAddLand: () -> Unit,
+    onGoBack: () -> Unit,
 ) {
     LaunchedEffect(Unit) {
         viewModel.getUserLands(userInfo?.email!!)
@@ -79,11 +75,16 @@ fun LandScreen(
             title = {
                 Text(stringResource(R.string.your_lands))
             },
-        )
-    }, bottomBar = {
-        BottomNavBar(
-            currentDestination = currentDestination,
-            onNavigateTo = onNavigateTo,
+            navigationIcon = {
+                IconButton(
+                    onClick = onGoBack
+                ) {
+                    Icon(
+                        Icons.AutoMirrored.TwoTone.ArrowBack,
+                        contentDescription = stringResource(R.string.go_back)
+                    )
+                }
+            }
         )
     }) { innerPadding ->
         Surface(
@@ -92,9 +93,7 @@ fun LandScreen(
             when {
                 viewModel.gettingUserLands is GetUserLands.Success -> {
                     if (lands.isEmpty()) {
-                        NoLand(
-                            onClickAddLand = onClickAddLand,
-                        )
+                        NoLand()
                     } else {
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -150,7 +149,6 @@ private fun LandCard(
 @Composable
 private fun NoLand(
     modifier: Modifier = Modifier,
-    onClickAddLand: () -> Unit,
 ) {
     Column(
         modifier
@@ -189,15 +187,6 @@ private fun NoLand(
                     stringResource(R.string.you_can_create_a_listing),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.secondary,
-                )
-            }
-            Spacer(Modifier.weight(1f))
-            IconButton(
-                onClick = onClickAddLand,
-            ) {
-                Icon(
-                    Icons.AutoMirrored.TwoTone.ArrowForward,
-                    contentDescription = stringResource(R.string.next)
                 )
             }
         }
