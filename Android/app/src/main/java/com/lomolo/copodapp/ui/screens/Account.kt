@@ -141,7 +141,7 @@ fun AccountScreen(
                                 }
                             })
                         Button(
-                            onClick = {},
+                            onClick = { mainViewModel.logOut() },
                             modifier = Modifier.fillMaxWidth().padding(16.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
