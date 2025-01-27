@@ -31,20 +31,6 @@ sealed class Screen(
         "explore",
         false,
     )
-    data object Land: Screen(
-        R.string.land,
-        R.drawable.land,
-        R.drawable.land_filled,
-        "land",
-        false,
-    )
-    data object Account: Screen(
-        R.string.account,
-        R.drawable.account,
-        R.drawable.account_filled,
-        "account",
-        false,
-    )
     data object Create: Screen(
         R.string.create,
         R.drawable.create,
@@ -60,7 +46,7 @@ fun BottomNavBar(
     currentDestination: NavDestination,
     onNavigateTo: (String) -> Unit,
 ) {
-    val navItems = listOf(Screen.Explore, Screen.Land, Screen.Create, Screen.Account)
+    val navItems = listOf(Screen.Explore, Screen.Create)
 
     NavigationBar {
         navItems.forEachIndexed { _, item ->

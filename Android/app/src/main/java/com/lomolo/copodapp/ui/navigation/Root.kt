@@ -17,7 +17,7 @@ import com.lomolo.copodapp.state.viewmodels.MpesaViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.screens.AccountScreen
 import com.lomolo.copodapp.ui.screens.AccountScreenDestination
-import com.lomolo.copodapp.ui.screens.AddLandScreen
+import com.lomolo.copodapp.ui.screens.CreateLandScreen
 import com.lomolo.copodapp.ui.screens.AddLandScreenDestination
 import com.lomolo.copodapp.ui.screens.ErrorScreen
 import com.lomolo.copodapp.ui.screens.ErrorScreenDestination
@@ -104,6 +104,10 @@ fun NavigationHost(
         composable(route = ExploreMarketsScreenDestination.route) {
             ExploreMarketsScreen(
                 onNavigateTo = onNavigateTo,
+                mainViewModel = mainViewModel,
+                onNext = {
+                    navHostController.navigate(it) { launchSingleTop = true }
+                },
                 currentDestination = it.destination,
             )
         }
@@ -121,11 +125,10 @@ fun NavigationHost(
             HomeScreen(modifier = modifier, mainViewModel = mainViewModel)
         }
         composable(route = LandScreenDestination.route) {
-            LandScreen(onNavigateTo = onNavigateTo,
-                currentDestination = it.destination,
+            LandScreen(
                 userInfo = mainViewModel.userInfo,
-                onClickAddLand = {
-                    navHostController.navigate(AddLandScreenDestination.route)
+                onGoBack = {
+                    navHostController.popBackStack()
                 })
         }
         composable(route = UploadLandTitleScreenDestination.route) {
@@ -186,15 +189,23 @@ fun NavigationHost(
         }
         composable(route = AccountScreenDestination.route) {
             AccountScreen(
-                currentDestination = it.destination,
-                onNavigateTo = onNavigateTo,
                 mainViewModel = mainViewModel,
+                onNext = {
+                    navHostController.navigate(it) { launchSingleTop = true }
+                },
+                onGoBack = {
+                    navHostController.popBackStack()
+                }
             )
         }
         composable(route = AddLandScreenDestination.route) {
-            AddLandScreen(viewModel = onboardingViewModel,
+            CreateLandScreen(viewModel = onboardingViewModel,
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
+                mainViewModel = mainViewModel,
+                onNext = {
+                    navHostController.navigate(it) { launchSingleTop = true }
+                },
                 onClickAddLand = {
                     navHostController.navigate(OnboardingScreenDestination.route)
                 })
