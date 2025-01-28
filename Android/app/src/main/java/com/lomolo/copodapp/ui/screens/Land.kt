@@ -37,12 +37,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetUserLands
 import com.lomolo.copodapp.state.viewmodels.LandViewModel
-import com.lomolo.copodapp.type.Verification
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
 import com.web3auth.core.types.UserInfo
@@ -191,14 +189,4 @@ private fun NoLand(
             }
         }
     }
-}
-
-fun GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification.whoIsStillOnboarding(): List<String> {
-    var rejects = mutableListOf<String>()
-    when {
-        this.displayPicture.verified == Verification.REJECTED -> rejects.add(this.displayPicture.__typename.lowercase())
-        this.title.verified == Verification.REJECTED -> rejects.add(this.title.__typename.lowercase())
-        this.supportingDoc.verified == Verification.REJECTED -> rejects.add(this.supportingDoc.__typename.lowercase())
-    }
-    return rejects
 }

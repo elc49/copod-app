@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -111,38 +114,42 @@ fun AccountScreen(
                     Modifier.align(Alignment.Center)
                 ) {
                     Column {
-                        ListItem(
-                            headlineContent = { Text(stringResource(R.string.lands)) },
-                            leadingContent = {
-                                Box(
-                                    Modifier
-                                        .background(
-                                            MaterialTheme.colorScheme.secondaryContainer,
-                                            MaterialTheme.shapes.extraSmall,
+                        OutlinedCard {
+                            ListItem(
+                                headlineContent = { Text(stringResource(R.string.lands)) },
+                                leadingContent = {
+                                    Box(
+                                        Modifier
+                                            .background(
+                                                MaterialTheme.colorScheme.secondaryContainer,
+                                                MaterialTheme.shapes.extraSmall,
+                                            )
+                                            .padding(8.dp),
+                                        contentAlignment = Alignment.Center,
+                                    ) {
+                                        Icon(
+                                            painterResource(R.drawable.land),
+                                            modifier = Modifier.size(24.dp),
+                                            contentDescription = stringResource(R.string.land)
                                         )
-                                        .padding(8.dp),
-                                    contentAlignment = Alignment.Center,
-                                ) {
-                                    Icon(
-                                        painterResource(R.drawable.land),
-                                        modifier = Modifier.size(24.dp),
-                                        contentDescription = stringResource(R.string.land)
-                                    )
-                                }
-                            },
-                            trailingContent = {
-                                IconButton(onClick = {
-                                    onNext(LandScreenDestination.route)
-                                }) {
-                                    Icon(
-                                        Icons.AutoMirrored.TwoTone.ArrowForward,
-                                        contentDescription = stringResource(R.string.next)
-                                    )
-                                }
-                            })
+                                    }
+                                },
+                                trailingContent = {
+                                    IconButton(onClick = {
+                                        onNext(LandScreenDestination.route)
+                                    }) {
+                                        Icon(
+                                            Icons.AutoMirrored.TwoTone.ArrowForward,
+                                            contentDescription = stringResource(R.string.next)
+                                        )
+                                    }
+                                })
+                        }
+                        Spacer(Modifier.size(8.dp))
                         Button(
                             onClick = { mainViewModel.logOut() },
-                            modifier = Modifier.fillMaxWidth().padding(16.dp),
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = PaddingValues(16.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.secondaryContainer,
                                 contentColor = MaterialTheme.colorScheme.primary,

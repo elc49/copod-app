@@ -86,4 +86,5 @@
     <string name="click_to_upload">Click to Upload</string>
     <string name="save">Save</string>
     <string name="lands">Lands</string>
+    <string name="resubmits">Re-submit rejected documents</string>
 </resources>

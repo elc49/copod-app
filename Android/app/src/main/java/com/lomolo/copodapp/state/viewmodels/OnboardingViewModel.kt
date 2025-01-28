@@ -13,6 +13,9 @@ import com.lomolo.copodapp.network.IRestFul
 import com.lomolo.copodapp.repository.IWeb3Auth
 import com.lomolo.copodapp.type.CreateOnboardingInput
 import com.lomolo.copodapp.type.GetOnboardingByEmailAndVerificationInput
+import com.lomolo.copodapp.type.UpdateDisplayPictureByIDInput
+import com.lomolo.copodapp.type.UpdateSupportingDocByIDInput
+import com.lomolo.copodapp.type.UpdateTitleDeedByIDInput
 import com.lomolo.copodapp.type.Verification
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -73,6 +76,15 @@ class OnboardingViewModel(
         private set
 
     var onboarding: Onboarding by mutableStateOf(Onboarding.Success)
+        private set
+
+    var updatingTitleDeed: UploadingDoc by mutableStateOf(UploadingDoc.Success)
+        private set
+
+    var updatingSupportDoc: UploadingDoc by mutableStateOf(UploadingDoc.Success)
+        private set
+
+    var updatingDisplayPicture: UploadingDoc by mutableStateOf(UploadingDoc.Success)
         private set
 
     fun uploadLandTitle(fileName: String, stream: InputStream) {
@@ -181,6 +193,66 @@ class OnboardingViewModel(
                 } catch (e: ApolloException) {
                     Log.d(TAG, e.message ?: "Something went wrong")
                     Onboarding.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun updateTitleDeed(cb: () -> Unit = {}) {
+        if (updatingTitleDeed !is UploadingDoc.Loading) {
+            updatingTitleDeed = UploadingDoc.Loading
+            viewModelScope.launch {
+                updatingTitleDeed = try {
+                    graphqlApiService.updateTitleDeedByID(
+                        UpdateTitleDeedByIDInput(
+                            id = _currentOnboarding.value?.title?.id!!,
+                            url = _landTitle.value,
+                        )
+                    )
+                    UploadingDoc.Success.also { cb() }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    UploadingDoc.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun updateSupportDoc(cb: () -> Unit = {}) {
+        if (updatingSupportDoc !is UploadingDoc.Loading) {
+            updatingSupportDoc = UploadingDoc.Loading
+            viewModelScope.launch {
+                updatingSupportDoc = try {
+                    graphqlApiService.updateSupportingDocByID(
+                        UpdateSupportingDocByIDInput(
+                            id = _currentOnboarding.value?.supportingDoc?.id!!,
+                            url = _supportingDoc.value,
+                        )
+                    )
+                    UploadingDoc.Success.also { cb() }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    UploadingDoc.Error(e.message)
+                }
+            }
+        }
+    }
+
+    fun updateDisplayPicture(cb: () -> Unit = {}) {
+        if (updatingDisplayPicture !is UploadingDoc.Loading) {
+            updatingDisplayPicture = UploadingDoc.Loading
+            viewModelScope.launch {
+                updatingDisplayPicture = try {
+                    graphqlApiService.updateDisplayPictureByID(
+                        UpdateDisplayPictureByIDInput(
+                            id = _currentOnboarding.value?.displayPicture?.id!!,
+                            url = _displayPicture.value,
+                        )
+                    )
+                    UploadingDoc.Success.also { cb() }
+                } catch (e: ApolloException) {
+                    Log.d(TAG, e.message ?: "Something went wrong")
+                    UploadingDoc.Error(e.message)
                 }
             }
         }

@@ -20,11 +20,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.ui.screens.UploadGovtIssuedIdScreenDestination
 
 @Composable
 fun OnboardGovtIdCard(
     modifier: Modifier = Modifier,
-    onNavigateToUploadGovtId: () -> Unit,
+    onNext: (String) -> Unit,
     land: String,
 ) {
     OutlinedCard(
@@ -38,8 +39,7 @@ fun OnboardGovtIdCard(
                 .padding(12.dp)
         ) {
             Column(
-                Modifier
-                    .align(Alignment.TopStart),
+                Modifier.align(Alignment.TopStart),
             ) {
                 Icon(
                     painterResource(R.drawable.govt_id),
@@ -60,8 +60,10 @@ fun OnboardGovtIdCard(
                 modifier = Modifier.align(Alignment.CenterStart),
             )
             OutlinedIconButton(
-                onClick = onNavigateToUploadGovtId,
-                modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                onClick = { onNext("${UploadGovtIssuedIdScreenDestination.route}/${false}") },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(60.dp),
                 enabled = land.isNotEmpty(),
             ) {
                 Icon(

@@ -66,7 +66,8 @@ fun UploadDocument(
     }, bottomBar = {
         BottomAppBar {
             Button(
-                onClick = { if (!savingDoc) onNext() },
+                enabled = !savingDoc,
+                onClick = onNext,
                 shape = MaterialTheme.shapes.extraSmall,
                 contentPadding = PaddingValues(16.dp),
                 modifier = Modifier.fillMaxWidth(),

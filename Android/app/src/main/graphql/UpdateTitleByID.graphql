@@ -1,0 +1,5 @@
+mutation UpdateTitleDeedByID($input: UpdateTitleDeedByIDInput!) {
+    updateTitleDeedByID(input: $input) {
+        id
+    }
+}

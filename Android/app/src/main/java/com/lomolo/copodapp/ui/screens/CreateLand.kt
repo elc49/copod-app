@@ -16,10 +16,13 @@ import androidx.compose.material.icons.twotone.Add
 import androidx.compose.material.icons.twotone.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,17 +37,20 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.R
 import com.lomolo.copodapp.state.viewmodels.GetCurrentOnboarding
 import com.lomolo.copodapp.state.viewmodels.MainViewModel
 import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
+import com.lomolo.copodapp.type.Verification
 import com.lomolo.copodapp.ui.common.BottomNavBar
 import com.lomolo.copodapp.ui.common.TopBar
 import com.lomolo.copodapp.ui.navigation.Navigation
+import okhttp3.internal.toImmutableList
 
-object AddLandScreenDestination : Navigation {
+object CreateLandScreenDestination : Navigation {
     override val title = null
-    override val route = "add_land"
+    override val route = "create_land"
 }
 
 @Composable
@@ -62,21 +68,24 @@ fun CreateLandScreen(
     }
 
     val currentOnboarding by viewModel.currentOnboarding.collectAsState()
+    val reSubmits: List<String>? = currentOnboarding?.whoIsStillOnboarding()
     val showTopBar =
         viewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Loading && viewModel.gettingCurrentOnboarding !is GetCurrentOnboarding.Error
 
     Scaffold(bottomBar = {
         BottomNavBar(currentDestination = currentDestination, onNavigateTo = onNavigateTo)
     }, topBar = {
-        TopBar(onClickAvatar = { onNext(AccountScreenDestination.route) }, mainViewModel = mainViewModel, title = {
-            if (showTopBar) {
-                if (currentOnboarding == null) {
-                    Text(stringResource(R.string.create_new_land))
-                } else {
-                    Text(stringResource(R.string.registration_status))
+        TopBar(onClickAvatar = { onNext(AccountScreenDestination.route) },
+            mainViewModel = mainViewModel,
+            title = {
+                if (showTopBar) {
+                    if (currentOnboarding == null) {
+                        Text(stringResource(R.string.create_new_land))
+                    } else {
+                        Text(stringResource(R.string.registration_status))
+                    }
                 }
-            }
-        })
+            })
     }) { innerPadding ->
         Surface(
             modifier = modifier.fillMaxSize()
@@ -86,7 +95,9 @@ fun CreateLandScreen(
                     if (currentOnboarding == null) {
                         NoYourListings(innerPadding = innerPadding, onClickAddLand = onClickAddLand)
                     } else {
-                        UnderReview(innerPadding = innerPadding)
+                        UnderReview(
+                            innerPadding = innerPadding, onNext = onNext, reSubmits = reSubmits
+                        )
                     }
                 }
 
@@ -101,6 +112,8 @@ fun CreateLandScreen(
 fun UnderReview(
     modifier: Modifier = Modifier,
     innerPadding: PaddingValues,
+    reSubmits: List<String>?,
+    onNext: (String) -> Unit,
 ) {
     Column(
         modifier
@@ -138,6 +151,46 @@ fun UnderReview(
                 Text(
                     stringResource(R.string.review_copy)
                 )
+            }
+        }
+        Spacer(Modifier.size(8.dp))
+        if (reSubmits != null && reSubmits.isNotEmpty()) {
+            Text(
+                stringResource(R.string.resubmits),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Spacer(Modifier.size(4.dp))
+            reSubmits.map {
+                ListItem(headlineContent = { Text(it) }, leadingContent = {
+                    Box(
+                        Modifier.padding(8.dp)
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.doc_paper),
+                            modifier = Modifier
+                                .size(28.dp)
+                                .align(Alignment.Center),
+                            contentDescription = stringResource(R.string.upload),
+                        )
+                    }
+                }, colors = ListItemDefaults.colors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                ), trailingContent = {
+                    TextButton(
+                        onClick = {
+                            when (it) {
+                                "Title" -> onNext("${UploadLandTitleScreenDestination.route}/${true}")
+                                "SupportingDoc" -> onNext("${UploadGovtIssuedIdScreenDestination.route}/${true}")
+                                "DisplayPicture" -> onNext("${UploadDisplayPictureDestination.route}/${true}")
+                            }
+                        },
+                    ) {
+                        Text(
+                            stringResource(R.string.submit),
+                            style = MaterialTheme.typography.titleMedium,
+                        )
+                    }
+                })
             }
         }
     }
@@ -183,4 +236,21 @@ fun NoYourListings(
             )
         }
     }
+}
+
+fun GetOnboardingByEmailAndVerificationQuery.GetOnboardingByEmailAndVerification.whoIsStillOnboarding(): List<String> {
+    var rejects = mutableListOf<String>()
+    if (this.title.verified == Verification.REJECTED) {
+        rejects.add(this.title.__typename.toString())
+    }
+
+    if (this.supportingDoc.verified == Verification.REJECTED) {
+        rejects.add(this.supportingDoc.__typename.toString())
+    }
+
+    if (this.displayPicture.verified == Verification.REJECTED) {
+        rejects.add(this.displayPicture.__typename.toString())
+    }
+
+    return rejects.toImmutableList()
 }
