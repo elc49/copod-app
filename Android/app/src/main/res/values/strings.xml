@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Copod App</string>
+    <string name="app_name">Copod</string>
     <string name="web3auth_project_id">BKaGsEtqDep8zK4hDbcw6msPiN-4TEXV_VVzq6uentm_wsedRRixAxzfBkHJSbmbxugKpr6PrYvP33dmasCpomw</string>
     <string name="email">example@email.com</string>
     <string name="signin">Sign in</string>
