@@ -71,7 +71,7 @@ fun LandScreen(
     Scaffold(topBar = {
         TopBar(
             title = {
-                Text(stringResource(R.string.your_lands))
+                Text(stringResource(R.string.verified_lands))
             },
             navigationIcon = {
                 IconButton(
