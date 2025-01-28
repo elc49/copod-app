@@ -20,11 +20,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.ui.screens.UploadDisplayPictureDestination
 
 @Composable
 fun OnboardDpCard(
     modifier: Modifier = Modifier,
-    onNavigateToUploadDp: () -> Unit,
+    onNext: (String) -> Unit,
     land: String,
     govtId: String,
 ) {
@@ -39,8 +40,7 @@ fun OnboardDpCard(
                 .padding(12.dp)
         ) {
             Column(
-                Modifier
-                    .align(Alignment.TopStart),
+                Modifier.align(Alignment.TopStart),
             ) {
                 Icon(
                     painterResource(R.drawable.account),
@@ -61,8 +61,10 @@ fun OnboardDpCard(
                 modifier = Modifier.align(Alignment.CenterStart),
             )
             OutlinedIconButton(
-                onClick = onNavigateToUploadDp,
-                modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                onClick = { onNext("${UploadDisplayPictureDestination.route}/${false}") },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(60.dp),
                 enabled = land.isNotEmpty() && govtId.isNotEmpty(),
             ) {
                 Icon(

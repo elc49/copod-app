@@ -11,10 +11,16 @@ import com.lomolo.copodapp.GetLandTitleDetailsQuery
 import com.lomolo.copodapp.GetOnboardingByEmailAndVerificationQuery
 import com.lomolo.copodapp.GetUserLandQuery
 import com.lomolo.copodapp.PaymentUpdateSubscription
+import com.lomolo.copodapp.UpdateDisplayPictureByIDMutation
+import com.lomolo.copodapp.UpdateSupportingDocByIDMutation
+import com.lomolo.copodapp.UpdateTitleDeedByIDMutation
 import com.lomolo.copodapp.type.CreateOnboardingInput
 import com.lomolo.copodapp.type.GetOnboardingByEmailAndVerificationInput
 import com.lomolo.copodapp.type.GetUserLandsInput
 import com.lomolo.copodapp.type.PayWithMpesaInput
+import com.lomolo.copodapp.type.UpdateDisplayPictureByIDInput
+import com.lomolo.copodapp.type.UpdateSupportingDocByIDInput
+import com.lomolo.copodapp.type.UpdateTitleDeedByIDInput
 import kotlinx.coroutines.flow.Flow
 
 interface IGraphQL {
@@ -25,6 +31,9 @@ interface IGraphQL {
     suspend fun createOnboarding(input: CreateOnboardingInput): ApolloResponse<CreateOnboardingMutation.Data>
     suspend fun getIsTitleVerified(titleNo: String): ApolloResponse<GetIsTitleVerifiedQuery.Data>
     suspend fun getLandTitleDetails(titleNo: String): ApolloResponse<GetLandTitleDetailsQuery.Data>
+    suspend fun updateTitleDeedByID(input: UpdateTitleDeedByIDInput): ApolloResponse<UpdateTitleDeedByIDMutation.Data>
+    suspend fun updateDisplayPictureByID(input: UpdateDisplayPictureByIDInput): ApolloResponse<UpdateDisplayPictureByIDMutation.Data>
+    suspend fun updateSupportingDocByID(input: UpdateSupportingDocByIDInput): ApolloResponse<UpdateSupportingDocByIDMutation.Data>
 }
 
 class GraphQLServiceImpl(
@@ -59,4 +68,16 @@ class GraphQLServiceImpl(
         apolloClient.query(GetLandTitleDetailsQuery(titleNo)).fetchPolicy(
             FetchPolicy.NetworkFirst
         ).execute()
+
+    override suspend fun updateTitleDeedByID(input: UpdateTitleDeedByIDInput) = apolloClient
+        .mutation(UpdateTitleDeedByIDMutation(input))
+        .execute()
+
+    override suspend fun updateSupportingDocByID(input: UpdateSupportingDocByIDInput) = apolloClient
+        .mutation(UpdateSupportingDocByIDMutation(input))
+        .execute()
+
+    override suspend fun updateDisplayPictureByID(input: UpdateDisplayPictureByIDInput) = apolloClient
+        .mutation(UpdateDisplayPictureByIDMutation(input))
+        .execute()
 }

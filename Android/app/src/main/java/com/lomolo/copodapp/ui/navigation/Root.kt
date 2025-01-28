@@ -18,7 +18,7 @@ import com.lomolo.copodapp.state.viewmodels.OnboardingViewModel
 import com.lomolo.copodapp.ui.screens.AccountScreen
 import com.lomolo.copodapp.ui.screens.AccountScreenDestination
 import com.lomolo.copodapp.ui.screens.CreateLandScreen
-import com.lomolo.copodapp.ui.screens.AddLandScreenDestination
+import com.lomolo.copodapp.ui.screens.CreateLandScreenDestination
 import com.lomolo.copodapp.ui.screens.ErrorScreen
 import com.lomolo.copodapp.ui.screens.ErrorScreenDestination
 import com.lomolo.copodapp.ui.screens.ExploreMarketsScreen
@@ -80,6 +80,9 @@ fun NavigationHost(
 
         else -> ErrorScreenDestination.route
     }
+    val onNext = { route: String ->
+        navHostController.navigate(route) { launchSingleTop = true }
+    }
     val onNavigateTo = { route: String ->
         navHostController.navigate(route) {
             // Pop up to the start destination of the graph to
@@ -106,7 +109,7 @@ fun NavigationHost(
                 onNavigateTo = onNavigateTo,
                 mainViewModel = mainViewModel,
                 onNext = {
-                    navHostController.navigate(it) { launchSingleTop = true }
+                    onNext(it)
                 },
                 currentDestination = it.destination,
             )
@@ -131,37 +134,61 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 })
         }
-        composable(route = UploadLandTitleScreenDestination.route) {
+        composable(
+            route = UploadLandTitleScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(UploadLandTitleScreenDestination.RESUBMIT_ID_ARG) {
+                type = NavType.BoolType
+            })
+        ) {
+            val isResubmit = it.arguments?.getBoolean("reSubmit", false)
+
             UploadLandTitle(
+                isResubmit = isResubmit,
                 onGoBack = {
                     navHostController.popBackStack()
                 },
                 onNavigateTo = {
-                    navHostController.navigate(it)
+                    onNext(it)
                 },
                 viewModel = onboardingViewModel,
             )
         }
-        composable(route = UploadGovtIssuedIdScreenDestination.route) {
+        composable(
+            route = UploadGovtIssuedIdScreenDestination.routeWithArgs,
+            arguments = listOf(navArgument(UploadGovtIssuedIdScreenDestination.RESUBMIT_ID_ARG) {
+                type = NavType.BoolType
+            })
+        ) {
+            val isResubmit = it.arguments?.getBoolean("reSubmit", false)
+
             UploadGovtIssuedId(
+                isResubmit = isResubmit,
                 onGoBack = {
                     navHostController.popBackStack()
                 },
                 viewModel = onboardingViewModel,
                 onNext = {
-                    navHostController.navigate(UploadDisplayPictureDestination.route)
+                    onNext(it)
                 },
             )
         }
-        composable(route = UploadDisplayPictureDestination.route) {
+        composable(
+            route = UploadDisplayPictureDestination.routeWithArgs,
+            arguments = listOf(navArgument(UploadDisplayPictureDestination.RESUBMIT_ID_ARG) {
+                type = NavType.BoolType
+            })
+        ) {
+            val reSubmit = it.arguments?.getBoolean("reSubmit", false)
+
             UploadDisplayPicture(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
                 viewModel = onboardingViewModel,
-                onNext = { onboardingId ->
-                    navHostController.navigate(AddLandScreenDestination.route)
+                onNext = {
+                    onNext(it)
                 },
+                reSubmit = reSubmit,
             )
         }
         composable(
@@ -176,7 +203,7 @@ fun NavigationHost(
                     navHostController.popBackStack()
                 },
                 onSuccess = {
-                    navHostController.navigate(SuccessScreenDestination.route)
+                    onNext(SuccessScreenDestination.route)
                 },
                 viewModel = mpesaViewModel,
                 mainViewModel = mainViewModel,
@@ -191,23 +218,23 @@ fun NavigationHost(
             AccountScreen(
                 mainViewModel = mainViewModel,
                 onNext = {
-                    navHostController.navigate(it) { launchSingleTop = true }
+                    onNext(it)
                 },
                 onGoBack = {
                     navHostController.popBackStack()
                 }
             )
         }
-        composable(route = AddLandScreenDestination.route) {
+        composable(route = CreateLandScreenDestination.route) {
             CreateLandScreen(viewModel = onboardingViewModel,
                 currentDestination = it.destination,
                 onNavigateTo = onNavigateTo,
                 mainViewModel = mainViewModel,
                 onNext = {
-                    navHostController.navigate(it) { launchSingleTop = true }
+                    onNext(it)
                 },
                 onClickAddLand = {
-                    navHostController.navigate(OnboardingScreenDestination.route)
+                    onNext(OnboardingScreenDestination.route)
                 })
         }
         composable(route = SearchScreenDestination.route) {
@@ -228,15 +255,7 @@ fun NavigationHost(
                 onGoBack = {
                     navHostController.popBackStack()
                 },
-                onNavigateToUploadLandTitle = {
-                    navHostController.navigate(UploadLandTitleScreenDestination.route)
-                },
-                onNavigateToUploadGovtId = {
-                    navHostController.navigate(UploadGovtIssuedIdScreenDestination.route)
-                },
-                onNavigateToUploadDp = {
-                    navHostController.navigate(UploadDisplayPictureDestination.route)
-                },
+                onNext = { onNext(it) },
                 onboardingViewModel = onboardingViewModel,
             )
         }

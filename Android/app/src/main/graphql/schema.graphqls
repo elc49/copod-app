@@ -8,18 +8,6 @@ input CreateOnboardingInput {
   displayPictureUrl: String!
 }
 
-input CreateUserInput {
-  email: String!
-
-  firstname: String!
-
-  lastname: String!
-
-  supportDocId: UUID!
-
-  supportDocVerification: Verification!
-}
-
 type DisplayPicture {
   id: UUID!
 
@@ -63,9 +51,17 @@ type Mutation {
 
   updateTitleVerificationById(input: UpdateTitleVerificationByIdInput!): Title!
 
-  createUser(input: CreateUserInput!): User!
+  updateSupportingDocVerificationByID(input: UpdateSupportingDocVerificationByIdInput!): SupportingDoc!
 
   updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!
+
+  updateOnboardingVerificationByID(input: UpdateOnboardingVerificationByIDInput!): Onboarding!
+
+  updateTitleDeedByID(input: UpdateTitleDeedByIDInput!): Title!
+
+  updateSupportingDocByID(input: UpdateSupportingDocByIDInput!): SupportingDoc!
+
+  updateDisplayPictureByID(input: UpdateDisplayPictureByIDInput!): DisplayPicture!
 }
 
 type Onboarding {
@@ -166,6 +162,8 @@ type Query {
   getIsTitleVerified(titleNo: String!): Boolean!
 
   getLandTitleDetails(titleNo: String!): LandDetails!
+
+  getOnboardingsByStatus(status: Verification!): [Onboarding!]!
 }
 
 type Subscription {
@@ -204,16 +202,68 @@ type Title {
 
 scalar UUID
 
+input UpdateDisplayPictureByIDInput {
+  id: UUID!
+
+  url: String!
+}
+
 input UpdateDisplayPictureVerificationByIdInput {
   displayPictureId: UUID!
 
+  email: String!
+
   verification: Verification!
+}
+
+input UpdateOnboardingVerificationByIDInput {
+  id: UUID!
+
+  email: String!
+
+  verification: Verification!
+}
+
+input UpdateSupportingDocByIDInput {
+  id: UUID!
+
+  url: String!
+}
+
+input UpdateSupportingDocVerificationByIdInput {
+  email: String!
+
+  firstname: String!
+
+  lastname: String!
+
+  supportDocId: UUID!
+
+  supportDocVerification: Verification!
+}
+
+input UpdateTitleDeedByIDInput {
+  id: UUID!
+
+  url: String!
 }
 
 input UpdateTitleVerificationByIdInput {
   titleId: UUID!
 
+  email: String!
+
   verification: Verification!
+
+  titleNo: String!
+
+  symbol: String!
+
+  owner: String!
+
+  size: Int!
+
+  registrationDate: String!
 }
 
 type User {

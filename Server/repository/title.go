@@ -64,6 +64,7 @@ func (r *Title) UpdateTitleByID(ctx context.Context, args sql.UpdateTitleByIDPar
 
 	return &model.Title{
 		ID:        u.ID,
+		URL:       u.Url,
 		Verified:  model.Verification(u.Verification),
 		CreatedAt: u.CreatedAt,
 		UpdatedAt: u.UpdatedAt,

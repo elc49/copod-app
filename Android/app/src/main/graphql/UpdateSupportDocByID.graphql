@@ -1,0 +1,5 @@
+mutation UpdateSupportingDocByID($input: UpdateSupportingDocByIDInput!) {
+    updateSupportingDocByID(input: $input) {
+        id
+    }
+}

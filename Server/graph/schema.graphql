@@ -168,6 +168,21 @@ input UpdateOnboardingVerificationByIDInput {
   verification: Verification!
 }
 
+input UpdateTitleDeedByIDInput {
+  id: UUID!
+  url: String!
+}
+
+input UpdateSupportingDocByIDInput {
+  id: UUID!
+  url: String!
+}
+
+input UpdateDisplayPictureByIDInput {
+  id: UUID!
+  url: String!
+}
+
 type Query {
   getUserLands(input: GetUserLandsInput!): [Title!]!
   getPaymentsByStatus(status: PaymentStatus!): [Payment!]!
@@ -187,6 +202,9 @@ type Mutation {
   updateSupportingDocVerificationByID(input: UpdateSupportingDocVerificationByIdInput!): SupportingDoc!
   updateDisplayPictureVerificationById(input: UpdateDisplayPictureVerificationByIdInput!): DisplayPicture!
   updateOnboardingVerificationByID(input: UpdateOnboardingVerificationByIDInput!): Onboarding!
+  updateTitleDeedByID(input: UpdateTitleDeedByIDInput!): Title!
+  updateSupportingDocByID(input: UpdateSupportingDocByIDInput!): SupportingDoc!
+  updateDisplayPictureByID(input: UpdateDisplayPictureByIDInput!): DisplayPicture!
 }
 
 type Subscription {

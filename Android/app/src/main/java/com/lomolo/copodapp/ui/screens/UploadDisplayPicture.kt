@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 object UploadDisplayPictureDestination : Navigation {
     override val title = null
     override val route = "register-display-picture"
+    const val RESUBMIT_ID_ARG = "reSubmit"
+    val routeWithArgs = "$route/{$RESUBMIT_ID_ARG}"
 }
 
 @Composable
@@ -33,6 +35,7 @@ fun UploadDisplayPicture(
     onGoBack: () -> Unit,
     onNext: (String) -> Unit,
     viewModel: OnboardingViewModel,
+    reSubmit: Boolean?,
 ) {
     val image by viewModel.displayPicture.collectAsState()
     val displayPicture = when (viewModel.uploadingDp) {
@@ -74,39 +77,37 @@ fun UploadDisplayPicture(
             }
         }
     }
+    val savingDoc =
+        viewModel.uploadingDp is UploadingDoc.Loading || viewModel.onboarding is Onboarding.Loading || viewModel.updatingDisplayPicture is UploadingDoc.Loading
 
-    UploadDocument(modifier = modifier,
-        title = @Composable {
-            Column {
-                Text(stringResource(R.string.display_picture))
-            }
-        },
-        image = displayPicture,
-        newUpload = image.isEmpty(),
-        savingDoc = viewModel.uploadingDp is UploadingDoc.Loading || viewModel.onboarding is Onboarding.Loading,
-        onNext = {
-            if (image.isNotEmpty()) {
-                viewModel.createOnboarding {
-                    onNext(it)
+    UploadDocument(modifier = modifier, title = @Composable {
+        Column {
+            Text(stringResource(R.string.display_picture))
+        }
+    }, image = displayPicture, newUpload = image.isEmpty(), savingDoc = savingDoc, onNext = {
+        if (image.isNotEmpty()) {
+            if (reSubmit == true) {
+                viewModel.updateDisplayPicture {
+                    onNext(CreateLandScreenDestination.route)
                 }
+            } else viewModel.createOnboarding {
+                onNext(CreateLandScreenDestination.route)
             }
-        },
-        onGoBack = onGoBack,
-        onSelectImage = {
-            if (viewModel.uploadingDp !is UploadingDoc.Loading) {
-                scope.launch {
-                    pickDisplayMedia.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly,
-                        )
+        }
+    }, onGoBack = onGoBack, onSelectImage = {
+        if (!savingDoc) {
+            scope.launch {
+                pickDisplayMedia.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly,
                     )
-                }
+                )
             }
-        },
-        buttonText = @Composable {
-            Text(
-                stringResource(R.string.save),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        })
+        }
+    }, buttonText = @Composable {
+        Text(
+            stringResource(R.string.save),
+            style = MaterialTheme.typography.titleMedium,
+        )
+    })
 }

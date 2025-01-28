@@ -5,9 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowForward
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,6 +24,8 @@ import kotlinx.coroutines.launch
 object UploadLandTitleScreenDestination : Navigation {
     override val title = null
     override val route = "register-land-title"
+    const val RESUBMIT_ID_ARG = "reSubmit"
+    val routeWithArgs = "$route/{$RESUBMIT_ID_ARG}"
 }
 
 @Composable
@@ -35,6 +34,7 @@ fun UploadLandTitle(
     onGoBack: () -> Unit,
     onNavigateTo: (String) -> Unit,
     viewModel: OnboardingViewModel,
+    isResubmit: Boolean?,
 ) {
     val image by viewModel.landTitle.collectAsState()
     val landTitle = when (viewModel.uploadingLandDoc) {
@@ -76,8 +76,10 @@ fun UploadLandTitle(
             }
         }
     }
+    val savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading || viewModel.updatingTitleDeed is UploadingDoc.Loading
 
-    UploadDocument(modifier = modifier,
+    UploadDocument(
+        modifier = modifier,
         title = @Composable {
             Column {
                 Text(stringResource(R.string.land_title_document))
@@ -85,15 +87,19 @@ fun UploadLandTitle(
         },
         image = landTitle,
         newUpload = image.isEmpty(),
-        savingDoc = viewModel.uploadingLandDoc is UploadingDoc.Loading,
+        savingDoc = savingDoc,
         onNext = {
             if (image.isNotEmpty()) {
-                onNavigateTo(UploadGovtIssuedIdScreenDestination.route)
+                if (isResubmit == true) {
+                    viewModel.updateTitleDeed {
+                        onNavigateTo(CreateLandScreenDestination.route)
+                    }
+                } else onNavigateTo("${UploadGovtIssuedIdScreenDestination.route}/${false}")
             }
         },
         onGoBack = onGoBack,
         onSelectImage = {
-            if (viewModel.uploadingLandDoc !is UploadingDoc.Loading) {
+            if (!savingDoc) {
                 scope.launch {
                     pickLandTitleMedia.launch(
                         PickVisualMediaRequest(
@@ -105,12 +111,8 @@ fun UploadLandTitle(
         },
         buttonText = @Composable {
             Text(
-                stringResource(R.string.proceed),
+                stringResource(R.string.save),
                 style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowForward,
-                contentDescription = stringResource(R.string.proceed),
             )
         })
 }

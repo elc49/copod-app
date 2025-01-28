@@ -35,7 +35,7 @@ sealed class Screen(
         R.string.create,
         R.drawable.create,
         R.drawable.create_filled,
-        "add_land",
+        "create_land",
         false,
     )
 }

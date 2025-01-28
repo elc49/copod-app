@@ -36,9 +36,7 @@ object OnboardingScreenDestination : Navigation {
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    onNavigateToUploadLandTitle: () -> Unit,
-    onNavigateToUploadGovtId: () -> Unit,
-    onNavigateToUploadDp: () -> Unit,
+    onNext: (String) -> Unit,
     onboardingViewModel: OnboardingViewModel,
 ) {
     val land by onboardingViewModel.landTitle.collectAsState()
@@ -74,9 +72,9 @@ fun OnboardingScreen(
                     ),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                OnboardLandCard(onNavigateToUploadLandTitle = onNavigateToUploadLandTitle)
-                OnboardGovtIdCard(onNavigateToUploadGovtId = onNavigateToUploadGovtId, land = land)
-                OnboardDpCard(onNavigateToUploadDp = onNavigateToUploadDp, land = land, govtId = govtId)
+                OnboardLandCard(onNext = onNext)
+                OnboardGovtIdCard(onNext = onNext, land = land)
+                OnboardDpCard(onNext =onNext, land = land, govtId = govtId)
             }
         }
     }

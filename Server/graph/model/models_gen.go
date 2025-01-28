@@ -103,6 +103,11 @@ type Title struct {
 	UpdatedAt    time.Time    `json:"updated_at"`
 }
 
+type UpdateDisplayPictureByIDInput struct {
+	ID  uuid.UUID `json:"id"`
+	URL string    `json:"url"`
+}
+
 type UpdateDisplayPictureVerificationByIDInput struct {
 	DisplayPictureID uuid.UUID    `json:"displayPictureId"`
 	Email            string       `json:"email"`
@@ -115,12 +120,22 @@ type UpdateOnboardingVerificationByIDInput struct {
 	Verification Verification `json:"verification"`
 }
 
+type UpdateSupportingDocByIDInput struct {
+	ID  uuid.UUID `json:"id"`
+	URL string    `json:"url"`
+}
+
 type UpdateSupportingDocVerificationByIDInput struct {
 	Email                  string       `json:"email"`
 	Firstname              string       `json:"firstname"`
 	Lastname               string       `json:"lastname"`
 	SupportDocID           uuid.UUID    `json:"supportDocId"`
 	SupportDocVerification Verification `json:"supportDocVerification"`
+}
+
+type UpdateTitleDeedByIDInput struct {
+	ID  uuid.UUID `json:"id"`
+	URL string    `json:"url"`
 }
 
 type UpdateTitleVerificationByIDInput struct {

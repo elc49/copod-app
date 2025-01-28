@@ -5,9 +5,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.twotone.ArrowForward
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,14 +24,17 @@ import kotlinx.coroutines.launch
 object UploadGovtIssuedIdScreenDestination : Navigation {
     override val title = null
     override val route = "register-govt-id"
+    const val RESUBMIT_ID_ARG = "reSubmit"
+    val routeWithArgs = "$route/{$RESUBMIT_ID_ARG}"
 }
 
 @Composable
 fun UploadGovtIssuedId(
     modifier: Modifier = Modifier,
     onGoBack: () -> Unit,
-    onNext: () -> Unit,
+    onNext: (String) -> Unit,
     viewModel: OnboardingViewModel,
+    isResubmit: Boolean?,
 ) {
     val image by viewModel.supportingDoc.collectAsState()
     val idDoc = when (viewModel.uploadingGovtId) {
@@ -75,43 +75,36 @@ fun UploadGovtIssuedId(
             }
         }
     }
+    val savingDoc = viewModel.uploadingGovtId is UploadingDoc.Loading || viewModel.updatingSupportDoc is UploadingDoc.Loading
 
-    UploadDocument(
-        modifier = modifier,
-        title = @Composable {
-            Column {
-                Text(stringResource(R.string.verify_your_id))
-            }
-        },
-        newUpload = image.isEmpty(),
-        image = idDoc,
-        onNext = {
-            if (image.isNotEmpty()) {
-                onNext()
-            }
-        },
-        onGoBack = onGoBack,
-        onSelectImage = {
-            if (viewModel.uploadingGovtId !is UploadingDoc.Loading) {
-                scope.launch {
-                    pickGovtIdMedia.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly,
-                        )
-                    )
+    UploadDocument(modifier = modifier, title = @Composable {
+        Column {
+            Text(stringResource(R.string.verify_your_id))
+        }
+    }, newUpload = image.isEmpty(), image = idDoc, onNext = {
+        if (image.isNotEmpty()) {
+            if (isResubmit == true) {
+                viewModel.updateSupportDoc {
+                    onNext(CreateLandScreenDestination.route)
                 }
-            }
-        },
-        savingDoc = viewModel.uploadingGovtId is UploadingDoc.Loading,
-        buttonText = @Composable {
-            Text(
-                stringResource(R.string.proceed),
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Icon(
-                Icons.AutoMirrored.TwoTone.ArrowForward,
-                contentDescription = stringResource(R.string.proceed),
+            } else onNext(
+                "${UploadDisplayPictureDestination.route}/${false}"
             )
         }
-    )
+    }, onGoBack = onGoBack, onSelectImage = {
+        if (!savingDoc) {
+            scope.launch {
+                pickGovtIdMedia.launch(
+                    PickVisualMediaRequest(
+                        ActivityResultContracts.PickVisualMedia.ImageOnly,
+                    )
+                )
+            }
+        }
+    }, savingDoc = savingDoc, buttonText = @Composable {
+        Text(
+            stringResource(R.string.save),
+            style = MaterialTheme.typography.titleMedium,
+        )
+    })
 }

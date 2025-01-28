@@ -20,11 +20,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.lomolo.copodapp.R
+import com.lomolo.copodapp.ui.screens.UploadLandTitleScreenDestination
 
 @Composable
 fun OnboardLandCard(
     modifier: Modifier = Modifier,
-    onNavigateToUploadLandTitle: () -> Unit,
+    onNext: (String) -> Unit,
 ) {
     OutlinedCard(
         modifier
@@ -37,8 +38,7 @@ fun OnboardLandCard(
                 .padding(12.dp)
         ) {
             Column(
-                Modifier
-                    .align(Alignment.TopStart),
+                Modifier.align(Alignment.TopStart),
             ) {
                 Icon(
                     painterResource(R.drawable.earth),
@@ -59,8 +59,10 @@ fun OnboardLandCard(
                 modifier = Modifier.align(Alignment.CenterStart),
             )
             OutlinedIconButton(
-                onClick = onNavigateToUploadLandTitle,
-                modifier = Modifier.align(Alignment.BottomEnd).size(60.dp),
+                onClick = { onNext("${UploadLandTitleScreenDestination.route}/${false}") },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .size(60.dp),
             ) {
                 Icon(
                     painterResource(R.drawable.doc_paper),

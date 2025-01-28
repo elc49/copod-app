@@ -126,6 +126,33 @@ func (r *mutationResolver) UpdateOnboardingVerificationByID(ctx context.Context,
 	return r.onboardingController.UpdateOnboardingVerificationByID(ctx, args)
 }
 
+// UpdateTitleDeedByID is the resolver for the updateTitleDeedByID field.
+func (r *mutationResolver) UpdateTitleDeedByID(ctx context.Context, input model.UpdateTitleDeedByIDInput) (*model.Title, error) {
+	return r.titleController.UpdateTitleByID(ctx, sql.UpdateTitleByIDParams{
+		ID:           input.ID,
+		Verification: model.VerificationOnboarding.String(),
+		Url:          input.URL,
+	})
+}
+
+// UpdateSupportingDocByID is the resolver for the updateSupportingDocByID field.
+func (r *mutationResolver) UpdateSupportingDocByID(ctx context.Context, input model.UpdateSupportingDocByIDInput) (*model.SupportingDoc, error) {
+	return r.supportDocController.UpdateSupportDocByID(ctx, sql.UpdateSupportDocByIDParams{
+		ID:           input.ID,
+		Url:          input.URL,
+		Verification: model.VerificationOnboarding.String(),
+	})
+}
+
+// UpdateDisplayPictureByID is the resolver for the updateDisplayPictureByID field.
+func (r *mutationResolver) UpdateDisplayPictureByID(ctx context.Context, input model.UpdateDisplayPictureByIDInput) (*model.DisplayPicture, error) {
+	return r.displayPictureController.UpdateDisplayPictureByID(ctx, sql.UpdateDisplayPictureByIDParams{
+		ID:           input.ID,
+		Verification: model.VerificationOnboarding.String(),
+		Url:          input.URL,
+	})
+}
+
 // Title is the resolver for the title field.
 func (r *onboardingResolver) Title(ctx context.Context, obj *model.Onboarding) (*model.Title, error) {
 	return r.titleController.GetTitleByID(ctx, obj.TitleID)

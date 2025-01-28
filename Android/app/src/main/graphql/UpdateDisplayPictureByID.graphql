@@ -1,0 +1,5 @@
+mutation UpdateDisplayPictureByID($input: UpdateDisplayPictureByIDInput!) {
+    updateDisplayPictureByID(input: $input) {
+        id
+    }
+}
