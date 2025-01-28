@@ -95,7 +95,7 @@ func (r *mutationResolver) UpdateSupportingDocVerificationByID(ctx context.Conte
 	switch du.Verified {
 	case model.VerificationVerified:
 		go func() {
-			if _, err := r.userController.CreateUser(ctx, sql.CreateUserParams{
+			if _, err := r.userController.CreateUser(context.Background(), sql.CreateUserParams{
 				Email:     input.Email,
 				Firstname: input.Firstname,
 				Lastname:  input.Lastname,

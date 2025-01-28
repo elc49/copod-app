@@ -80,9 +80,9 @@ func (c *SupportingDoc) UpdateSupportDocVerificationByID(ctx context.Context, em
 
 	// Comms rejected doc
 	if config.IsProd() {
-		go func() {
-			switch u.Verified {
-			case model.VerificationRejected:
+		switch u.Verified {
+		case model.VerificationRejected:
+			go func() {
 				req := &resend.SendEmailRequest{
 					From:    "Chanzu <chanzu@info.copodap.com>",
 					To:      []string{email},
@@ -92,8 +92,8 @@ func (c *SupportingDoc) UpdateSupportDocVerificationByID(ctx context.Context, em
 				if err := c.emailService.Send(context.Background(), req); err != nil {
 					return
 				}
-			}
-		}()
+			}()
+		}
 	}
 
 	return u, nil
